@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Simplifi Football — Trade Journal</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- Papa Parse for CSV -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+
+  <body class="h-full bg-black text-white antialiased pb-20" style="font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial">
+    <!-- Ambient background gradient -->
+    <div class="pointer-events-none fixed inset-0 -z-10">
+      <div class="absolute inset-x-0 top-[-10%] mx-auto h-[420px] max-w-6xl rounded-3xl blur-3xl opacity-15"
+           style="background: radial-gradient(1000px 200px at 10% 0%, rgba(34,197,94,.4), transparent),
+                    radial-gradient(800px 200px at 90% 0%, rgba(234,179,8,.3), transparent),
+                    radial-gradient(600px 200px at 50% 20%, rgba(31,84,16,.25), transparent);">
+      </div>
+    </div>
+
+    <!-- Top bar -->
+    <header class="sticky top-0 z-20 border-b border-zinc-800 bg-black/80 backdrop-blur">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-green-500">
+            <img src="https://images.unsplash.com/photo-1504805572947-34fad45aed93?q=80&w=96&auto=format&fit=crop" alt="logo" class="h-10 w-10 rounded-xl object-cover mix-blend-multiply opacity-90" />
+          </div>
+          <div>
+            <div class="text-lg font-semibold tracking-tight text-white">Simplifi Football</div>
+            <div class="text-xs text-zinc-400">Trade Journal</div>
+          </div>
+        </div>
+
+        <div class="hidden md:flex items-center gap-3">
+          <div class="relative">
+            <input id="search" type="text" placeholder="Search trades, teams…" class="w-72 rounded-xl border border-zinc-700 bg-zinc-900/70 px-10 py-2 text-sm text-white placeholder:text-zinc-500 outline-none focus:ring-2 focus:ring-green-500/40" />
+            <i data-lucide="search" class="absolute left-3 top-2.5 h-5 w-5 text-zinc-500"></i>
+          </div>
+
+          <button class="inline-flex items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900/70 px-3 py-2 text-sm text-slate-300 hover:bg-zinc-800">
+            <i data-lucide="sliders" class="h-4 w-4"></i>
+            Indicator Filter
+          </button>
+
+          <div class="flex items-center gap-3 rounded-xl border border-zinc-700 bg-zinc-900/60 px-3 py-1.5">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=96&auto=format&fit=crop" class="h-8 w-8 rounded-full object-cover" alt="avatar" />
+            <div>
+              <div class="text-sm font-medium text-white">Jamie Chastain</div>
+              <div class="text-[11px] text-zinc-400">Administrator</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <!-- Page title + controls -->
+      <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 class="text-2xl font-semibold tracking-tight text-white">Dashboard</h1>
+          <p class="text-sm text-slate-300">Clean, luxurious journal to track your trades and capital movement.</p>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+          <!-- GitHub URL input -->
+          <div class="relative flex w-full sm:w-[440px]">
+            <i data-lucide="github" class="pointer-events-none absolute left-3 top-2.5 h-5 w-5 text-zinc-500"></i>
+            <input id="githubUrl" type="url" placeholder="Paste GitHub raw CSV URL" class="w-full rounded-l-xl border border-zinc-700 bg-zinc-900/80 px-10 py-2 text-sm text-white placeholder:text-zinc-500 outline-none focus:ring-2 focus:ring-green-500/40" />
+            <button id="loadBtn" class="rounded-r-xl bg-green-500 px-4 text-sm font-medium text-white hover:bg-green-600">Load</button>
+          </div>
+
+          <!-- Starting capital -->
+          <div class="flex items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900/80 px-3 py-2">
+            <i data-lucide="wallet" class="h-4 w-4 text-green-500"></i>
+            <label for="startCapital" class="text-sm text-slate-300">Start</label>
+            <input id="startCapital" type="number" step="0.01" value="1000" class="w-28 rounded-lg border border-zinc-700 bg-black px-2 py-1.5 text-right text-sm text-white outline-none focus:ring-2 focus:ring-green-500/40" />
+          </div>
+
+          <!-- Representative rule custom dropdown -->
+          <div class="relative">
+            <button id="ruleBtn" class="inline-flex items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900/80 px-3 py-2 text-sm text-slate-300 hover:bg-zinc-800">
+              <i data-lucide="sparkles" class="h-4 w-4 text-yellow-500"></i>
+              <span id="ruleLabel">Pick: First fixture</span>
+              <i data-lucide="chevron-down" class="h-4 w-4"></i>
+            </button>
+            <div id="ruleMenu" class="absolute right-0 mt-2 hidden w-56 overflow-hidden rounded-xl border border-zinc-700 bg-zinc-900 shadow-xl z-50">
+              <button data-rule="first" class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-300 hover:bg-zinc-800">
+                <i data-lucide="flag" class="h-4 w-4 text-zinc-400"></i>
+                First fixture
+              </button>
+              <button data-rule="last" class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-300 hover:bg-zinc-800">
+                <i data-lucide="flag-triangle-right" class="h-4 w-4 text-zinc-400"></i>
+                Last fixture
+              </button>
+              <button data-rule="maxProfit" class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-300 hover:bg-zinc-800">
+                <i data-lucide="trending-up" class="h-4 w-4 text-green-500"></i>
+                Highest profit
+              </button>
+              <button data-rule="maxOdds" class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-300 hover:bg-zinc-800">
+                <i data-lucide="percent" class="h-4 w-4 text-yellow-500"></i>
+                Highest odds
+              </button>
+            </div>
+          </div>
+
+          <!-- Recalculate -->
+          <button id="recalcBtn" class="inline-flex items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900/80 px-3 py-2 text-sm text-slate-300 hover:bg-zinc-800">
+            <i data-lucide="refresh-ccw" class="h-4 w-4"></i>
+            Recalculate
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI cards -->
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div class="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4">
+          <div class="flex items-center justify-between">
+            <p class="text-sm text-slate-400">Total Earnings</p>
+            <i data-lucide="banknote" class="h-5 w-5 text-green-400"></i>
+          </div>
+          <div class="mt-2 text-3xl font-semibold tracking-tight text-white" id="kpiEarnings">$0.00</div>
+          <p class="mt-1 text-xs text-green-400" id="kpiEarningsHint">Up to — this period</p>
+        </div>
+
+        <div class="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4">
+          <div class="flex items-center justify-between">
+            <p class="text-sm text-slate-400">Hit Rate</p>
+            <i data-lucide="target" class="h-5 w-5 text-yellow-500"></i>
+          </div>
+          <div class="mt-2 text-3xl font-semibold tracking-tight text-white" id="kpiHitRate">0%</div>
+          <p class="mt-1 text-xs text-slate-400" id="kpiTrades">0 trades</p>
+        </div>
+
+        <div class="rounded-2xl border border-green-500/30 bg-gradient-to-br from-green-950/40 to-zinc-900/80 p-4">
+          <div class="flex items-center justify-between">
+            <p class="text-sm/5 text-green-300">Current Capital</p>
+            <i data-lucide="wallet" class="h-5 w-5 text-green-400"></i>
+          </div>
+          <div class="mt-2 text-3xl font-semibold tracking-tight text-green-50" id="kpiCapital">$0.00</div>
+          <p class="mt-1 text-xs text-green-400" id="kpiCapitalHint">Capital after last trade</p>
+        </div>
+      </div>
+
+      <!-- Main grid -->
+      <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <!-- Chart -->
+        <section class="lg:col-span-2 space-y-6">
+          <!-- Capital Movement Chart -->
+          <div class="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-xl font-semibold tracking-tight text-white">Capital Movement per Trade</h2>
+                <p class="text-xs text-slate-400">Hover a point to reveal all fixtures from that trade.</p>
+              </div>
+              <div class="flex items-center gap-2 text-xs">
+                <span class="inline-flex items-center gap-1 rounded-full bg-green-500/10 px-2 py-1 text-green-400">
+                  <span class="h-2 w-2 rounded-full bg-green-500"></span> Capital
+                </span>
+                <span class="inline-flex items-center gap-1 rounded-full bg-yellow-500/10 px-2 py-1 text-yellow-400">
+                  <span class="h-2 w-2 rounded-full bg-yellow-500"></span> Profit
+                </span>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="relative h-[340px]">
+                <canvas id="cmChart" class="absolute inset-0"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Details panel -->
+        <aside class="space-y-6">
+          <!-- Hovered Trade Details -->
+          <div class="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-semibold tracking-tight text-white">Trade details</h3>
+              <span id="hoverTradeBadge" class="hidden rounded-full bg-green-500 px-3 py-1 text-xs text-white">Trade —</span>
+            </div>
+            <p class="mt-1 text-xs text-slate-400">All fixtures belonging to the hovered trade are listed here.</p>
+
+            <div id="tradeFixtures" class="mt-4 space-y-2">
+              <div class="rounded-lg border border-dashed border-zinc-700 p-4 text-sm text-zinc-400">
+                Hover a point on the chart to preview fixtures.
+              </div>
+            </div>
+          </div>
+
+          <!-- Mini insights -->
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-1">
+            <!-- Calendar -->
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4">
+              <div class="flex items-center justify-between">
+                <h4 class="text-base font-semibold tracking-tight text-white">Calendar</h4>
+                <div class="flex items-center gap-2">
+                  <button id="calPrev" class="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800 text-slate-300 hover:bg-zinc-700">
+                    <i data-lucide="chevron-left" class="h-4 w-4" aria-hidden="true"></i>
+                  </button>
+                  <div id="calLabel" class="min-w-[130px] text-center text-sm font-medium text-slate-300">—</div>
+                  <button id="calNext" class="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800 text-slate-300 hover:bg-zinc-700">
+                    <i data-lucide="chevron-right" class="h-4 w-4" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+              <div id="calRangeLabel" class="mt-1 text-xs text-slate-400">All dates</div>
+              <div class="mt-3">
+                <div class="grid grid-cols-7 text-center text-[11px] text-zinc-500">
+                  <div class="py-1">Mon</div>
+                  <div class="py-1">Tue</div>
+                  <div class="py-1">Wed</div>
+                  <div class="py-1">Thu</div>
+                  <div class="py-1">Fri</div>
+                  <div class="py-1">Sat</div>
+                  <div class="py-1">Sun</div>
+                </div>
+                <div id="calendarGrid" class="mt-1 grid grid-cols-7 gap-1"></div>
+              </div>
+              <div class="mt-3 flex justify-end">
+                <button id="calClear" class="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800 px-2.5 py-1.5 text-xs text-slate-300 hover:bg-zinc-700">
+                  <i data-lucide="x" class="h-3.5 w-3.5"></i>
+                  Clear
+                </button>
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4">
+              <h4 class="text-base font-semibold tracking-tight text-white">League Split</h4>
+              <p class="text-xs text-slate-400">Distribution of trades by league</p>
+              <div class="mt-3 space-y-2" id="leagueSplit"></div>
+            </div>
+
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4">
+              <h4 class="text-base font-semibold tracking-tight text-white">Notes</h4>
+              <textarea placeholder="Quick thought about your strategy today…" class="mt-2 h-28 w-full resize-none rounded-xl border border-zinc-700 bg-zinc-800/80 p-3 text-sm text-white placeholder:text-zinc-500 outline-none focus:ring-2 focus:ring-green-500/40"></textarea>
+              <div class="mt-2 flex justify-end">
+                <button class="inline-flex items-center gap-2 rounded-xl bg-green-500 px-3 py-1.5 text-xs text-white hover:bg-green-600">
+                  <i data-lucide="save" class="h-4 w-4"></i>
+                  Save note
+                </button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Trades table - Full width below -->
+      <div class="mt-6 rounded-2xl border border-zinc-800 bg-zinc-900/80">
+        <div class="flex items-center justify-between px-4 pt-4">
+          <h3 class="text-lg font-semibold tracking-tight text-white">Trades (representative fixture per trade)</h3>
+          <button id="exportBtn" class="inline-flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-xs text-slate-300 hover:bg-zinc-700">
+            <i data-lucide="download" class="h-4 w-4"></i>
+            Export CSV
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="mt-2 w-full min-w-[720px] text-left text-sm">
+            <thead class="border-y border-zinc-800 text-slate-400">
+              <tr>
+                <th class="px-4 py-2">Trade</th>
+                <th class="px-4 py-2">Fixture</th>
+                <th class="px-4 py-2">League</th>
+                <th class="px-4 py-2">Date</th>
+                <th class="px-4 py-2">Odds</th>
+                <th class="px-4 py-2">Stake</th>
+                <th class="px-4 py-2">W/L</th>
+                <th class="px-4 py-2">Profit</th>
+                <th class="px-4 py-2">Capital After</th>
+              </tr>
+            </thead>
+            <tbody id="tradesTbody" class="divide-y divide-zinc-800"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <footer class="mx-auto mt-10 max-w-7xl px-4 pb-12 text-center text-xs text-zinc-500 sm:px-6 lg:px-8">
+      Built for clarity and speed. Paste your GitHub CSV and start journaling.
+    </footer>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-black border-t border-zinc-800 z-50">
+      <div class="max-w-md mx-auto">
+        <div class="flex">
+          <!-- Markets -->
+          <button class="flex-1 flex flex-col items-center justify-center py-3 px-2 text-zinc-400 hover:text-slate-300 transition-colors" data-nav="markets">
+            <i data-lucide="trending-up" class="w-5 h-5 mb-1"></i>
+            <span class="text-xs font-medium">Markets</span>
+          </button>
+          
+          <!-- Backtesting -->
+          <button class="flex-1 flex flex-col items-center justify-center py-3 px-2 text-zinc-400 hover:text-slate-300 transition-colors" data-nav="backtesting">
+            <i data-lucide="line-chart" class="w-5 h-5 mb-1"></i>
+            <span class="text-xs font-medium">Backtesting</span>
+          </button>
+          
+          <!-- Journal (Active) -->
+          <button class="flex-1 flex flex-col items-center justify-center py-3 px-2 text-green-400 transition-colors">
+            <i data-lucide="book-open" class="w-5 h-5 mb-1"></i>
+            <span class="text-xs font-medium">Journal</span>
+            <div class="w-1 h-1 bg-green-400 rounded-full mt-1"></div>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <script>
+      // Icon init
+      document.addEventListener("DOMContentLoaded", () => {
+        if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+      });
+
+      // State
+      let rawFixtures = [];
+      let visibleFixtures = [];
+      let grouped = {};
+      let representativeRule = 'first';
+      let cmChart;
+      let representatives = [];
+      let capitalSeries = [];
+      let profitSeries = [];
+      let tradeOrder = [];
+
+      // Date filter state
+      let dateFilterStart = null;
+      let dateFilterEnd = null;
+      let calendarMonth = new Date();
+
+      // Helpers
+      const $ = (sel) => document.querySelector(sel);
+      const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+      const fmt = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', minimumFractionDigits: 2 });
+      const pct = (n) => `${(n * 100).toFixed(1)}%`;
+
+      function toNum(v) {
+        if (v === null || v === undefined) return 0;
+        if (typeof v === 'number') return v;
+        const s = String(v).replace(/[^\d\.\-]/g, '');
+        const n = parseFloat(s);
+        return isNaN(n) ? 0 : n;
+      }
+
+      function cleanStr(v) { return (v ?? '').toString().trim(); }
+
+      function computeProfit(row) {
+        const explicit = toNum(row['Profit']);
+        if (explicit || explicit === 0) return explicit;
+
+        const stake = toNum(row['Stake']);
+        const odds = toNum(row['Odd']);
+        const wl = cleanStr(row['Win/loss']).toLowerCase();
+        if (wl === 'win' || wl === 'won') return stake * (odds - 1);
+        if (wl === 'loss' || wl === 'lose' || wl === 'lost') return -stake;
+        return 0;
+      }
+
+      function parseCSVDateStr(s) {
+        const t = cleanStr(s);
+        if (!t) return null;
+        const m = t.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (m) {
+          const y = +m[1], mo = +m[2], d = +m[3];
+          return new Date(y, mo - 1, d);
+        }
+        const dflt = new Date(t);
+        return isNaN(dflt) ? null : dflt;
+      }
+
+      function getRowDate(row) {
+        return parseCSVDateStr(row['Date']);
+      }
+
+      function ymdKey(d) {
+        const y = d.getFullYear();
+        const m = `${d.getMonth()+1}`.padStart(2,'0');
+        const day = `${d.getDate()}`.padStart(2,'0');
+        return `${y}-${m}-${day}`;
+      }
+
+      function inRange(d, start, end) {
+        if (!d) return false;
+        if (!start && !end) return true;
+        if (start && !end) return d >= start;
+        if (!start && end) return d <= end;
+        return d >= start && d <= end;
+      }
+
+      function applyDateFilter(fixtures) {
+        if (!dateFilterStart && !dateFilterEnd) return fixtures.slice();
+        return fixtures.filter(r => {
+          const d = getRowDate(r);
+          return inRange(d, dateFilterStart, dateFilterEnd);
+        });
+      }
+
+      function groupByTrade(fixtures) {
+        const g = {};
+        fixtures.forEach(r => {
+          const t = cleanStr(r['Tradenumber'] || r['TradeNumber'] || r['Trade'] || '');
+          if (!t) return;
+          if (!g[t]) g[t] = [];
+          g[t].push(r);
+        });
+        for (const t in g) {
+          g[t].sort((a,b) => {
+            const da = new Date(`${a['Date'] ?? ''} ${a['Time'] ?? ''}`);
+            const db = new Date(`${b['Date'] ?? ''} ${b['Time'] ?? ''}`);
+            return da - db;
+          });
+        }
+        return g;
+      }
+
+      function pickRepresentative(fixtures, rule) {
+        if (!fixtures || fixtures.length === 0) return null;
+        if (rule === 'first') return fixtures[0];
+        if (rule === 'last') return fixtures[fixtures.length - 1];
+        if (rule === 'maxProfit') {
+          return fixtures.slice().sort((a,b) => computeProfit(b) - computeProfit(a))[0];
+        }
+        if (rule === 'maxOdds') {
+          return fixtures.slice().sort((a,b) => toNum(b['Odd']) - toNum(a['Odd']))[0];
+        }
+        return fixtures[0];
+      }
+
+      function recompute() {
+        visibleFixtures = applyDateFilter(rawFixtures);
+        grouped = groupByTrade(visibleFixtures);
+        tradeOrder = Object.keys(grouped).sort((a,b) => {
+          const na = Number(a), nb = Number(b);
+          if (!isNaN(na) && !isNaN(nb)) return na - nb;
+          return a.localeCompare(b);
+        });
+
+        representatives = [];
+        profitSeries = [];
+        capitalSeries = [];
+
+        const startCapital = toNum($('#startCapital').value || 0);
+        let runningCapital = startCapital;
+
+        tradeOrder.forEach((t, idx) => {
+          const rep = pickRepresentative(grouped[t], representativeRule);
+          representatives.push({ trade: t, rep, fixtures: grouped[t] });
+          const p = computeProfit(rep);
+          profitSeries.push(p);
+          runningCapital = runningCapital + p;
+          capitalSeries.push(runningCapital);
+        });
+
+        renderKPIs(startCapital);
+        renderChart();
+        renderTable();
+        renderLeagueSplit();
+        updateRangeLabel();
+      }
+
+      function renderKPIs(startCapital) {
+        const totalProfit = profitSeries.reduce((a,b) => a + b, 0);
+        $('#kpiEarnings').textContent = fmt.format(totalProfit);
+        $('#kpiCapital').textContent = fmt.format((startCapital || 0) + totalProfit);
+        $('#kpiCapitalHint').textContent = 'Capital after last trade';
+
+        const allFixtures = visibleFixtures.length;
+        const wins = visibleFixtures.filter(r => cleanStr(r['Win/loss']).toLowerCase().startsWith('w')).length;
+        $('#kpiHitRate').textContent = allFixtures ? pct(wins / allFixtures) : '0%';
+        $('#kpiTrades').textContent = `${tradeOrder.length} trades`;
+        $('#kpiEarningsHint').textContent = totalProfit >= 0 ? 'Up this period' : 'Down this period';
+      }
+
+      function renderChart() {
+        const ctx = document.getElementById('cmChart').getContext('2d');
+        if (cmChart) cmChart.destroy();
+
+        const grad = ctx.createLinearGradient(0, 0, 0, 320);
+        grad.addColorStop(0, 'rgba(34,197,94,0.22)');
+        grad.addColorStop(1, 'rgba(34,197,94,0.01)');
+
+        const labels = tradeOrder.map(t => `Trade ${t}`);
+
+        cmChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [
+              {
+                label: 'Capital',
+                data: capitalSeries,
+                tension: 0.32,
+                borderColor: '#22c55e',
+                backgroundColor: grad,
+                pointBackgroundColor: '#22c55e',
+                pointHoverBackgroundColor: '#22c55e',
+                pointBorderColor: '#000',
+                pointRadius: 4,
+                fill: true,
+                borderWidth: 2
+              },
+              {
+                label: 'Profit',
+                data: profitSeries,
+                yAxisID: 'y1',
+                tension: 0.3,
+                borderColor: '#eab308',
+                pointBackgroundColor: '#eab308',
+                pointBorderColor: '#000',
+                pointRadius: 3,
+                fill: false,
+                borderDash: [4,4],
+                borderWidth: 1.5
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'nearest', intersect: false },
+            scales: {
+              y: {
+                beginAtZero: false,
+                grid: { color: 'rgba(63,63,70,.35)' },
+                ticks: { color: '#cbd5e1', crossAlign: 'near', font: { size: 12 } }
+              },
+              y1: {
+                position: 'right',
+                grid: { display: false },
+                ticks: { color: '#94a3b8', font: { size: 11 } }
+              },
+              x: {
+                grid: { color: 'rgba(63,63,70,.35)' },
+                ticks: { color: '#cbd5e1', font: { size: 12 } }
+              }
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: 'rgba(0,0,0,.95)',
+                padding: 12,
+                titleColor: '#fff',
+                bodyColor: '#cbd5e1',
+                borderColor: 'rgba(255,255,255,.08)',
+                borderWidth: 1,
+                displayColors: false,
+                callbacks: {
+                  title: (items) => {
+                    const idx = items[0].dataIndex;
+                    const t = tradeOrder[idx];
+                    const cap = capitalSeries[idx];
+                    return `Trade ${t} — Capital: ${fmt.format(cap)}`;
+                  },
+                  label: (item) => {
+                    if (item.dataset.label === 'Profit') {
+                      return `Profit: ${fmt.format(item.raw)}`;
+                    }
+                    const rep = representatives[item.dataIndex]?.rep;
+                    if (!rep) return '';
+                    const ht = rep['HomeTeam'] || '';
+                    const at = rep['AwayTeam'] || '';
+                    const wl = rep['Win/loss'] || '';
+                    const odds = toNum(rep['Odd']);
+                    return `Rep: ${ht} vs ${at} • ${wl} • @${odds.toFixed(2)}`;
+                  },
+                  afterBody: (items) => {
+                    const idx = items[0].dataIndex;
+                    showTradeDetails(idx);
+                    return '';
+                  }
+                }
+              }
+            },
+            onHover: (e, els) => {
+              if (els && els.length > 0) {
+                const idx = els[0].index;
+                showTradeDetails(idx);
+              }
+            }
+          }
+        });
+      }
+
+      function showTradeDetails(index) {
+        const data = representatives[index];
+        if (!data) return;
+
+        const t = data.trade;
+        const fixtures = data.fixtures;
+        const rep = data.rep;
+        const cap = capitalSeries[index];
+
+        const container = $('#tradeFixtures');
+        container.innerHTML = '';
+
+        $('#hoverTradeBadge').classList.remove('hidden');
+        $('#hoverTradeBadge').textContent = `Trade ${t} • Capital ${fmt.format(cap)}`;
+
+        fixtures.forEach((f) => {
+          const isRep = f === rep;
+          const line = document.createElement('div');
+          line.className = 'flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-800/50 px-3 py-2';
+          line.innerHTML = `
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="truncate text-sm font-medium ${isRep ? 'text-green-400' : 'text-slate-200'}">
+                  ${cleanStr(f['HomeTeam'])} vs ${cleanStr(f['AwayTeam'])}
+                </span>
+                ${isRep ? '<span class="rounded-full bg-green-500/10 px-2 py-0.5 text-[11px] font-medium text-green-400">Representative</span>' : ''}
+              </div>
+              <div class="text-xs text-slate-400">
+                ${cleanStr(f['League'])} • ${cleanStr(f['Date'])} ${cleanStr(f['Time'])} • Odds @${toNum(f['Odd']).toFixed(2)} • ${cleanStr(f['Win/loss'])}
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-sm ${computeProfit(f) >= 0 ? 'text-green-400' : 'text-rose-400'}">${fmt.format(computeProfit(f))}</div>
+              <div class="text-[11px] text-zinc-500">Stake ${fmt.format(toNum(f['Stake']))}</div>
+            </div>
+          `;
+          container.appendChild(line);
+        });
+      }
+
+      function renderTable() {
+        const tbody = $('#tradesTbody');
+        tbody.innerHTML = '';
+        let running = toNum($('#startCapital').value || 0);
+
+        representatives.forEach((entry) => {
+          const r = entry.rep;
+          const profit = computeProfit(r);
+          running = running + profit;
+
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-zinc-800/40';
+          tr.innerHTML = `
+            <td class="px-4 py-2 text-sm text-slate-300">#${entry.trade}</td>
+            <td class="px-4 py-2">
+              <div class="text-sm font-medium text-slate-200">${cleanStr(r['HomeTeam'])} vs ${cleanStr(r['AwayTeam'])}</div>
+              <div class="text-xs text-zinc-500">${cleanStr(r['FixtureScore'] || '')}</div>
+            </td>
+            <td class="px-4 py-2 text-sm text-slate-400">${cleanStr(r['League'])}</td>
+            <td class="px-4 py-2 text-sm text-slate-400">${cleanStr(r['Date'])} ${cleanStr(r['Time'])}</td>
+            <td class="px-4 py-2 text-sm text-slate-300">${toNum(r['Odd']).toFixed(2)}</td>
+            <td class="px-4 py-2 text-sm text-slate-300">${fmt.format(toNum(r['Stake']))}</td>
+            <td class="px-4 py-2 text-sm text-slate-300">${cleanStr(r['Win/loss'])}</td>
+            <td class="px-4 py-2 text-sm ${profit >= 0 ? 'text-green-400' : 'text-rose-400'}">${fmt.format(profit)}</td>
+            <td class="px-4 py-2 text-sm font-medium text-slate-200">${fmt.format(running)}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      function renderLeagueSplit() {
+        const container = $('#leagueSplit');
+        container.innerHTML = '';
+        const counts = {};
+        visibleFixtures.forEach(f => {
+          const l = cleanStr(f['League'] || '—');
+          counts[l] = (counts[l] || 0) + 1;
+        });
+        const total = visibleFixtures.length || 1;
+        Object.entries(counts).sort((a,b) => b[1] - a[1]).forEach(([league, cnt]) => {
+          const row = document.createElement('div');
+          const pr = (cnt / total) * 100;
+          row.innerHTML = `
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-medium text-slate-300">${league}</span>
+              <span class="text-zinc-500">${cnt}</span>
+            </div>
+            <div class="mt-1 h-2 w-full overflow-hidden rounded-full bg-zinc-800">
+              <div class="h-2 bg-gradient-to-r from-green-500 to-green-400" style="width:${pr}%"></div>
+            </div>
+          `;
+          container.appendChild(row);
+        });
+      }
+
+      function getEarliestFixtureDate() {
+        const ds = rawFixtures.map(getRowDate).filter(Boolean);
+        if (ds.length === 0) return new Date();
+        ds.sort((a,b) => a - b);
+        return ds[0];
+      }
+
+      function monthLabel(d) {
+        return d.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+      }
+
+      function dayHasFixturesMap() {
+        const map = {};
+        rawFixtures.forEach(r => {
+          const d = getRowDate(r);
+          if (!d) return;
+          const k = ymdKey(d);
+          map[k] = (map[k] || 0) + 1;
+        });
+        return map;
+      }
+
+      function isSameDay(a, b) {
+        return a && b && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+      }
+
+      function updateRangeLabel() {
+        const lbl = $('#calRangeLabel');
+        if (!dateFilterStart && !dateFilterEnd) {
+          lbl.textContent = 'All dates';
+          return;
+        }
+        const opts = { year: 'numeric', month: 'short', day: 'numeric' };
+        if (dateFilterStart && dateFilterEnd) {
+          lbl.textContent = `${dateFilterStart.toLocaleDateString(undefined, opts)} — ${dateFilterEnd.toLocaleDateString(undefined, opts)}`;
+        } else if (dateFilterStart) {
+          lbl.textContent = `From ${dateFilterStart.toLocaleDateString(undefined, opts)}`;
+        } else {
+          lbl.textContent = `Until ${dateFilterEnd.toLocaleDateString(undefined, opts)}`;
+        }
+      }
+
+      function renderCalendar() {
+        $('#calLabel').textContent = monthLabel(calendarMonth);
+        const grid = $('#calendarGrid');
+        grid.innerHTML = '';
+
+        const y = calendarMonth.getFullYear();
+        const m = calendarMonth.getMonth();
+        const first = new Date(y, m, 1);
+        const last = new Date(y, m + 1, 0);
+        const startIdx = (first.getDay() + 6) % 7;
+        const daysInMonth = last.getDate();
+        const fixturesMap = dayHasFixturesMap();
+
+        for (let i = 0; i < startIdx; i++) {
+          const cell = document.createElement('div');
+          cell.className = 'aspect-square rounded-lg border border-transparent';
+          grid.appendChild(cell);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+          const d = new Date(y, m, day);
+          const k = ymdKey(d);
+          const cnt = fixturesMap[k] || 0;
+          const selectedStart = !!dateFilterStart && isSameDay(d, dateFilterStart);
+          const selectedEnd = !!dateFilterEnd && isSameDay(d, dateFilterEnd);
+          const inSelectedRange = dateFilterStart && dateFilterEnd && d >= dateFilterStart && d <= dateFilterEnd;
+
+          const btn = document.createElement('button');
+          btn.type = 'button';
+
+          const base = 'relative aspect-square w-full rounded-lg border text-sm';
+          const text = inSelectedRange || selectedStart || selectedEnd ? 'text-green-300' : 'text-slate-300';
+          const bg = selectedStart || selectedEnd ? 'bg-green-500/20 border-green-500/50' : (inSelectedRange ? 'bg-green-500/10 border-green-500/30' : 'bg-zinc-800/50 border-zinc-700 hover:bg-zinc-800');
+          btn.className = `${base} ${bg} ${text}`;
+
+          btn.innerHTML = `
+            <span class="absolute left-1.5 top-1.5 text-[12px]">${day}</span>
+            ${cnt ? `<span class="absolute bottom-1.5 left-1/2 -translate-x-1/2 inline-flex items-center gap-1">
+              <span class="h-1.5 w-1.5 rounded-full ${inSelectedRange || selectedStart || selectedEnd ? 'bg-green-400' : 'bg-zinc-500'}"></span>
+              <span class="text-[10px] ${inSelectedRange || selectedStart || selectedEnd ? 'text-green-300' : 'text-zinc-500'}">${cnt}</span>
+            </span>` : ''}
+          `;
+
+          btn.addEventListener('click', () => {
+            if (!dateFilterStart && !dateFilterEnd) {
+              dateFilterStart = d;
+              dateFilterEnd = null;
+            } else if (dateFilterStart && !dateFilterEnd) {
+              if (d < dateFilterStart) {
+                dateFilterEnd = dateFilterStart;
+                dateFilterStart = d;
+              } else if (isSameDay(d, dateFilterStart)) {
+                dateFilterStart = null;
+                dateFilterEnd = null;
+              } else {
+                dateFilterEnd = d;
+              }
+            } else {
+              dateFilterStart = d;
+              dateFilterEnd = null;
+            }
+            updateRangeLabel();
+            renderCalendar();
+            recompute();
+          });
+
+          grid.appendChild(btn);
+        }
+      }
+
+      async function loadCSVFromURL(url) {
+        try {
+          const response = await fetch(url, { cache: 'no-cache' });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const csvText = await response.text();
+          
+          return new Promise((resolve, reject) => {
+            Papa.parse(csvText, {
+              header: true,
+              dynamicTyping: false,
+              skipEmptyLines: true,
+              complete: results => resolve(results.data),
+              error: err => reject(err)
+            });
+          });
+        } catch (err) {
+          console.error('Error loading CSV:', err);
+          throw err;
+        }
+      }
+
+      function exportCSV() {
+        const headers = ['Trade','League','Date','Time','HomeTeam','AwayTeam','Odd','Win/loss','Stake','Profit','CapitalAfter'];
+        let running = toNum($('#startCapital').value || 0);
+        const rows = representatives.map((e) => {
+          const r = e.rep;
+          const p = computeProfit(r);
+          running = running + p;
+          return [
+            e.trade,
+            cleanStr(r['League']),
+            cleanStr(r['Date']),
+            cleanStr(r['Time']),
+            cleanStr(r['HomeTeam']),
+            cleanStr(r['AwayTeam']),
+            toNum(r['Odd']).toFixed(2),
+            cleanStr(r['Win/loss']),
+            toNum(r['Stake']).toFixed(2),
+            p.toFixed(2),
+            running.toFixed(2)
+          ];
+        });
+        const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'simplifi-trades.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      async function loadFromTradeJournal() {
+        try {
+          const data = await loadCSVFromURL('/TRADDEJOURNAL.csv');
+          rawFixtures = data;
+          calendarMonth = getEarliestFixtureDate();
+          renderCalendar();
+          recompute();
+        } catch (e) {
+          console.error('Failed to load TRADDEJOURNAL.csv:', e);
+          alert('Failed to load TRADDEJOURNAL.csv. Please check the file exists and is accessible.');
+        }
+      }
+
+      $('#loadBtn').addEventListener('click', async () => {
+        const url = $('#githubUrl').value.trim();
+        if (!url) {
+          await loadFromTradeJournal();
+          return;
+        }
+        try {
+          const data = await loadCSVFromURL(url);
+          rawFixtures = data;
+          calendarMonth = getEarliestFixtureDate();
+          renderCalendar();
+          recompute();
+        } catch (e) {
+          console.error(e);
+          alert('Failed to load CSV from URL. Loading default TRADDEJOURNAL.csv instead.');
+          await loadFromTradeJournal();
+        }
+      });
+
+      $('#recalcBtn').addEventListener('click', recompute);
+
+      const ruleBtn = $('#ruleBtn');
+      const ruleMenu = $('#ruleMenu');
+      ruleBtn.addEventListener('click', () => {
+        ruleMenu.classList.toggle('hidden');
+      });
+      ruleMenu.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-rule]');
+        if (!btn) return;
+        representativeRule = btn.getAttribute('data-rule');
+        const labelMap = {
+          first: 'Pick: First fixture',
+          last: 'Pick: Last fixture',
+          maxProfit: 'Pick: Highest profit',
+          maxOdds: 'Pick: Highest odds'
+        };
+        $('#ruleLabel').textContent = labelMap[representativeRule] || 'Pick: First fixture';
+        ruleMenu.classList.add('hidden');
+        recompute();
+      });
+      document.addEventListener('click', (e) => {
+        if (!ruleMenu.contains(e.target) && !ruleBtn.contains(e.target)) {
+          ruleMenu.classList.add('hidden');
+        }
+      });
+
+      $('#exportBtn').addEventListener('click', exportCSV);
+
+      $('#calPrev').addEventListener('click', () => {
+        calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1);
+        renderCalendar();
+      });
+      $('#calNext').addEventListener('click', () => {
+        calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1);
+        renderCalendar();
+      });
+      $('#calClear').addEventListener('click', () => {
+        dateFilterStart = null;
+        dateFilterEnd = null;
+        updateRangeLabel();
+        renderCalendar();
+        recompute();
+      });
+
+      document.querySelector('nav button[data-nav="markets"]').addEventListener('click', () => {
+        window.location.href = 'https://www.simplififootball.com/market.html';
+      });
+      
+      document.querySelector('nav button[data-nav="backtesting"]').addEventListener('click', () => {
+        window.location.href = 'https://www.simplififootball.com/backtesting.html';
+      });
+
+      loadFromTradeJournal();
+    </script>
+  </body>
+</html>
