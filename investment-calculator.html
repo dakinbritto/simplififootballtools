@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simplifi Football - Investment Calculator</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link id="all-fonts-link-font-geist" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap">
+<link id="all-fonts-link-font-roboto" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap">
+<link id="all-fonts-link-font-montserrat" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap">
+<link id="all-fonts-link-font-poppins" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+<link id="all-fonts-link-font-playfair" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;900&display=swap">
+<link id="all-fonts-link-font-instrument-serif" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:wght@400;500;600;700&display=swap">
+<link id="all-fonts-link-font-merriweather" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap">
+<link id="all-fonts-link-font-bricolage" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700&display=swap">
+<link id="all-fonts-link-font-jakarta" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
+<link id="all-fonts-link-font-manrope" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap">
+<link id="all-fonts-link-font-space-grotesk" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap">
+<link id="all-fonts-link-font-work-sans" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700;800&display=swap">
+<link id="all-fonts-link-font-pt-serif" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&display=swap">
+<link id="all-fonts-link-font-geist-mono" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600;700&display=swap">
+<link id="all-fonts-link-font-space-mono" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap">
+<link id="all-fonts-link-font-quicksand" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap">
+<link id="all-fonts-link-font-nunito" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap">
+<style id="all-fonts-style-font-geist">.font-geist { font-family: 'Geist', sans-serif !important; }</style>
+<style id="all-fonts-style-font-roboto">.font-roboto { font-family: 'Roboto', sans-serif !important; }</style>
+<style id="all-fonts-style-font-montserrat">.font-montserrat { font-family: 'Montserrat', sans-serif !important; }</style>
+<style id="all-fonts-style-font-poppins">.font-poppins { font-family: 'Poppins', sans-serif !important; }</style>
+<style id="all-fonts-style-font-playfair">.font-playfair { font-family: 'Playfair Display', serif !important; }</style>
+<style id="all-fonts-style-font-instrument-serif">.font-instrument-serif { font-family: 'Instrument Serif', serif !important; }</style>
+<style id="all-fonts-style-font-merriweather">.font-merriweather { font-family: 'Merriweather', serif !important; }</style>
+<style id="all-fonts-style-font-bricolage">.font-bricolage { font-family: 'Bricolage Grotesque', sans-serif !important; }</style>
+<style id="all-fonts-style-font-jakarta">.font-jakarta { font-family: 'Plus Jakarta Sans', sans-serif !important; }</style>
+<style id="all-fonts-style-font-manrope">.font-manrope { font-family: 'Manrope', sans-serif !important; }</style>
+<style id="all-fonts-style-font-space-grotesk">.font-space-grotesk { font-family: 'Space Grotesk', sans-serif !important; }</style>
+<style id="all-fonts-style-font-work-sans">.font-work-sans { font-family: 'Work Sans', sans-serif !important; }</style>
+<style id="all-fonts-style-font-pt-serif">.font-pt-serif { font-family: 'PT Serif', serif !important; }</style>
+<style id="all-fonts-style-font-geist-mono">.font-geist-mono { font-family: 'Geist Mono', monospace !important; }</style>
+<style id="all-fonts-style-font-space-mono">.font-space-mono { font-family: 'Space Mono', monospace !important; }</style>
+<style id="all-fonts-style-font-quicksand">.font-quicksand { font-family: 'Quicksand', sans-serif !important; }</style>
+<style id="all-fonts-style-font-nunito">.font-nunito { font-family: 'Nunito', sans-serif !important; }</style>
+</head>
+<body class="min-h-screen text-[15px] antialiased selection:bg-emerald-600/40 selection:text-white text-gray-200 bg-black">
+
+  <!-- Loading Screen -->
+  <div id="loading" class="flex items-center justify-center min-h-screen">
+    <div class="text-center animate-pulse">
+      <div class="inline-flex items-center gap-2 text-xl tracking-tight text-emerald-400 mb-3">
+        <i data-lucide="football"></i>
+        <span>Loading football data securely...</span>
+      </div>
+      <div class="text-sm text-gray-400">Fetching secure analytics...</div>
+    </div>
+  </div>
+
+  <!-- Error Screen -->
+  <div id="error" class="flex items-center justify-center min-h-screen" style="display: none;">
+    <div class="text-center">
+      <div class="inline-flex items-center gap-2 text-xl tracking-tight text-red-400 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="triangle-alert" class="lucide lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+        <span>Error loading data</span>
+      </div>
+      <div class="text-sm text-gray-400 mb-2">Please check your connection and try again.</div>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app" class="p-6 md:p-8 bg-black min-h-screen pb-20" style="display: none;">
+    <div class="max-w-7xl mx-auto space-y-6 md:space-y-8">
+      <!-- Header Section -->
+      <div class="shadow-[0_8px_30px_rgba(0,0,0,0.35)] md:p-7 outline outline-1 outline-gray-900/50 bg-black border-gray-800/80 border rounded-xl pt-6 pr-6 pb-6 pl-6" style="width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);">
+        <div class="flex gap-4 items-start justify-between">
+          <div class="">
+            <h1 class="md:text-[32px] inline-flex items-center gap-3 text-lg font-normal text-white tracking-tight font-geist mb-1">
+              <span class="inline-flex h-9 w-9 items-center justify-center ring-1 ring-emerald-500/20 bg-emerald-500/10 rounded-md overflow-hidden">
+  <img src="https://i.postimg.cc/1z8RL6S7/reallygreatsite-com-3-removebg-preview.png?w=800&q=80" alt="Analytics preview" class="h-full w-full" loading="lazy">
+</span>
+              Observe Football Market Then Invest
+            </h1>
+            <!-- Market Rules Dropdown Button -->
+            <div class="mb-6 mt-4">
+              <div class="flex justify-center mb-2">
+                <button id="marketRulesButton" onclick="toggleMarketRules()" class="inline-flex items-center gap-3 px-6 py-3 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-red-500/25" style="background: linear-gradient(135deg, rgba(220, 38, 38, 0.9), rgba(185, 28, 28, 0.8)); backdrop-filter: blur(10px); border: 1px solid rgba(248, 113, 113, 0.3); box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-100">
+                    <path d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zm-9-3.75h.008v.008H12V8.25z"></path>
+                  </svg>
+                  <span class="text-lg">IMPORTANT: READ Before You Engage</span>
+                  <svg id="marketRulesArrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300 text-red-100">
+                    <path d="m9 18 6-6-6-6"></path>
+                  </svg>
+                </button>
+              </div>
+              <div id="marketRulesContent" class="mt-4 hidden">
+                <div class="bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-filter backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 shadow-2xl">
+                  <div class="space-y-4">
+                    <div>
+                      <h4 class="text-white font-semibold mb-3 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-400">
+                          <path d="M12 2v20m9-9H3"></path>
+                        </svg>
+                        Strategy Setup Guidelines
+                      </h4>
+                      <ul class="space-y-2 text-gray-300">
+                        <li class="flex items-start gap-3">
+                          <span class="w-2 h-2 bg-emerald-400 rounded-full mt-2 flex-shrink-0"></span>
+                          <span>Use filters below to decide your betting budget for the season</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                          <span class="w-2 h-2 bg-emerald-400 rounded-full mt-2 flex-shrink-0"></span>
+                          <span>Choose a fixed stake size per fixture (2% - 7% of your budget, e.g., £50 per game if your budget is £1000)</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                          <span class="w-2 h-2 bg-emerald-400 rounded-full mt-2 flex-shrink-0"></span>
+                          <span>Graph simulates single bets only - <strong>NO ACCUMULATORS, ONLY SPECIFIC MARKETS</strong></span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="border-t border-gray-700/50 pt-4">
+                      <h4 class="text-white font-semibold mb-3 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-400">
+                          <path d="M9 12l2 2 4-4"></path>
+                          <path d="M21 12c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1H3c-.552 0-1 .448-1 1v6c0 .552.448 1 1 1h18z"></path>
+                          <path d="M3 10v4c0 .552.448 1 1 1h16c.552 0 1-.448 1-1v-4"></path>
+                        </svg>
+                        Performance Analysis
+                      </h4>
+                      <ul class="space-y-2 text-gray-300">
+                        <li class="flex items-start gap-3">
+                          <span class="w-2 h-2 bg-amber-400 rounded-full mt-2 flex-shrink-0"></span>
+                          <span>Graph simulates how your capital evolves over the season using the same strategy repeatedly</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                          <span class="w-2 h-2 bg-amber-400 rounded-full mt-2 flex-shrink-0"></span>
+                          <span><strong>STUDY THE MARKETS TO FIND A PROFITABLE STRATEGY TO REPLICATE FOR YOUR LIVE BETTING</strong></span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="hidden md:flex items-center gap-3">
+            <div class="text-xs text-gray-400 px-3 py-1 rounded-md bg-gray-800/60 ring-1 ring-gray-700/60">
+              <span class="text-gray-300">Data</span> • <span class="text-emerald-400">Live</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Chart Interface -->
+        <div class="chart-container mt-6 mb-6 pt-6 pr-6 pb-6 pl-6" style="background: linear-gradient(135deg, #1a1a1a 0%, #0f1419 100%); border: 1px solid #2a2e39; border-radius: 12px; width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);">
+          
+          <!-- Chart Header with Performance Data -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
+            <div class="flex items-center space-x-6">
+              <div class="">
+                <h2 id="chartTitle" class="text-xl font-medium text-white">Loading...</h2>
+                <p id="chartSubtitle" class="text-sm text-gray-400">Secure Performance Analysis</p>
+              </div>
+              <div class="flex items-center space-x-4 text-sm">
+                <span id="roiDisplay" class="font-mono" style="color: rgb(239, 68, 68); display: block; margin-top: 8px;">0%</span>
+                <span class="text-gray-400" id="aura-emf7bfui0">|</span>
+                <span id="finalCapitalDisplay" class="text-white font-mono">£0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Chart -->
+          <div class="h-96 md:h-[500px] lg:h-[400px] relative">
+            <canvas id="capitalChart" class="w-full h-full"></canvas>
+          </div>
+
+          <!-- Chart Footer with Trading Data -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 text-sm">
+            <div class="market-data-card p-4 rounded-lg" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);">
+              <div class="text-gray-400 text-xs uppercase tracking-wide mb-1">Total Games</div>
+              <div id="statGames" class="text-white font-mono text-lg">0</div>
+            </div>
+            <div class="market-data-card p-4 rounded-lg" style="background: rgba(255 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);">
+              <div class="text-gray-400 text-xs uppercase tracking-wide mb-1">Win Rate</div>
+              <div id="statWinRate" class="text-white font-mono text-lg">0%</div>
+            </div>
+            <div class="market-data-card p-4 rounded-lg" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);">
+              <div class="text-gray-400 text-xs uppercase tracking-wide mb-1">Peak Capital</div>
+              <div id="statPeak" class="text-white font-mono text-lg" style="color:#00d4aa">£0</div>
+            </div>
+            <div class="market-data-card p-4 rounded-lg" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);">
+              <div class="text-gray-400 text-xs uppercase tracking-wide mb-1">Net Return</div>
+              <div id="statNetReturn" class="font-mono text-lg" style="color: rgb(239, 68, 68);">£0</div>
+            </div>
+          </div>
+
+          <!-- Filter Controls - Bottom of Chart Box -->
+          <div class="mt-6 pt-6 border-t border-gray-700/50">
+            <div class="text-xs font-medium text-gray-400 mb-3 uppercase tracking-wide">Filters & Settings</div>
+            
+            <!-- First Row: Starting Capital, Season, League -->
+            <div class="grid grid-cols-3 gap-2 mb-3">
+              <!-- Starting Capital Input -->
+              <div class="bg-gray-800 rounded-lg p-2 flex flex-col gap-1">
+                <label class="text-xs font-medium text-gray-400">Capital</label>
+                <div class="flex items-center gap-1">
+                  <span class="text-gray-400 text-xs">£</span>
+                  <input id="startingCapital" type="number" value="1000" min="100" step="100" class="w-full border border-gray-600 rounded px-1 py-1 text-xs bg-gray-900 text-white focus:ring-1 focus:ring-emerald-500 focus:outline-none">
+                </div>
+              </div>
+              
+              <!-- Season Filter -->
+              <div class="bg-gray-800 rounded-lg p-2 flex flex-col gap-1">
+                <label class="text-xs font-medium text-gray-400">Season</label>
+                <select id="selectedSeason" class="w-full bg-gray-900 text-white text-xs px-2 py-1 rounded focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer">
+                  <option value="Max">ALL</option>
+                </select>
+              </div>
+
+              <!-- League Filter -->
+              <div class="bg-gray-800 rounded-lg p-2 flex flex-col gap-1">
+                <label class="text-xs font-medium text-gray-400">League</label>
+                <select id="selectedLeague" class="w-full bg-gray-900 text-white text-xs px-2 py-1 rounded focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer">
+                  <option value="">Loading...</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Second Row: Market, Stake, Teams -->
+            <div class="grid grid-cols-3 gap-2">
+              <!-- Market Filter -->
+              <div class="bg-gray-800 rounded-lg p-2 flex flex-col gap-1">
+                <label class="text-xs font-medium text-gray-400">Market</label>
+                <select id="selectedMarket" class="w-full bg-gray-900 text-white text-xs px-2 py-1 rounded focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer">
+                  <option value="over2.5">OVER 2.5</option>
+                  <option value="under2.5">UNDER 2.5</option>
+                  <option value="under6">UNDER 6</option>
+                </select>
+              </div>
+
+              <!-- Stake Percentage Filter -->
+              <div class="bg-gray-800 rounded-lg p-2 flex flex-col gap-1">
+                <label class="text-xs font-medium text-gray-400">Stake</label>
+                <select id="stakePercentage" class="w-full bg-gray-900 text-white text-xs px-2 py-1 rounded focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer">
+                  <option value="2">2%</option>
+                  <option value="5" selected="">5%</option>
+                  <option value="7">7%</option>
+                </select>
+              </div>
+
+              <!-- T9 Teams Filter -->
+              <div class="bg-gray-800 rounded-lg p-2 flex flex-col gap-1">
+                <label class="text-xs font-medium text-gray-400">Teams</label>
+                <button id="t9TeamsButton" onclick="toggleT9Teams()" class="px-2 py-1 text-xs font-medium rounded text-gray-400 hover:text-white bg-gray-900 hover:bg-gray-700 transition-colors">ALL</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Current Settings -->
+        <div class="bg-gray-900/70 border border-[#1f5410]/20 p-4 md:p-5 rounded-lg mb-6">
+          <div class="inline-flex items-center gap-2 mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders-horizontal" class="lucide lucide-sliders-horizontal"><line x1="21" x2="14" y1="4" y2="4"></line><line x1="10" x2="3" y1="4" y2="4"></line><line x1="21" x2="12" y1="12" y2="12"></line><line x1="8" x2="3" y1="12" y2="12"></line><line x1="21" x2="16" y1="20" y2="20"></line><line x1="12" x2="3" y1="20" y2="20"></line><line x1="14" x2="14" y1="2" y2="6"></line><line x1="8" x2="8" y1="10" y2="14"></line><line x1="16" x2="16" y1="18" y2="22"></line></svg>
+            <h3 class="font-semibold text-[#4ade80]">Current Settings</h3>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+            <div>
+              <span class="text-gray-400 font-medium">Starting Capital</span>
+              <p id="displayCapital" class="text-white font-semibold">£1,000</p>
+            </div>
+            <div>
+              <span class="text-gray-400 font-medium">Stake per Bet</span>
+              <p id="displayStake" class="text-white font-semibold">£50.00</p>
+            </div>
+            <div>
+              <span class="text-gray-400 font-medium">Market</span>
+              <p id="displayMarket" class="text-white font-semibold">Over 2.5 Goals</p>
+            </div>
+            <div>
+              <span class="text-gray-400 font-medium">League</span>
+              <p id="displayLeague" class="text-white font-semibold">Loading...</p>
+            </div>
+            <div>
+              <span class="text-gray-400 font-medium">Season</span>
+              <p id="displaySeason" class="text-white font-semibold">Max</p>
+            </div>
+            <div>
+              <span class="text-gray-400 font-medium">Teams</span>
+              <p id="displayTeams" class="text-white font-semibold">All Teams</p>
+            </div>
+          </div>
+          <div id="t9TeamsList" class="mt-3 pt-3 border-t border-gray-800" style="display: none;">
+            <span class="text-gray-400 font-medium text-sm">T9 Teams:</span>
+            <p id="t9TeamsDisplay" class="text-emerald-400 text-sm mt-1"></p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Summary Section -->
+      <div class="bg-gradient-to-br from-gray-900 to-[#173f12] rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.35)] p-6 md:p-7 border border-gray-800/80 outline outline-1 outline-gray-900/50">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-emerald-500/10 ring-1 ring-emerald-500/20">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="layout-panel-top" class="lucide lucide-layout-panel-top"><rect width="18" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect></svg>
+          </span>
+        <h2 class="text-2xl tracking-tight font-semibold text-white">
+            Capital Movement - <span id="summaryLeague">Loading...</span> (<span id="summarySeason">Max</span>)
+            <span id="summaryT9" class="text-[#4ade80]" style="display: none;"> - T9 Teams Only</span>
+          </h2>
+        </div>
+        <p class="text-gray-300 mb-6">
+          <span id="summaryDescription">Loading investment strategy analysis...</span>
+        </p>
+
+        <div class="mt-6">
+          <div class="p-4 bg-gray-900/70 border border-gray-800/80 rounded-lg">
+            <h3 class="font-semibold text-white mb-2 inline-flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="sparkles" class="lucide lucide-sparkles"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path><path d="M20 2v4"></path><path d="M22 4h-4"></path><circle cx="4" cy="20" r="2"></circle></svg>Performance Summary
+            </h3>
+            <ul class="text-sm text-gray-300 space-y-1">
+              <li>• Total Games: <span id="summaryTotalGames">0</span></li>
+              <li>• ROI: <span id="summaryROI">0%</span></li>
+              <li>• Peak Gain: <span id="summaryPeakGain">£0</span></li>
+              <li>• Final Capital: <span id="summaryFinalCapital">£0</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Grid: Selected Market and Opposite Market -->
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <!-- Selected Market Ranking Section -->
+        <div class="bg-gradient-to-br from-gray-900 to-[#173f12] rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.35)] p-6 md:p-7 border border-gray-800/80 outline outline-1 outline-gray-900/50">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-emerald-500/10 ring-1 ring-emerald-500/20">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="bar-chart-3" class="lucide lucide-bar-chart-3"><path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></svg>
+            </span>
+            <h2 class="text-2xl tracking-tight font-semibold text-white">
+              <span id="selectedMarketTitle">Loading...</span> - Team Ranking · <span id="under2League">Loading...</span> (<span id="under2Season">Max</span>)
+              <span id="under2T9" class="text-[#4ade80]" style="display: none;"> - T9 Teams Only</span>
+            </h2>
+          </div>
+          <p class="text-gray-300 mb-4">
+            Teams ranked by number of matches with successful outcomes in the <span id="selectedMarketDesc">selected</span> market within the selected filters.
+          </p>
+          <div class="rounded-lg bg-gray-900/70 ring-1 ring-gray-800/80 p-3">
+            <div id="under2Empty" class="text-sm text-gray-400 px-2 py-3" style="display: none;">
+              No data available for the current filter selection.
+            </div>
+            <div id="under2ChartWrapper" class="w-full" style="height: 768px; display: block;">
+              <div class="h-full w-full">
+                <canvas id="under2Chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End Selected Market Section -->
+
+        <!-- Opposite Market Ranking Section -->
+        <div class="bg-gradient-to-br from-gray-900 to-[#173f12] rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.35)] p-6 md:p-7 border border-gray-800/80 outline outline-1 outline-gray-900/50">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-emerald-500/10 ring-1 ring-emerald-500/20">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="bar-chart-3" class="lucide lucide-bar-chart-3"><path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></svg>
+            </span>
+            <h2 class="text-2xl tracking-tight font-semibold text-white">
+              <span id="oppositeMarketTitle">Loading...</span> - Team Ranking · <span id="under25League">Loading...</span> (<span id="under25Season">Max</span>)
+              <span id="under25T9" class="text-[#4ade80]" style="display: none;"> - T9 Teams Only</span>
+            </h2>
+          </div>
+          <p class="text-gray-300 mb-4">
+            Teams ranked by number of matches with successful outcomes in the <span id="oppositeMarketDesc">opposite</span> market within the selected filters.
+          </p>
+          <div class="rounded-lg bg-gray-900/70 ring-1 ring-gray-800/80 p-3">
+            <div id="under25Empty" class="text-sm text-gray-400 px-2 py-3" style="display: none;">
+              No data available for the current filter selection.
+            </div>
+            <div id="under25ChartWrapper" class="w-full" style="height: 768px; display: block;">
+              <div class="h-full w-full">
+                <canvas id="under25Chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End Opposite Market Section -->
+      </div>
+      <!-- End Charts Grid -->
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-800 z-50">
+    <div class="max-w-md mx-auto">
+      <div class="flex">
+        <!-- Markets -->
+        <button class="flex-1 flex flex-col items-center justify-center py-3 px-2 text-yellow-500 hover:text-yellow-400 transition-colors" data-nav="markets">
+          <i data-lucide="trending-up" class="w-5 h-5 mb-1"></i>
+          <span class="text-xs font-medium">Markets</span>
+          <div class="w-1 h-1 bg-yellow-500 rounded-full mt-1"></div>
+        </button>
+        
+        <!-- Backtesting -->
+        <button class="flex-1 flex flex-col items-center justify-center py-3 px-2 text-gray-400 hover:text-gray-200 transition-colors" data-nav="backtesting">
+          <i data-lucide="line-chart" class="w-5 h-5 mb-1"></i>
+          <span class="text-xs font-medium">Backtesting</span>
+        </button>
+        
+        <!-- Journal -->
+        <button class="flex-1 flex flex-col items-center justify-center py-3 px-2 text-gray-400 hover:text-gray-200 transition-colors">
+          <i data-lucide="book-open" class="w-5 h-5 mb-1"></i>
+          <span class="text-xs font-medium">Journal</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <script>
+    // Global variables
+    let processedData = [];
+    let chart = null;
+    let under2Chart = null;
+    let under25Chart = null;
+    let t9TeamsActive = false;
+    let availableFilters = null;
+
+    const gbp0 = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
+    const gbp2 = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    // SECURE API CALLS - All calculations now happen server-side
+
+    // Load filters from secure API
+    async function loadFilters() {
+      try {
+        const response = await fetch('https://simplififootball-backend.vercel.app/api/investment/filters');
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        
+        const data = await response.json();
+        availableFilters = data;
+        populateFilters();
+        loadLeagueFromURL();
+        updateT9Button();
+        hideLoading();
+        updateCalculation();
+      } catch (error) {
+        console.error('Error loading filters:', error);
+        showError();
+      }
+    }
+
+    // Perform calculations via secure API
+    async function performCalculation() {
+      try {
+        const params = {
+          startingCapital: parseFloat(document.getElementById('startingCapital').value) || 1000,
+          stakePercentage: parseFloat(document.getElementById('stakePercentage').value) || 5,
+          selectedSeason: document.getElementById('selectedSeason').value,
+          selectedLeague: document.getElementById('selectedLeague').value,
+          selectedMarket: document.getElementById('selectedMarket').value,
+          t9TeamsActive: t9TeamsActive
+        };
+
+        if (!params.selectedLeague) {
+          console.log('No league selected yet');
+          return;
+        }
+
+        const response = await fetch('https://simplififootball-backend.vercel.app/api/investment/calculate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(params)
+        });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+          throw new Error(data.error || 'Calculation failed');
+        }
+
+        processedData = data.processedData || [];
+        const stats = data.stats;
+
+        updateDisplays();
+        updateStats(stats);
+        updateChart(stats);
+        updateChartHeader(stats);
+        loadTeamRankings();
+
+        // Refresh icons when UI changes
+        if (window.lucide) {
+          window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+        }
+
+      } catch (error) {
+        console.error('Error performing calculation:', error);
+        // Don't show error to user for API calls, just log it
+      }
+    }
+
+    // Load team rankings via secure API
+    async function loadTeamRankings() {
+      try {
+        const params = {
+          selectedLeague: document.getElementById('selectedLeague').value,
+          selectedSeason: document.getElementById('selectedSeason').value,
+          selectedMarket: document.getElementById('selectedMarket').value,
+          t9TeamsActive: t9TeamsActive
+        };
+
+        if (!params.selectedLeague) return;
+
+        const response = await fetch('https://simplififootball-backend.vercel.app/api/investment/teams-ranking', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(params)
+        });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          updateUnder2Chart(data.selectedMarketRanking);
+          updateUnder25Chart(data.oppositeMarketRanking);
+        }
+
+      } catch (error) {
+        console.error('Error loading team rankings:', error);
+      }
+    }
+
+    // Handle league and strategy parameters from market list navigation
+    function loadLeagueFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const leagueCode = urlParams.get('league');
+        const strategy = urlParams.get('strategy');
+        
+        if (leagueCode || strategy) {
+            // Wait for dropdowns to be populated, then set the values
+            setTimeout(() => {
+                const leagueSelect = document.getElementById('selectedLeague');
+                const marketSelect = document.getElementById('selectedMarket');
+                
+                if (leagueSelect && leagueCode) {
+                    leagueSelect.value = leagueCode;
+                    updateT9Button();
+                }
+                
+                if (marketSelect && strategy) {
+                    // Map strategy to market value
+                    if (strategy === 'over') {
+                        marketSelect.value = 'over2.5';
+                    } else if (strategy === 'under') {
+                        marketSelect.value = 'under2.5';
+                    }
+                }
+                
+                updateCalculation();
+            }, 1000);
+        }
+    }
+
+    // Populate filter dropdowns from secure API data
+    function populateFilters() {
+      if (!availableFilters) return;
+
+      const seasons = availableFilters.seasons || [];
+      const leagues = availableFilters.leagues || [];
+
+      const seasonSelect = document.getElementById('selectedSeason');
+      const leagueSelect = document.getElementById('selectedLeague');
+
+      // Reset Season options
+      seasonSelect.innerHTML = '<option value="Max">ALL SEASONS</option>';
+      seasons.forEach(season => {
+        const option = document.createElement('option');
+        option.value = season;
+        option.textContent = season.toUpperCase();
+        seasonSelect.appendChild(option);
+      });
+
+      // Reset League options
+      leagueSelect.innerHTML = '';
+      leagues.forEach(league => {
+        const option = document.createElement('option');
+        option.value = league;
+        option.textContent = league.toUpperCase();
+        leagueSelect.appendChild(option);
+      });
+
+      // Default to EPL if available
+      if (leagues.includes('EPL')) {
+        leagueSelect.value = 'EPL';
+      }
+    }
+
+    // Update all calculations and displays
+    function updateCalculation() {
+      performCalculation();
+    }
+
+    // Update chart header displays
+    function updateChartHeader(stats) {
+      const selectedMarket = document.getElementById('selectedMarket').value;
+      const selectedLeague = document.getElementById('selectedLeague').value;
+      const selectedSeason = document.getElementById('selectedSeason').value;
+      
+      let marketDisplayText;
+      if (selectedMarket === 'over2.5') {
+        marketDisplayText = 'Over 2.5 Goals';
+      } else if (selectedMarket === 'under2.5') {
+        marketDisplayText = 'Under 2.5 Goals';
+      } else if (selectedMarket === 'under6') {
+        marketDisplayText = 'Under 6 Goals';
+      }
+      
+      // Update chart title and subtitle
+      document.getElementById('chartTitle').textContent = `${selectedLeague} ${marketDisplayText}`;
+      const seasonText = selectedSeason === 'Max' ? 'All Seasons' : `Season ${selectedSeason}`;
+      document.getElementById('chartSubtitle').textContent = `${seasonText} Performance`;
+      
+      // Update ROI display
+      const roiDisplay = document.getElementById('roiDisplay');
+      const roiPrefix = stats.roi >= 0 ? '+' : '';
+      roiDisplay.textContent = `${roiPrefix}${stats.roi.toFixed(1)}%`;
+      roiDisplay.style.color = stats.roi >= 0 ? '#00d4aa' : '#ef4444';
+      
+      // Update final capital display
+      document.getElementById('finalCapitalDisplay').textContent = gbp0.format(Math.round(stats.finalCapital));
+    }
+
+    // Update display values
+    function updateDisplays() {
+      const startingCapital = parseFloat(document.getElementById('startingCapital').value) || 0;
+      const stakePercentage = parseFloat(document.getElementById('stakePercentage').value) || 0;
+      const selectedSeason = document.getElementById('selectedSeason').value;
+      const selectedLeague = document.getElementById('selectedLeague').value;
+      const selectedMarket = document.getElementById('selectedMarket').value;
+      const stakeAmount = (startingCapital * stakePercentage) / 100;
+
+      // Market display text
+      let marketDisplayText;
+      if (selectedMarket === 'over2.5') {
+        marketDisplayText = 'Over 2.5 Goals';
+      } else if (selectedMarket === 'under2.5') {
+        marketDisplayText = 'Under 2.5 Goals';
+      } else if (selectedMarket === 'under6') {
+        marketDisplayText = 'Under 6 Goals';
+      }
+
+      // Update current settings
+      document.getElementById('displayCapital').textContent = gbp0.format(startingCapital);
+      document.getElementById('displayStake').textContent = gbp2.format(stakeAmount);
+      document.getElementById('displayMarket').textContent = marketDisplayText;
+      document.getElementById('displayLeague').textContent = selectedLeague;
+      document.getElementById('displaySeason').textContent = selectedSeason;
+      document.getElementById('displayTeams').textContent = t9TeamsActive ? 'T9 Teams Only' : 'All Teams';
+
+      // Update summary section
+      document.getElementById('summaryLeague').textContent = selectedLeague;
+      document.getElementById('summarySeason').textContent = selectedSeason;
+      document.getElementById('summaryDescription').textContent =
+        `Starting with ${gbp0.format(startingCapital)}, using ${stakePercentage}% stake (${gbp2.format(stakeAmount)} per bet) on ${marketDisplayText}`;
+
+      // Update chart titles
+      let oppositeMarketText;
+      if (selectedMarket === 'over2.5') {
+        oppositeMarketText = 'Under 2.5 Goals';
+      } else if (selectedMarket === 'under2.5') {
+        oppositeMarketText = 'Over 2.5 Goals';
+      } else if (selectedMarket === 'under6') {
+        oppositeMarketText = 'Over 2.5 Goals'; // Default opposite for under6
+      }
+      
+      document.getElementById('selectedMarketTitle').textContent = marketDisplayText;
+      document.getElementById('selectedMarketDesc').textContent = marketDisplayText;
+      document.getElementById('oppositeMarketTitle').textContent = oppositeMarketText;
+      document.getElementById('oppositeMarketDesc').textContent = oppositeMarketText;
+
+      // Show/hide T9 teams list
+      const t9List = document.getElementById('t9TeamsList');
+      const summaryT9 = document.getElementById('summaryT9');
+
+      if (t9TeamsActive && availableFilters && availableFilters.t9Teams && availableFilters.t9Teams[selectedLeague]) {
+        t9List.style.display = 'block';
+        summaryT9.style.display = 'inline';
+        document.getElementById('t9TeamsDisplay').textContent = availableFilters.t9Teams[selectedLeague].join(', ');
+      } else {
+        t9List.style.display = 'none';
+        summaryT9.style.display = 'none';
+      }
+    }
+
+    // Update statistics cards
+    function updateStats(stats) {
+      const startingCapital = parseFloat(document.getElementById('startingCapital').value) || 0;
+
+      // Update chart footer stats
+      document.getElementById('statGames').textContent = stats.totalGames;
+      document.getElementById('statWinRate').textContent = `${stats.winRate.toFixed(1)}%`;
+      document.getElementById('statPeak').textContent = gbp0.format(Math.round(stats.maxCapital));
+      const netReturnEl = document.getElementById('statNetReturn');
+      const netPrefix = stats.totalReturn >= 0 ? '+' : '';
+      netReturnEl.textContent = `${netPrefix}${gbp0.format(Math.abs(Math.round(stats.totalReturn)))}`;
+      netReturnEl.style.color = stats.totalReturn >= 0 ? '#00d4aa' : '#ef4444';
+
+      // Update summary section
+      document.getElementById('summaryTotalGames').textContent = stats.totalGames;
+      document.getElementById('summaryROI').textContent = `${stats.roi.toFixed(1)}%`;
+      document.getElementById('summaryPeakGain').textContent = gbp0.format(Math.max(0, Math.round(stats.maxCapital - startingCapital)));
+      document.getElementById('summaryFinalCapital').textContent = gbp0.format(Math.round(stats.finalCapital));
+    }
+
+    // Update line chart with new styling
+    function updateChart(stats) {
+      const ctx = document.getElementById('capitalChart').getContext('2d');
+      const startingCapital = parseFloat(document.getElementById('startingCapital').value) || 0;
+
+      const chartData = processedData.map(d => ({
+        x: d.gameNumber,
+        y: d.capitalMovement
+      }));
+
+      const lineColor = stats.finalCapital >= startingCapital ? '#00d4aa' : '#ef4444';
+      const fillColor = stats.finalCapital >= startingCapital ? 'rgba(0, 212, 170, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+
+      if (chart) {
+        chart.destroy();
+      }
+
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          datasets: [
+            {
+              label: 'Capital Movement',
+              data: chartData,
+              borderColor: lineColor,
+              backgroundColor: fillColor,
+              borderWidth: 2,
+              fill: true,
+              tension: 0.1,
+              pointRadius: 0,
+              pointHoverRadius: 6,
+              pointHoverBackgroundColor: lineColor,
+              pointHoverBorderColor: '#ffffff',
+              pointHoverBorderWidth: 2,
+              pointHitRadius: 14
+            },
+            {
+              label: `Starting Capital (${gbp0.format(startingCapital)})`,
+              data: [
+                { x: 0, y: startingCapital },
+                { x: Math.max(chartData.length, 1), y: startingCapital }
+              ],
+              borderColor: 'rgba(255, 255, 255, 0.3)',
+              borderDash: [5, 5],
+              borderWidth: 1,
+              pointRadius: 0,
+              tension: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            intersect: false,
+            mode: 'index'
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.9)',
+              titleColor: '#ffffff',
+              bodyColor: '#ffffff',
+              borderColor: lineColor,
+              borderWidth: 1,
+              cornerRadius: 8,
+              displayColors: false,
+              callbacks: {
+                title: function(context) {
+                  return `Game ${context[0].dataIndex}`;
+                },
+                label: function(context) {
+                  const value = context.parsed.y;
+                  const prevValue = context.dataIndex > 0 ? processedData[context.dataIndex - 1].capitalMovement : startingCapital;
+                  const change = value - prevValue;
+                  const changePercent = ((change / prevValue) * 100).toFixed(2);
+                  
+                  return [
+                    `Capital: ${gbp0.format(Math.round(value))}`,
+                    context.dataIndex > 0 ? `Change: ${change >= 0 ? '+' : ''}${gbp0.format(Math.abs(Math.round(change)))} (${changePercent}%)` : ''
+                  ].filter(Boolean);
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              type: 'linear',
+              display: true,
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)',
+                drawBorder: false
+              },
+              ticks: {
+                color: '#8b949e',
+                maxTicksLimit: 8
+              },
+              title: { display: true, text: 'Game Number', color: '#8b949e' }
+            },
+            y: {
+              display: false,
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)',
+                drawBorder: false
+              },
+              ticks: {
+                color: '#8b949e',
+                callback: function(value) {
+                  return '£' + value.toFixed(0);
+                }
+              },
+              title: { display: true, text: 'Capital (£)', color: '#8b949e' }
+            }
+          },
+          onHover: (event, activeElements) => {
+            event.native.target.style.cursor = activeElements.length > 0 ? 'crosshair' : 'default';
+          }
+        }
+      });
+    }
+
+    // Render the ranking chart for the selected market
+    function updateUnder2Chart(rankingData) {
+      const selectedLeague = document.getElementById('selectedLeague').value;
+      const selectedSeason = document.getElementById('selectedSeason').value;
+
+      const { labels = [], values = [] } = rankingData || {};
+
+      document.getElementById('under2League').textContent = selectedLeague;
+      document.getElementById('under2Season').textContent = selectedSeason;
+      document.getElementById('under2T9').style.display =
+        t9TeamsActive && availableFilters && availableFilters.t9Teams && availableFilters.t9Teams[selectedLeague] ? 'inline' : 'none';
+
+      const empty = document.getElementById('under2Empty');
+      const wrapper = document.getElementById('under2ChartWrapper');
+
+      if (!labels.length) {
+        empty.style.display = 'block';
+        wrapper.style.display = 'none';
+        if (under2Chart) { under2Chart.destroy(); under2Chart = null; }
+        return;
+      } else {
+        empty.style.display = 'none';
+        wrapper.style.display = 'block';
+      }
+
+      const ctx = document.getElementById('under2Chart').getContext('2d');
+      if (under2Chart) under2Chart.destroy();
+
+      under2Chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Successful Matches',
+            data: values,
+            backgroundColor: 'rgba(74, 222, 128, 0.35)',
+            borderColor: '#4ade80',
+            borderWidth: 1.5,
+            borderRadius: 6,
+            barThickness: 14,
+            hoverBackgroundColor: 'rgba(74, 222, 128, 0.55)',
+            hoverBorderColor: '#86efac'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(0,0,0,0.9)',
+              titleColor: '#fff',
+              bodyColor: '#fff',
+              borderColor: '#4ade80',
+              borderWidth: 1,
+              cornerRadius: 8,
+              callbacks: {
+                label: (ctx) => ` ${ctx.parsed.x} successful matches`
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255,255,255,0.08)', drawBorder: false },
+              ticks: { color: '#9ba3af' }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { color: '#e5e7eb', font: { size: 12 } }
+            }
+          }
+        }
+      });
+    }
+
+    // Render the ranking chart for the opposite market
+    function updateUnder25Chart(rankingData) {
+      const selectedLeague = document.getElementById('selectedLeague').value;
+      const selectedSeason = document.getElementById('selectedSeason').value;
+
+      const { labels = [], values = [] } = rankingData || {};
+
+      document.getElementById('under25League').textContent = selectedLeague;
+      document.getElementById('under25Season').textContent = selectedSeason;
+      document.getElementById('under25T9').style.display =
+        t9TeamsActive && availableFilters && availableFilters.t9Teams && availableFilters.t9Teams[selectedLeague] ? 'inline' : 'none';
+
+      const empty = document.getElementById('under25Empty');
+      const wrapper = document.getElementById('under25ChartWrapper');
+
+      if (!labels.length) {
+        empty.style.display = 'block';
+        wrapper.style.display = 'none';
+        if (under25Chart) { under25Chart.destroy(); under25Chart = null; }
+        return;
+      } else {
+        empty.style.display = 'none';
+        wrapper.style.display = 'block';
+      }
+
+      const ctx = document.getElementById('under25Chart').getContext('2d');
+      if (under25Chart) under25Chart.destroy();
+
+      under25Chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Successful Matches',
+            data: values,
+            backgroundColor: 'rgba(245, 158, 11, 0.35)',
+            borderColor: '#f59e0b',
+            borderWidth: 1.5,
+            borderRadius: 6,
+            barThickness: 14,
+            hoverBackgroundColor: 'rgba(245, 158, 11, 0.55)',
+            hoverBorderColor: '#fbbf24'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(0,0,0,0.9)',
+              titleColor: '#fff',
+              bodyColor: '#fff',
+              borderColor: '#f59e0b',
+              borderWidth: 1,
+              cornerRadius: 8,
+              callbacks: {
+                label: (ctx) => ` ${ctx.parsed.x} successful matches`
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255,255,255,0.08)', drawBorder: false },
+              ticks: { color: '#9ba3af' }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { color: '#e5e7eb', font: { size: 12 } }
+            }
+          }
+        }
+      });
+    }
+
+    // Toggle T9 teams filter
+    function toggleT9Teams() {
+      const league = document.getElementById('selectedLeague').value;
+      if (!availableFilters || !availableFilters.t9Teams || !availableFilters.t9Teams[league]) return; // No T9 set for this league
+      t9TeamsActive = !t9TeamsActive;
+      updateT9Button();
+      updateCalculation();
+    }
+
+    // Toggle market rules dropdown
+    function toggleMarketRules() {
+      const content = document.getElementById('marketRulesContent');
+      const arrow = document.getElementById('marketRulesArrow');
+      
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        arrow.style.transform = 'rotate(90deg)';
+      } else {
+        content.classList.add('hidden');
+        arrow.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    // Update T9 button state
+    function updateT9Button() {
+      const btn = document.getElementById('t9TeamsButton');
+      const league = document.getElementById('selectedLeague').value;
+      if (!availableFilters || !availableFilters.t9Teams || !availableFilters.t9Teams[league]) {
+        t9TeamsActive = false;
+        btn.textContent = 'ALL TEAMS';
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+        btn.classList.remove('hover:bg-gray-700', 'text-white');
+      } else {
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+        btn.classList.add('hover:bg-gray-700');
+        btn.textContent = t9TeamsActive ? 'T9 TEAMS' : 'ALL TEAMS';
+        btn.classList.toggle('text-white', t9TeamsActive);
+        btn.classList.toggle('text-gray-400', !t9TeamsActive);
+      }
+
+      // Reflect badges under section headings
+      const u2 = document.getElementById('under2T9');
+      const u25 = document.getElementById('under25T9');
+      const summaryT9 = document.getElementById('summaryT9');
+
+      const show = t9TeamsActive && availableFilters && availableFilters.t9Teams && !!availableFilters.t9Teams[league];
+      if (u2) u2.style.display = show ? 'inline' : 'none';
+      if (u25) u25.style.display = show ? 'inline' : 'none';
+      if (summaryT9) summaryT9.style.display = show ? 'inline' : 'none';
+    }
+
+    // Visibility helpers
+    function showError() {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('app').style.display = 'none';
+      document.getElementById('error').style.display = 'flex';
+    }
+    function hideLoading() {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('error').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+    }
+
+    // Event listeners
+    function bindUI() {
+      const onChange = () => updateCalculation();
+
+      document.getElementById('startingCapital').addEventListener('input', onChange);
+      document.getElementById('stakePercentage').addEventListener('change', onChange);
+      document.getElementById('selectedSeason').addEventListener('change', onChange);
+      document.getElementById('selectedLeague').addEventListener('change', () => {
+        updateT9Button();
+        onChange();
+      });
+      document.getElementById('selectedMarket').addEventListener('change', onChange);
+
+      // Accessibility: Enter key triggers update for number input
+      document.getElementById('startingCapital').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') updateCalculation();
+      });
+
+      // Navigation handlers
+      const marketsBtn = document.querySelector('nav button[data-nav="markets"]');
+      const backtestingBtn = document.querySelector('nav button[data-nav="backtesting"]');
+      
+      if (marketsBtn) {
+        marketsBtn.addEventListener('click', () => {
+          window.location.href = 'https://simplififootballtools.vercel.app/market.html';
+        });
+      }
+      
+      if (backtestingBtn) {
+        backtestingBtn.addEventListener('click', () => {
+          window.location.href = 'https://simplififootballtools.vercel.app/backtesting.html';
+        });
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize icons
+      if (window.lucide) {
+        window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+      }
+      bindUI();
+      document.getElementById('loading').style.display = 'flex';
+      loadFilters();
+    });
+  </script>
+
+</body>
+</html>
