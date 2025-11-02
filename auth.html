@@ -1,253 +1,634 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authentication Test - Simplifi Football</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #1a1a1a;
-            color: white;
-        }
-        .form-group {
-            margin: 15px 0;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #4ade80;
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #333;
-            border-radius: 5px;
-            background: #2a2a2a;
-            color: white;
-        }
-        button {
-            background: #4ade80;
-            color: black;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            margin: 10px 5px;
-        }
-        button:hover {
-            background: #22c55e;
-        }
-        .result {
-            margin: 20px 0;
-            padding: 15px;
-            border-radius: 5px;
-            background: #2a2a2a;
-            border-left: 4px solid #4ade80;
-        }
-        .error {
-            border-left-color: #ef4444;
-            background: #2a1a1a;
-        }
-        h1 {
-            color: #4ade80;
-            text-align: center;
-        }
-        .section {
-            margin: 30px 0;
-            padding: 20px;
-            border: 1px solid #333;
-            border-radius: 8px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Simplifi Football</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Geist Font -->
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  .btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 13rem;
+    overflow: hidden;
+    height: 3rem;
+    background-size: 300% 300%;
+    cursor: pointer;
+    backdrop-filter: blur(1rem);
+    border-radius: 5rem;
+    transition: 0.5s;
+    animation: gradient_simplifi 5s ease infinite;
+    border: double 1px transparent;
+    background-image: linear-gradient(#000000, #000000),
+      linear-gradient(
+        137.48deg,
+        #4ade80 10%,
+        #00d4aa 45%,
+        #10b981 67%,
+        #059669 87%
+      );
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    position: relative;
+  }
+  #container-stars {
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    transition: 0.5s;
+    border-radius: 5rem;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+  }
+  #particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+  }
+  strong {
+    z-index: 3;
+    font-family: 'Geist', sans-serif;
+    font-size: 13px;
+    letter-spacing: 5px;
+    color: #ffffff;
+    text-shadow: 0 0 4px #4ade80;
+    font-weight: 600;
+  }
+  #glow {
+    position: absolute;
+    display: flex;
+    width: 12rem;
+    left: .5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .circle {
+    width: 100%;
+    height: 30px;
+    filter: blur(2rem);
+    animation: pulse_simplifi 4s infinite;
+    z-index: -1;
+  }
+  .circle:nth-of-type(1) {
+    background: rgba(74, 222, 128, 0.6);
+  }
+  .circle:nth-of-type(2) {
+    background: rgba(0, 212, 170, 0.7);
+  }
+  .btn:hover #container-stars {
+    z-index: 2;
+    background-color: #000000;
+  }
+  .btn:hover {
+    transform: scale(1.06);
+  }
+  .btn:active {
+    border: double 1px #4ade80;
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    animation: none;
+  }
+  .btn:active .circle {
+    background: #4ade80;
+  }
+  @keyframes gradient_simplifi {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+  }
+  @keyframes pulse_simplifi {
+    0% {
+      transform: scale(0.75);
+      box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+    }
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 10px rgba(74, 222, 128, 0);
+    }
+    100% {
+      transform: scale(0.75);
+      box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+    }
+  }
+  body, input, label {
+    font-family: 'Geist', sans-serif !important;
+  }
+  .glass {
+    background: rgba(26, 26, 26, 0.8);
+    box-shadow: 0 8px 40px 5px rgba(74, 222, 128, 0.1), 0 2px 12px 2px rgba(74, 222, 128, 0.15);
+    backdrop-filter: blur(18px);
+    border: 1.5px solid rgba(74, 222, 128, 0.1);
+    border-radius: 1.25rem;
+    position: relative;
+  }
+  .glass::before {
+    content: '';
+    pointer-events: none;
+    z-index: 0;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(120deg, rgba(74, 222, 128, 0.1) 0%, rgba(0, 212, 170, 0.05) 60%, #1a1a1a 100%);
+    opacity: 0.3;
+  }
+  .social-btn {
+    background: #1a1a1a;
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    transition: all 0.3s ease;
+  }
+  .social-btn:hover {
+    background: #0f1419;
+    border: 1.5px solid #4ade80;
+    transform: scale(1.02);
+    box-shadow: 0 4px 24px 0 rgba(74, 222, 128, 0.2);
+  }
+  .tab-button {
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  .tab-button.active {
+    color: #4ade80;
+  }
+  .tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #4ade80, #00d4aa);
+    border-radius: 1px;
+  }
+  .error-message {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+  }
+  .success-message {
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    color: #4ade80;
+  }
+  .floating-icon {
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 </head>
-<body>
-    <h1>🔐 Simplifi Football - Authentication Test</h1>
+<body class="min-h-screen flex items-center justify-center bg-black overflow-x-hidden relative">
+  
+  <!-- Background Pattern -->
+  <div class="absolute inset-0 opacity-10">
+    <svg class="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+          <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#4ade80" stroke-width="0.5"/>
+        </pattern>
+      </defs>
+      <rect width="100" height="100" fill="url(#grid)" />
+    </svg>
+  </div>
+
+  <div class="w-full max-w-md flex flex-col gap-6 relative glass px-8 py-8 z-10">
     
-    <div class="section">
-        <h2>📝 Register New User</h2>
-        <div class="form-group">
-            <label for="regEmail">Email:</label>
-            <input type="email" id="regEmail" placeholder="test@example.com">
-        </div>
-        <div class="form-group">
-            <label for="regPassword">Password:</label>
-            <input type="password" id="regPassword" placeholder="password123">
-        </div>
-        <button onclick="register()">Register</button>
+    <!-- Header with Logo -->
+    <div class="flex flex-col items-center gap-4">
+      <div class="floating-icon">
+        <span class="inline-flex h-16 w-16 items-center justify-center ring-2 ring-emerald-500/30 bg-emerald-500/10 rounded-xl overflow-hidden">
+          <img src="https://i.postimg.cc/1z8RL6S7/reallygreatsite-com-3-removebg-preview.png?w=800&q=80" alt="Simplifi Football" class="h-12 w-12" loading="lazy">
+        </span>
+      </div>
+      <div class="text-center">
+        <h1 class="text-white text-3xl font-semibold tracking-tight">Simplifi Football</h1>
+        <p class="text-gray-400 text-sm mt-1">Professional Football Analytics Platform</p>
+      </div>
     </div>
 
-    <div class="section">
-        <h2>🔑 Login User</h2>
-        <div class="form-group">
-            <label for="loginEmail">Email:</label>
-            <input type="email" id="loginEmail" placeholder="test@example.com">
-        </div>
-        <div class="form-group">
-            <label for="loginPassword">Password:</label>
-            <input type="password" id="loginPassword" placeholder="password123">
-        </div>
-        <button onclick="login()">Login</button>
+    <!-- Tab Navigation -->
+    <div class="flex justify-center gap-8 border-b border-gray-800 pb-4">
+      <button id="loginTab" class="tab-button active text-sm font-medium py-2 px-1">Sign In</button>
+      <button id="registerTab" class="tab-button text-gray-400 text-sm font-medium py-2 px-1">Create Account</button>
     </div>
 
-    <div class="section">
-        <h2>👤 Get Profile (requires login)</h2>
-        <button onclick="getProfile()">Get Profile</button>
-        <button onclick="testProtectedAPI()">Test Protected Investment API</button>
+    <!-- Error/Success Messages -->
+    <div id="messageContainer" class="hidden rounded-lg p-3 text-sm"></div>
+
+    <!-- Login Form -->
+    <form id="loginForm" class="flex flex-col gap-5 z-10">
+      <div>
+        <label for="loginEmail" class="block text-sm font-medium text-white tracking-wide mb-2">Email Address</label>
+        <input id="loginEmail" name="email" type="email" required autocomplete="email" class="w-full rounded-lg bg-gray-900/70 border border-gray-700 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition" placeholder="your@email.com">
+      </div>
+      <div>
+        <label for="loginPassword" class="block text-sm font-medium text-white tracking-wide mb-2">Password</label>
+        <input id="loginPassword" name="password" type="password" required autocomplete="current-password" class="w-full rounded-lg bg-gray-900/70 border border-gray-700 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition" placeholder="••••••••">
+      </div>
+      <div class="flex items-center justify-between text-sm">
+        <label class="flex items-center text-gray-400">
+          <input type="checkbox" class="mr-2 rounded border-gray-600 text-emerald-500 focus:ring-emerald-500">
+          Remember me
+        </label>
+        <a href="#" class="text-emerald-400 hover:text-emerald-300 transition">Forgot Password?</a>
+      </div>
+      <button type="submit" class="btn mx-auto mt-4 relative" disabled>
+        <span id="container-stars">
+          <div id="particles-js"></div>
+        </span>
+        <span id="glow">
+          <span class="circle"></span>
+          <span class="circle"></span>
+        </span>
+        <strong class="login-btn-text">SIGN IN</strong>
+      </button>
+    </form>
+
+    <!-- Register Form (Hidden by default) -->
+    <form id="registerForm" class="flex flex-col gap-5 z-10 hidden">
+      <div>
+        <label for="registerEmail" class="block text-sm font-medium text-white tracking-wide mb-2">Email Address</label>
+        <input id="registerEmail" name="email" type="email" required autocomplete="email" class="w-full rounded-lg bg-gray-900/70 border border-gray-700 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition" placeholder="your@email.com">
+      </div>
+      <div>
+        <label for="registerPassword" class="block text-sm font-medium text-white tracking-wide mb-2">Password</label>
+        <input id="registerPassword" name="password" type="password" required autocomplete="new-password" class="w-full rounded-lg bg-gray-900/70 border border-gray-700 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition" placeholder="••••••••" minlength="6">
+      </div>
+      <div>
+        <label for="confirmPassword" class="block text-sm font-medium text-white tracking-wide mb-2">Confirm Password</label>
+        <input id="confirmPassword" name="confirmPassword" type="password" required autocomplete="new-password" class="w-full rounded-lg bg-gray-900/70 border border-gray-700 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition" placeholder="••••••••" minlength="6">
+      </div>
+      <div class="text-sm">
+        <label class="flex items-start text-gray-400">
+          <input type="checkbox" required class="mr-2 mt-1 rounded border-gray-600 text-emerald-500 focus:ring-emerald-500">
+          <span>I agree to the <a href="#" class="text-emerald-400 hover:text-emerald-300 transition">Terms of Service</a> and <a href="#" class="text-emerald-400 hover:text-emerald-300 transition">Privacy Policy</a></span>
+        </label>
+      </div>
+      <button type="submit" class="btn mx-auto mt-4 relative" disabled>
+        <span id="container-stars-register">
+          <div id="particles-js-register"></div>
+        </span>
+        <span id="glow-register">
+          <span class="circle"></span>
+          <span class="circle"></span>
+        </span>
+        <strong class="register-btn-text">CREATE ACCOUNT</strong>
+      </button>
+    </form>
+
+    <!-- Social Login (Optional) -->
+    <div class="relative">
+      <div class="absolute inset-0 flex items-center">
+        <div class="w-full border-t border-gray-800"></div>
+      </div>
+      <div class="relative flex justify-center text-sm">
+        <span class="px-4 bg-black text-gray-400">Or continue with</span>
+      </div>
     </div>
 
-    <div id="result"></div>
+    <div class="grid grid-cols-2 gap-3">
+      <button class="social-btn flex items-center gap-2 justify-center py-3 px-4 rounded-lg font-medium text-white transition">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        <span>Google</span>
+      </button>
+      <button class="social-btn flex items-center gap-2 justify-center py-3 px-4 rounded-lg font-medium text-white transition">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+        <span>GitHub</span>
+      </button>
+    </div>
 
-    <script>
-        const API_BASE = 'https://simplififootball-backend.vercel.app/api';
-        let authToken = localStorage.getItem('authToken');
+    <!-- Footer -->
+    <div class="text-center mt-6">
+      <p class="text-gray-500 text-xs">
+        © 2024 Simplifi Football. All rights reserved.
+      </p>
+    </div>
+  </div>
 
-        function showResult(message, isError = false) {
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = `<div class="result ${isError ? 'error' : ''}">${message}</div>`;
+  <script>
+    // Configuration
+    const API_BASE = 'https://simplififootball-backend.vercel.app/api';
+    
+    // DOM Elements
+    const loginTab = document.getElementById('loginTab');
+    const registerTab = document.getElementById('registerTab');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const messageContainer = document.getElementById('messageContainer');
+
+    // Tab Switching
+    loginTab.addEventListener('click', () => switchTab('login'));
+    registerTab.addEventListener('click', () => switchTab('register'));
+
+    function switchTab(tab) {
+      if (tab === 'login') {
+        loginTab.classList.add('active', 'text-emerald-400');
+        loginTab.classList.remove('text-gray-400');
+        registerTab.classList.remove('active', 'text-emerald-400');
+        registerTab.classList.add('text-gray-400');
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+      } else {
+        registerTab.classList.add('active', 'text-emerald-400');
+        registerTab.classList.remove('text-gray-400');
+        loginTab.classList.remove('active', 'text-emerald-400');
+        loginTab.classList.add('text-gray-400');
+        registerForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+      }
+      hideMessage();
+    }
+
+    // Message Display
+    function showMessage(message, type = 'error') {
+      messageContainer.textContent = message;
+      messageContainer.className = `rounded-lg p-3 text-sm ${type === 'error' ? 'error-message' : 'success-message'}`;
+      messageContainer.classList.remove('hidden');
+    }
+
+    function hideMessage() {
+      messageContainer.classList.add('hidden');
+    }
+
+    // Button States
+    function setButtonLoading(isLogin, loading) {
+      const button = isLogin ? loginForm.querySelector('button') : registerForm.querySelector('button');
+      const text = isLogin ? button.querySelector('.login-btn-text') : button.querySelector('.register-btn-text');
+      
+      if (loading) {
+        button.disabled = true;
+        text.textContent = 'LOADING...';
+        button.style.opacity = '0.7';
+      } else {
+        button.disabled = false;
+        text.textContent = isLogin ? 'SIGN IN' : 'CREATE ACCOUNT';
+        button.style.opacity = '1';
+      }
+    }
+
+    // Form Validation
+    function validatePassword(password) {
+      if (password.length < 6) {
+        return 'Password must be at least 6 characters long';
+      }
+      return null;
+    }
+
+    function validateEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return 'Please enter a valid email address';
+      }
+      return null;
+    }
+
+    // Authentication Functions
+    async function handleLogin(email, password) {
+      try {
+        const response = await fetch(`${API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Store token
+          localStorage.setItem('authToken', data.token);
+          localStorage.setItem('userEmail', data.user.email);
+          localStorage.setItem('subscriptionStatus', data.user.subscriptionStatus);
+          
+          showMessage('Login successful! Redirecting to dashboard...', 'success');
+          
+          // Redirect to tools dashboard after short delay
+          setTimeout(() => {
+            window.location.href = 'https://simplififootballtools.vercel.app/market.html';
+          }, 1500);
+          
+        } else {
+          showMessage(data.error || 'Login failed. Please try again.');
         }
+      } catch (error) {
+        showMessage('Network error. Please check your connection and try again.');
+      }
+    }
 
-        async function register() {
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
+    async function handleRegister(email, password, confirmPassword) {
+      // Validation
+      if (password !== confirmPassword) {
+        showMessage('Passwords do not match');
+        return;
+      }
 
-            if (!email || !password) {
-                showResult('Please enter email and password', true);
-                return;
-            }
+      const emailError = validateEmail(email);
+      if (emailError) {
+        showMessage(emailError);
+        return;
+      }
 
-            try {
-                const response = await fetch(`${API_BASE}/auth/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
-                });
+      const passwordError = validatePassword(password);
+      if (passwordError) {
+        showMessage(passwordError);
+        return;
+      }
 
-                const data = await response.json();
+      try {
+        const response = await fetch(`${API_BASE}/auth/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
 
-                if (data.success) {
-                    authToken = data.token;
-                    localStorage.setItem('authToken', authToken);
-                    showResult(`✅ Registration successful!<br>
-                                Email: ${data.user.email}<br>
-                                Subscription: ${data.user.subscriptionStatus}<br>
-                                Token saved automatically.`);
-                } else {
-                    showResult(`❌ Registration failed: ${data.error}`, true);
-                }
-            } catch (error) {
-                showResult(`❌ Network error: ${error.message}`, true);
-            }
+        const data = await response.json();
+
+        if (data.success) {
+          // Store token
+          localStorage.setItem('authToken', data.token);
+          localStorage.setItem('userEmail', data.user.email);
+          localStorage.setItem('subscriptionStatus', data.user.subscriptionStatus);
+          
+          showMessage('Account created successfully! Redirecting to dashboard...', 'success');
+          
+          // Redirect to tools dashboard after short delay
+          setTimeout(() => {
+            window.location.href = 'https://simplififootballtools.vercel.app/market.html';
+          }, 1500);
+          
+        } else {
+          showMessage(data.error || 'Registration failed. Please try again.');
         }
+      } catch (error) {
+        showMessage('Network error. Please check your connection and try again.');
+      }
+    }
 
-        async function login() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
+    // Form Submissions
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideMessage();
+      
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
 
-            if (!email || !password) {
-                showResult('Please enter email and password', true);
-                return;
-            }
+      if (!email || !password) {
+        showMessage('Please fill in all fields');
+        return;
+      }
 
-            try {
-                const response = await fetch(`${API_BASE}/auth/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
-                });
+      setButtonLoading(true, true);
+      await handleLogin(email, password);
+      setButtonLoading(true, false);
+    });
 
-                const data = await response.json();
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideMessage();
+      
+      const email = document.getElementById('registerEmail').value.trim();
+      const password = document.getElementById('registerPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
 
-                if (data.success) {
-                    authToken = data.token;
-                    localStorage.setItem('authToken', authToken);
-                    showResult(`✅ Login successful!<br>
-                                Email: ${data.user.email}<br>
-                                Subscription: ${data.user.subscriptionStatus}<br>
-                                Query Count: ${data.user.queryCount || 0}/5 (free tier)<br>
-                                Token saved automatically.`);
-                } else {
-                    showResult(`❌ Login failed: ${data.error}`, true);
-                }
-            } catch (error) {
-                showResult(`❌ Network error: ${error.message}`, true);
-            }
+      if (!email || !password || !confirmPassword) {
+        showMessage('Please fill in all fields');
+        return;
+      }
+
+      setButtonLoading(false, true);
+      await handleRegister(email, password, confirmPassword);
+      setButtonLoading(false, false);
+    });
+
+    // Check if already logged in
+    window.addEventListener('load', () => {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        // Verify token is still valid
+        fetch(`${API_BASE}/auth/profile`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Already logged in, redirect to dashboard
+            window.location.href = 'https://simplififootballtools.vercel.app/market.html';
+          } else {
+            // Token expired, remove it
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('subscriptionStatus');
+          }
+        })
+        .catch(() => {
+          // Network error, assume token is invalid
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userEmail');
+          localStorage.removeItem('subscriptionStatus');
+        });
+      }
+    });
+
+    // Enable buttons initially
+    document.querySelector('.btn').disabled = false;
+    document.querySelectorAll('.btn')[1].disabled = false;
+
+    // Initialize Particles.js
+    particlesJS("particles-js", {
+      "particles": {
+        "number": {
+          "value": 60,
+          "density": {
+            "enable": true,
+            "value_area": 300
+          }
+        },
+        "color": {
+          "value": ["#4ade80", "#00d4aa", "#10b981", "#ffffff"]
+        },
+        "shape": {
+          "type": "circle",
+          "stroke": {
+            "width": 0,
+            "color": "#000"
+          }
+        },
+        "opacity": {
+          "value": 0.6,
+          "random": true,
+          "anim": {
+            "enable": true,
+            "speed": 0.3,
+            "opacity_min": 0.1,
+            "sync": false
+          }
+        },
+        "size": {
+          "value": 1,
+          "random": false,
+          "anim": {
+            "enable": false
+          }
+        },
+        "line_linked": {
+          "enable": false
+        },
+        "move": {
+          "enable": true,
+          "speed": 0.5,
+          "direction": "top",
+          "random": true,
+          "straight": false,
+          "out_mode": "out",
+          "bounce": false,
+          "attract": {
+            "enable": false
+          }
         }
-
-        async function getProfile() {
-            if (!authToken) {
-                showResult('❌ Please login first', true);
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_BASE}/auth/profile`, {
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    showResult(`✅ Profile retrieved!<br>
-                                Email: ${data.user.email}<br>
-                                Subscription: ${data.user.subscriptionStatus}<br>
-                                Query Count: ${data.user.queryCount || 0}<br>
-                                Created: ${new Date(data.user.createdAt).toLocaleString()}`);
-                } else {
-                    showResult(`❌ Profile error: ${data.error}`, true);
-                }
-            } catch (error) {
-                showResult(`❌ Network error: ${error.message}`, true);
-            }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": {
+            "enable": false
+          },
+          "onclick": {
+            "enable": false
+          },
+          "resize": true
         }
-
-        async function testProtectedAPI() {
-            if (!authToken) {
-                showResult('❌ Please login first', true);
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_BASE}/investment/filters`, {
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    showResult(`✅ Protected API works!<br>
-                                Leagues available: ${data.leagues ? data.leagues.length : 0}<br>
-                                Seasons available: ${data.seasons ? data.seasons.length : 0}<br>
-                                🎉 Your APIs are now protected!`);
-                } else {
-                    showResult(`❌ API error: ${data.error}<br>
-                                Note: This might be because the API isn't protected yet.`, true);
-                }
-            } catch (error) {
-                showResult(`❌ Network error: ${error.message}`, true);
-            }
-        }
-
-        // Show current auth status on load
-        window.onload = function() {
-            if (authToken) {
-                showResult('🔑 Auth token found in storage. You can test protected APIs.');
-            } else {
-                showResult('ℹ️ No auth token. Please register or login first.');
-            }
-        };
-    </script>
+      },
+      "retina_detect": true
+    });
+  </script>
 </body>
 </html>
