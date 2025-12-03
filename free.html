@@ -73,6 +73,7 @@
             <option value="all">All Strategies</option>
             <option value="over">Over Goals</option>
             <option value="under">Under Goals</option>
+            <option value="under6">Under 6 Goals</option>
           </select>
           <i data-lucide="chevron-down" class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500"></i>
         </div>
@@ -190,7 +191,7 @@
         
         const data = await response.json();
         
-        // Add league info to each market
+        // Add league info to each market - UPDATED to support Under 6
         allMarkets = data.markets.map(market => {
           const leagueInfo = leagueCountries[market.league] || { 
             country: market.league, 
@@ -200,11 +201,13 @@
           
           return {
             ...market,
-            name: `${market.strategy === 'over' ? 'Over' : 'Under'} 2.5 Goals`,
+            name: market.strategy === 'over' ? 'Over 2.5 Goals' 
+                : market.strategy === 'under' ? 'Under 2.5 Goals'
+                : 'Under 6 Goals',
             logoUrl: leagueInfo.logoUrl,
             country: leagueInfo.country,
             activeSince: '2023/24',
-            avgOdds: market.strategy === 'over' ? 1.8 : 1.8
+            avgOdds: market.strategy === 'over' ? 1.8 : market.strategy === 'under' ? 1.8 : 1.05
           };
         });
 
@@ -235,6 +238,10 @@
     function createMarketRow(market, isLast) {
       const row = document.createElement('div');
       row.className = `group hover:bg-neutral-950/60 transition-colors`;
+      
+      // Show different info for Under 6 (trades vs games)
+      const gameDisplay = market.strategy === 'under6' ? ` • ${market.totalGames} trades` : '';
+      
       row.innerHTML = `
         <div class="px-4 sm:px-5 py-4">
           <div class="flex items-center justify-between gap-4">
@@ -245,7 +252,7 @@
                   <h3 class="text-white font-medium truncate group-hover:text-emerald-400 transition-colors">
                     ${market.name} <span class="text-gray-400">(${market.league})</span>
                   </h3>
-                  <div class="text-[13px] text-gray-500">Active since ${market.activeSince}</div>
+                  <div class="text-[13px] text-gray-500">Active since ${market.activeSince}${gameDisplay}</div>
                 </div>
                 <i data-lucide="${market.roi >= 0 ? 'trending-up' : 'trending-down'}" class="h-4 w-4 ${market.roi >= 0 ? 'text-emerald-400' : 'text-red-400'}"></i>
               </div>
@@ -267,7 +274,10 @@
       `;
 
       row.addEventListener('click', () => {
-        const url = `https://simplififootballtools.vercel.app/investment-calculator.html?league=${encodeURIComponent(market.league)}&strategy=${market.strategy}`;
+        // Updated to handle Under 6 strategy parameter
+        const url = market.strategy === 'under6' 
+          ? `https://simplififootballtools.vercel.app/investment-calculator.html?league=${encodeURIComponent(market.league)}&strategy=under6`
+          : `https://simplififootballtools.vercel.app/investment-calculator.html?league=${encodeURIComponent(market.league)}&strategy=${market.strategy}`;
         window.open(url, '_blank');
       });
 
