@@ -430,7 +430,7 @@
     // Load filters from secure API
     async function loadFilters() {
       try {
-        const response = await fetch('https://us-central1-simplififootball-1234.cloudfunctions.net/api/investment/filters');
+        const response = await fetch('https://us-central1-simplififootball-1234.cloudfunctions.net/api/calculator/filters');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const data = await response.json();
@@ -463,7 +463,7 @@
           return;
         }
 
-        const response = await fetch('https://us-central1-simplififootball-1234.cloudfunctions.net/api/investment/calculate', {
+        const response = await fetch('https://us-central1-simplififootball-1234.cloudfunctions.net/api/calculator/calculate', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
