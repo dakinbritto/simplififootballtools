@@ -183,7 +183,7 @@
     // SECURE API CALL - Replaces all client-side calculations
     async function loadSecureMarkets() {
       try {
-        const response = await fetch('https://simplififootball-backend.vercel.app/api/markets/all');
+        const response = await fetch('https://us-central1-simplififootball-1234.cloudfunctions.net/api/markets/all');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const data = await response.json();
