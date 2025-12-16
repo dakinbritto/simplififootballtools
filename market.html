@@ -1,178 +1,381 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Simplifi Football Markets</title>
+<head><meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Simplifi Football Markets</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script></head>
+<body class="min-h-screen bg-black text-gray-300 antialiased" style="font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;">
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-</head>
-
-<body class="min-h-screen bg-black text-gray-300" style="font-family: Inter">
-
-<!-- Loading -->
-<div id="loading" class="flex items-center justify-center min-h-screen">
-  <div class="text-center animate-pulse">
-    <div class="text-emerald-400 text-xl mb-2">Loading Markets…</div>
-    <div class="text-gray-500 text-sm">Analyzing data securely</div>
-  </div>
-</div>
-
-<!-- Error -->
-<div id="error" class="hidden flex items-center justify-center min-h-screen">
-  <div class="text-center text-red-400">
-    Error loading markets
-  </div>
-</div>
-
-<!-- App -->
-<div id="app" class="hidden min-h-screen">
-
-<main class="max-w-7xl mx-auto px-4 py-6">
-
-  <h2 class="text-2xl font-semibold text-white mb-4">
-    Available Football Markets
-  </h2>
-
-  <!-- Controls -->
-  <div class="flex gap-3 mb-6">
-    <select id="filterStrategy" class="bg-black border border-neutral-800 px-3 py-2 rounded">
-      <option value="all">All Strategies</option>
-      <option value="over">Over 2.5 Goals</option>
-      <option value="under">Under 2.5 Goals</option>
-      <option value="under6">Under 6 Goals</option>
-    </select>
-
-    <select id="filterPerformance" class="bg-black border border-neutral-800 px-3 py-2 rounded">
-      <option value="all">All Performance</option>
-      <option value="profitable">Profitable Only</option>
-      <option value="losing">Losing Only</option>
-    </select>
+  <!-- Loading Screen -->
+  <div id="loading" class="flex items-center justify-center min-h-screen">
+    <div class="text-center animate-pulse">
+      <div class="inline-flex items-center gap-2 text-xl tracking-tight text-emerald-400 mb-3">
+        <i data-lucide="trending-up"></i>
+        <span>Loading Markets...</span>
+      </div>
+      <div class="text-sm text-gray-500">Analyzing football data securely...</div>
+    </div>
   </div>
 
-  <!-- Markets -->
-  <section class="border border-neutral-800 rounded-xl overflow-hidden">
-    <div id="marketsList" class="divide-y divide-neutral-900"></div>
-  </section>
+  <!-- Error Screen -->
+  <div id="error" class="flex items-center justify-center min-h-screen" style="display: none;">
+    <div class="text-center">
+      <div class="inline-flex items-center gap-2 text-xl tracking-tight text-red-400 mb-4">
+        <i data-lucide="triangle-alert"></i>
+        <span>Error loading markets</span>
+      </div>
+      <div class="text-sm text-gray-500">Please check your connection and try again.</div>
+    </div>
+  </div>
 
-</main>
-</div>
-
-<script>
-let allMarkets = []
-
-/* =========================
-   LOAD FROM FIREBASE
-========================= */
-async function loadSecureMarkets() {
-  try {
-    const res = await fetch(
-      'https://us-central1-simplififootball-1234.cloudfunctions.net/api/markets/all'
-    )
-
-    if (!res.ok) throw new Error('Fetch failed')
-
-    const data = await res.json()
-    allMarkets = data.markets
-
-    renderMarkets()
-    showApp()
-  } catch (e) {
-    console.error(e)
-    showError()
-  }
-}
-
-/* =========================
-   RENDER
-========================= */
-function renderMarkets() {
-  const container = document.getElementById('marketsList')
-  container.innerHTML = ''
-
-  getFilteredMarkets().forEach(market => {
-    const row = document.createElement('div')
-    row.className = 'p-4 hover:bg-neutral-900 cursor-pointer'
-
-    const gamesInfo =
-      market.strategy === 'under6'
-        ? `${market.totalTrades} trades`
-        : `${market.totalGames} games`
-
-    row.innerHTML = `
-      <div class="flex justify-between items-center">
-        <div>
-          <div class="text-white font-medium">
-            ${market.name} (${market.league})
+  <!-- Main App -->
+  <div id="app" class="min-h-screen" style="display: none;">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 border-b border-neutral-800 bg-black/90 backdrop-blur supports-[backdrop-filter]:bg-black/60">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="h-14 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-neutral-900 ring-1 ring-neutral-800">
+              <img src="https://i.postimg.cc/1z8RL6S7/reallygreatsite-com-3-removebg-preview.png?w=800&q=80" alt="Simplifi Football" class="w-8 h-8 object-contain" />
+            </div>
+            <div class="flex items-baseline gap-3">
+              <h1 class="text-[20px] sm:text-[21px] font-semibold tracking-tight text-white">Simplifi Football</h1>
+              <span class="hidden sm:inline text-sm text-gray-500">Markets</span>
+            </div>
           </div>
-          <div class="text-sm text-gray-500">
-            ${gamesInfo} • Win rate ${market.winRate.toFixed(1)}%
-          </div>
-        </div>
-        <div class="text-right">
-          <div class="text-white">${market.avgOdds.toFixed(2)}</div>
-          <div class="${market.roi >= 0 ? 'text-emerald-400' : 'text-red-400'}">
-            ${market.roi.toFixed(1)}%
+
+          <div class="flex items-center gap-3">
+            <div class="text-xs text-gray-400 px-2.5 py-1 rounded-md bg-neutral-900 ring-1 ring-neutral-800">
+              <span class="text-gray-300">Data</span> • <span class="text-emerald-400">Secure</span>
+            </div>
           </div>
         </div>
       </div>
-    `
+    </header>
 
-    row.onclick = () => {
-      window.open(
-        `https://www.simplififootball.com/investment-calculator.html?league=${encodeURIComponent(market.league)}&strategy=${market.strategy}`,
-        '_blank'
-      )
+   
+    <!-- Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20">
+      <!-- Title -->
+      <div class="mb-5">
+        <h2 class="text-[22px] sm:text-2xl font-semibold tracking-tight text-white">Available Football Markets</h2>
+        <p class="text-sm text-gray-500 mt-1">Click any market to analyze with investment calculator</p>
+      </div>
+
+      <!-- Controls -->
+      <div class="mb-5 flex flex-wrap gap-3">
+        <!-- Strategy -->
+        <div class="relative">
+          <select id="filterStrategy" class="appearance-none pl-3 pr-9 py-2 bg-black border border-neutral-800 rounded-md text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/60">
+            <option value="all">All Strategies</option>
+            <option value="over">Over Goals</option>
+            <option value="under">Under Goals</option>
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500"></i>
+        </div>
+
+        <!-- Performance -->
+        <div class="relative">
+          <select id="filterPerformance" class="appearance-none pl-3 pr-9 py-2 bg-black border border-neutral-800 rounded-md text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/60">
+            <option value="all">All Performance</option>
+            <option value="profitable">Profitable Only</option>
+            <option value="losing">Losing Only</option>
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500"></i>
+        </div>
+
+        <!-- Sort -->
+        <button id="sortButton" class="inline-flex items-center gap-2 px-3 py-2 bg-black border border-neutral-800 rounded-md text-sm text-gray-200 hover:bg-neutral-950 transition-colors">
+          <i data-lucide="arrow-up-down" class="h-4 w-4"></i>
+          <span id="sortText">Sort by ROI</span>
+        </button>
+      </div>
+
+      <!-- Markets Panel -->
+      <section class="rounded-xl border border-neutral-800 bg-black overflow-hidden">
+        <div id="marketsList" class="divide-y divide-neutral-900"></div>
+      </section>
+
+      <!-- Stats Summary -->
+      <section class="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-black border border-neutral-800 rounded-xl p-4">
+          <div class="text-sm text-slate-300">Total Markets</div>
+          <div class="text-2xl tracking-tight font-semibold text-white" id="totalMarkets">0</div>
+        </div>
+        <div class="bg-black border border-neutral-800 rounded-xl p-4">
+          <div class="text-sm text-slate-300">Profitable Markets</div>
+          <div class="text-2xl tracking-tight font-semibold text-emerald-400" id="profitableMarkets">0</div>
+        </div>
+        <div class="bg-black border border-neutral-800 rounded-xl p-4">
+          <div class="text-sm text-slate-300">Average ROI</div>
+          <div class="text-2xl tracking-tight font-semibold text-white" id="averageROI">0%</div>
+        </div>
+        <div class="bg-black border border-neutral-800 rounded-xl p-4">
+          <div class="text-sm text-slate-300">Total Income</div>
+          <div class="text-2xl tracking-tight font-semibold text-white" id="totalIncome">£0</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-black border-t border-neutral-800 z-50">
+    <div class="max-w-md mx-auto">
+      <div class="flex">
+        <!-- Markets (Active) -->
+        <button class="flex-1 flex flex-col items-center justify-center py-3 px-2 text-emerald-400 transition-colors">
+          <i data-lucide="trending-up" class="w-5 h-5 mb-1"></i>
+          <span class="text-xs font-medium">Markets</span>
+          <div class="w-1 h-1 bg-emerald-400 rounded-full mt-1"></div>
+        </button>
+        
+        <!-- Backtesting -->
+        <button class="flex-1 flex flex-col items-center justify-center py-3 px-2 text-gray-400 hover:text-gray-200 transition-colors" data-nav="backtesting">
+          <i data-lucide="line-chart" class="w-5 h-5 mb-1"></i>
+          <span class="text-xs font-medium">Backtesting</span>
+        </button>
+        
+        <!-- Journal -->
+        <button class="flex-1 flex flex-col items-center justify-center py-3 px-2 text-gray-400 hover:text-gray-200 transition-colors" data-nav="journal">
+          <i data-lucide="book-open" class="w-5 h-5 mb-1"></i>
+          <span class="text-xs font-medium">Journal</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <script>
+    // Global variables
+    let allMarkets = [];
+    let currentSort = 'roi';
+    let sortDirection = 'desc';
+
+    // League country mapping with official logos
+    const leagueCountries = {
+      'EPL': { country: 'England', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/f/f2/Premier_League.svg', code: 'EPL' },
+      'La Liga': { country: 'Spain', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/13/LaLiga_logo_2023.svg', code: 'La Liga' },
+      'laliga': { country: 'Spain', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/13/LaLiga_logo_2023.svg', code: 'laliga' },
+      'Bundesliga': { country: 'Germany', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/df/Bundesliga_logo.svg', code: 'Bundesliga' },
+      'German1': { country: 'Germany', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/df/Bundesliga_logo.svg', code: 'German1' },
+      'Bundes2': { country: 'Germany', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/2._Bundesliga_Wordmark.svg', code: 'Bundes2' },
+      'Serie A': { country: 'Italy', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Serie_A_logo_2022.svg', code: 'Serie A' },
+      'ITALY': { country: 'Italy', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Serie_A_logo_2022.svg', code: 'ITALY' },
+      'SeriaB': { country: 'Italy', logoUrl: 'https://flagcdn.com/40x30/it.png', code: 'SeriaB' },
+      'Ligue 1': { country: 'France', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Ligue1.svg', code: 'Ligue 1' },
+      'F1': { country: 'France', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Ligue1.svg', code: 'F1' },
+      'Eredivisie': { country: 'Netherlands', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/0f/Eredivisie_nieuw_logo_2017-.svg', code: 'Eredivisie' },
+      'NED': { country: 'Netherlands', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/0f/Eredivisie_nieuw_logo_2017-.svg', code: 'NED' },
+      'Scottish': { country: 'Scotland', logoUrl: 'https://flagcdn.com/40x30/gb-sct.png', code: 'Scottish' },
+      'Championship': { country: 'England', logoUrl: 'https://flagcdn.com/40x30/gb-eng.png', code: 'Championship' },
+      'Champion': { country: 'England', logoUrl: 'https://flagcdn.com/40x30/gb-eng.png', code: 'Champion' },
+      'Belgium': { country: 'Belgium', logoUrl: 'https://flagcdn.com/40x30/be.png', code: 'Belgium' },
+      'Greece': { country: 'Greece', logoUrl: 'https://flagcdn.com/40x30/gr.png', code: 'Greece' },
+      'Portugal': { country: 'Portugal', logoUrl: 'https://flagcdn.com/40x30/pt.png', code: 'Portugal' },
+      'Turk': { country: 'Turkey', logoUrl: 'https://flagcdn.com/40x30/tr.png', code: 'Turk' }
+    };
+
+    const gbp0 = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
+    const gbp2 = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    // SECURE API CALL - Replaces all client-side calculations
+    async function loadSecureMarkets() {
+      try {
+        const response = await fetch('https://us-central1-simplififootball-1234.cloudfunctions.net/api/markets/all');
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        
+        const data = await response.json();
+        
+        // Add league info to each market
+        allMarkets = data.markets.map(market => {
+          const leagueInfo = leagueCountries[market.league] || { 
+            country: market.league, 
+            logoUrl: 'https://flagcdn.com/40x30/xx.png', 
+            code: market.league 
+          };
+          
+          return {
+            ...market,
+            name: `${market.strategy === 'over' ? 'Over' : 'Under'} 2.5 Goals`,
+            logoUrl: leagueInfo.logoUrl,
+            country: leagueInfo.country,
+            activeSince: '2023/24',
+            avgOdds: market.strategy === 'over' ? 1.8 : 1.8
+          };
+        });
+
+        allMarkets.sort((a, b) => b.roi - a.roi);
+        renderMarkets();
+        updateSummaryStats();
+        hideLoading();
+        
+      } catch (error) {
+        console.error('Error loading secure markets:', error);
+        showError();
+      }
     }
 
-    container.appendChild(row)
-  })
-}
+    function renderMarkets() {
+      const container = document.getElementById('marketsList');
+      const filteredMarkets = getFilteredMarkets();
+      container.innerHTML = '';
 
-/* =========================
-   FILTERS
-========================= */
-function getFilteredMarkets() {
-  let result = [...allMarkets]
+      filteredMarkets.forEach((market, idx) => {
+        const el = createMarketRow(market, idx === filteredMarkets.length - 1);
+        container.appendChild(el);
+      });
 
-  const strategy = filterStrategy.value
-  const perf = filterPerformance.value
+      refreshIcons();
+    }
 
-  if (strategy !== 'all')
-    result = result.filter(m => m.strategy === strategy)
+    function createMarketRow(market, isLast) {
+      const row = document.createElement('div');
+      row.className = `group hover:bg-neutral-950/60 transition-colors`;
+      row.innerHTML = `
+        <div class="px-4 sm:px-5 py-4">
+          <div class="flex items-center justify-between gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-3 mb-1.5">
+                <img src="${market.logoUrl}" alt="${market.country}" class="w-4 h-4 object-contain" onerror="this.style.display='none'" />
+                <div class="min-w-0">
+                  <h3 class="text-white font-medium truncate group-hover:text-emerald-400 transition-colors">
+                    ${market.name} <span class="text-gray-400">(${market.league})</span>
+                  </h3>
+                  <div class="text-[13px] text-gray-500">Active since ${market.activeSince}</div>
+                </div>
+                <i data-lucide="${market.roi >= 0 ? 'trending-up' : 'trending-down'}" class="h-4 w-4 ${market.roi >= 0 ? 'text-emerald-400' : 'text-red-400'}"></i>
+              </div>
 
-  if (perf === 'profitable')
-    result = result.filter(m => m.roi > 0)
-  if (perf === 'losing')
-    result = result.filter(m => m.roi < 0)
+              <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-sm">
+                <span class="text-gray-400"><span class="text-emerald-400">W:</span> ${market.wins}</span>
+                <span class="text-gray-400"><span class="text-red-400">L:</span> ${market.losses}</span>
+                <span class="text-gray-400">Success: <span class="text-white">${market.winRate.toFixed(1)}%</span></span>
+                <span class="text-gray-400">Income: <span class="${market.income >= 0 ? 'text-emerald-400' : 'text-red-400'}">${market.income >= 0 ? '+' : ''}${gbp0.format(Math.abs(market.income))}</span></span>
+              </div>
+            </div>
 
-  return result.sort((a,b) => b.roi - a.roi)
-}
+            <div class="text-right whitespace-nowrap">
+              <div class="text-[21px] leading-6 font-semibold text-white tracking-tight">${market.avgOdds.toFixed(2)}</div>
+              <div class="text-xs ${market.roi >= 0 ? 'text-emerald-400' : 'text-red-400'}">${market.roi >= 0 ? '+' : ''}${market.roi.toFixed(1)}%</div>
+            </div>
+          </div>
+        </div>
+      `;
 
-/* =========================
-   UI HELPERS
-========================= */
-function showApp() {
-  loading.style.display = 'none'
-  app.style.display = 'block'
-  lucide.createIcons()
-}
+      row.addEventListener('click', () => {
+        const url = `https://simplififootballtools.vercel.app/investment-calculator.html?league=${encodeURIComponent(market.league)}&strategy=${market.strategy}`;
+        window.open(url, '_blank');
+      });
 
-function showError() {
-  loading.style.display = 'none'
-  error.style.display = 'flex'
-}
+      return row;
+    }
 
-/* =========================
-   EVENTS
-========================= */
-filterStrategy.onchange = renderMarkets
-filterPerformance.onchange = renderMarkets
+    function getFilteredMarkets() {
+      let filtered = [...allMarkets];
 
-document.addEventListener('DOMContentLoaded', loadSecureMarkets)
-</script>
+      const strategyFilter = document.getElementById('filterStrategy').value;
+      const performanceFilter = document.getElementById('filterPerformance').value;
 
+      if (strategyFilter !== 'all') {
+        filtered = filtered.filter(market => market.strategy === strategyFilter);
+      }
+
+      if (performanceFilter === 'profitable') {
+        filtered = filtered.filter(market => market.roi > 0);
+      } else if (performanceFilter === 'losing') {
+        filtered = filtered.filter(market => market.roi < 0);
+      }
+
+      filtered.sort((a, b) => {
+        let aVal, bVal;
+        switch (currentSort) {
+          case 'roi': aVal = a.roi; bVal = b.roi; break;
+          case 'winrate': aVal = a.winRate; bVal = b.winRate; break;
+          case 'income': aVal = a.income; bVal = b.income; break;
+          case 'games': aVal = a.totalGames; bVal = b.totalGames; break;
+          default: aVal = a.roi; bVal = b.roi;
+        }
+        return sortDirection === 'desc' ? bVal - aVal : aVal - bVal;
+      });
+
+      return filtered;
+    }
+
+    function updateSummaryStats() {
+      const totalMarkets = allMarkets.length;
+      const profitableMarkets = allMarkets.filter(m => m.roi > 0).length;
+      const avgROI = totalMarkets > 0 ? allMarkets.reduce((sum, m) => sum + m.roi, 0) / totalMarkets : 0;
+      const totalIncome = allMarkets.reduce((sum, m) => sum + m.income, 0);
+
+      document.getElementById('totalMarkets').textContent = totalMarkets;
+      document.getElementById('profitableMarkets').textContent = profitableMarkets;
+      document.getElementById('averageROI').textContent = `${avgROI.toFixed(1)}%`;
+      document.getElementById('totalIncome').textContent = gbp0.format(totalIncome);
+    }
+
+    function hideLoading() {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      refreshIcons();
+    }
+
+    function showError() {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('error').style.display = 'flex';
+      refreshIcons();
+    }
+
+    function refreshIcons() {
+      if (window.lucide && window.lucide.createIcons) {
+        window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+      }
+    }
+
+    // Event listeners
+    document.getElementById('filterStrategy').addEventListener('change', renderMarkets);
+    document.getElementById('filterPerformance').addEventListener('change', renderMarkets);
+
+    document.getElementById('sortButton').addEventListener('click', () => {
+      const sortOptions = ['roi', 'winrate', 'income', 'games'];
+      const currentIndex = sortOptions.indexOf(currentSort);
+      const nextIndex = (currentIndex + 1) % sortOptions.length;
+      currentSort = sortOptions[nextIndex];
+
+      const sortLabels = {
+        'roi': 'Sort by ROI',
+        'winrate': 'Sort by Win Rate',
+        'income': 'Sort by Income',
+        'games': 'Sort by Games'
+      };
+
+      document.getElementById('sortText').textContent = sortLabels[currentSort];
+      renderMarkets();
+    });
+
+    // Initialize - NOW CALLS SECURE API
+    document.addEventListener('DOMContentLoaded', () => {
+      refreshIcons();
+      
+      // Navigation handlers
+      const backtestingBtn = document.querySelector('nav button[data-nav="backtesting"]');
+      if (backtestingBtn) {
+        backtestingBtn.addEventListener('click', () => {
+          window.location.href = 'https://simplififootballtools.vercel.app/testyourbet.html';
+        });
+      }
+      
+      const journalBtn = document.querySelector('nav button[data-nav="journal"]');
+      if (journalBtn) {
+        journalBtn.addEventListener('click', () => {
+          window.location.href = 'https://www.simplififootball.com/dash.html';
+        });
+      }
+      
+      // SECURE API CALL - No more client-side calculations!
+      loadSecureMarkets();
+    });
+  </script>
 </body>
 </html>
