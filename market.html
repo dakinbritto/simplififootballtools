@@ -112,7 +112,9 @@ function renderMarkets() {
           </div>
         </div>
         <div class="text-right">
-          <div class="text-white">${market.avgOdds.toFixed(2)}</div>
+          <div class="text-white">
+  ${(market.avgOdds ?? 0).toFixed(2)}
+</div>
           <div class="${market.roi >= 0 ? 'text-emerald-400' : 'text-red-400'}">
             ${market.roi.toFixed(1)}%
           </div>
