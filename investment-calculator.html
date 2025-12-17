@@ -1099,17 +1099,24 @@ function loadLeagueFromURL() {
         });
       }
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', () => {
-      // Initialize icons
-      if (window.lucide) {
-        window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
-      }
-      bindUI();
-      document.getElementById('loading').style.display = 'flex';
-      loadFilters();
-    });
-  </script>
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    // Initialize icons
+    if (window.lucide) {
+      window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+    }
 
+    bindUI();
+
+    // SHOW loader while fetching
+    const loadingEl = document.getElementById('loading');
+    if (loadingEl) loadingEl.style.display = 'flex';
+
+    // Load filters, then UNBLOCK UI
+    loadFilters().finally(() => {
+      if (loadingEl) loadingEl.style.display = 'none';
+    });
+  });
+</script>
 </body>
 </html>
