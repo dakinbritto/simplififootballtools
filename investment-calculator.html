@@ -404,11 +404,11 @@
           <span class="text-xs font-medium">Backtesting</span>
         </button>
         
-        <!-- Journal -->
-        <button class="flex-1 flex flex-col items-center justify-center py-3 px-2 text-gray-400 hover:text-gray-200 transition-colors">
-          <i data-lucide="book-open" class="w-5 h-5 mb-1"></i>
-          <span class="text-xs font-medium">Journal</span>
-        </button>
+<!-- Journal -->
+<button class="flex-1 flex flex-col items-center justify-center py-3 px-2 text-gray-400 hover:text-gray-200 transition-colors" data-nav="journal">
+  <i data-lucide="book-open" class="w-5 h-5 mb-1"></i>
+  <span class="text-xs font-medium">Journal</span>
+</button>
       </div>
     </div>
   </nav>
@@ -1092,14 +1092,14 @@ function loadLeagueFromURL() {
       }
     }
     
-<script>
-  // Journal navigation
-  const journalBtn = document.querySelector('nav button[data-nav="journal"]');
-  if (journalBtn) {
-    journalBtn.addEventListener('click', () => {
-      window.location.href = 'https://www.simplififootball.com/betbehavioursurvey.html';
-    });
-  }
+      const journalBtn = document.querySelector('nav button[data-nav="journal"]');
+
+      if (journalBtn) {
+        journalBtn.addEventListener('click', () => {
+          window.location.href = 'https://www.simplififootball.com/betbehavioursurvey.html';
+        });
+      }
+
 
   // Initialize
   document.addEventListener('DOMContentLoaded', () => {
