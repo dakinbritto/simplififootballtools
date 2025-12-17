@@ -426,11 +426,12 @@
     const gbp2 = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     // SECURE API CALLS - All calculations now happen server-side
+    const API_BASE = 'https://us-central1-simplififootball-1234.cloudfunctions.net/api';
 
     // Load filters from secure API
     async function loadFilters() {
       try {
-        const response = await fetch('https://us-central1-simplififootball-1234.cloudfunctions.net/api/calculator/filters');
+        const response = await fetch(`${API_BASE}/calculator/filters`);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const data = await response.json();
@@ -463,7 +464,7 @@
           return;
         }
 
-        const response = await fetch('https://us-central1-simplififootball-1234.cloudfunctions.net/api/calculator/calculate', {
+        const response = await fetch(`${API_BASE}/calculator/calculate`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -511,7 +512,7 @@
 
         if (!params.selectedLeague) return;
 
-        const response = await fetch('https://us-central1-simplififootball-1234.cloudfunctions.net/api/calculator/teams-ranking', {
+        const response = await fetch(`${API_BASE}/calculator/teams-ranking`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -532,32 +533,37 @@
         console.error('Error loading team rankings:', error);
       }
     }
+// Handle league and strategy parameters from market list navigation
+function loadLeagueFromURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const leagueCode = urlParams.get('league');
+  const strategy = urlParams.get('strategy');
 
-    // Handle league and strategy parameters from market list navigation
-    function loadLeagueFromURL() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const leagueCode = urlParams.get('league');
-        const strategy = urlParams.get('strategy');
-        
-        if (leagueCode || strategy) {
-            // Wait for dropdowns to be populated, then set the values
-            setTimeout(() => {
-                const leagueSelect = document.getElementById('selectedLeague');
-                const marketSelect = document.getElementById('selectedMarket');
-                
-                if (leagueSelect && leagueCode) {
-                    leagueSelect.value = leagueCode;
-                    updateT9Button();
-                }
-                
-                if (marketSelect && strategy) {
-                    // Map strategy to market value
-                    if (strategy === 'over') {
-                        marketSelect.value = 'over2.5';
-                    } else if (strategy === 'under') {
-                        marketSelect.value = 'under2.5';
-                    }
-                }
+  if (leagueCode || strategy) {
+    // Wait for dropdowns to be populated, then set the values
+    setTimeout(() => {
+      const leagueSelect = document.getElementById('selectedLeague');
+      const marketSelect = document.getElementById('selectedMarket');
+
+      if (leagueSelect && leagueCode) {
+        leagueSelect.value = leagueCode;
+        updateT9Button();
+      }
+
+      if (marketSelect && strategy) {
+        if (strategy === 'over') {
+          marketSelect.value = 'over2.5';
+        } else if (strategy === 'under') {
+          marketSelect.value = 'under2.5';
+        } else if (strategy === 'under6') {
+          marketSelect.value = 'under6';
+        }
+      }
+
+      updateCalculation();
+    }, 1000);
+  }
+}
                 
                 updateCalculation();
             }, 1000);
