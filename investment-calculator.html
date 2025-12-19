@@ -45,6 +45,34 @@
 <style id="all-fonts-style-font-nunito">.font-nunito { font-family: 'Nunito', sans-serif !important; }</style>
 </head>
 <body class="min-h-screen text-[15px] antialiased selection:bg-emerald-600/40 selection:text-white text-gray-200 bg-black">
+  <script>
+  const API_BASE = "https://us-central1-simplififootball-1234.cloudfunctions.net/api";
+
+  (async function requireLogin() {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      window.location.href = "https://simplififootballtools.vercel.app/auth.html";
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/auth/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        localStorage.clear();
+        window.location.href = "https://simplififootballtools.vercel.app/auth.html";
+      }
+    } catch {
+      localStorage.clear();
+      window.location.href = "https://simplififootballtools.vercel.app/auth.html";
+    }
+  })();
+</script>
 
   <!-- Loading Screen -->
   <div id="loading" class="flex items-center justify-center min-h-screen">
