@@ -408,28 +408,28 @@
 
     // Authentication Functions
     async function handleLogin(email, password) {
-      try {
-        const response = await fetch(`${API_BASE}/auth/login`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ email, password })
-        });
+  try {
+    const response = await fetch(`${API_BASE}/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "omit",
+      body: JSON.stringify({ email, password })
+    });
 
-        const data = await response.json();
+    const data = await response.json();
 
-        if (data.success) {
-          // Store token
-          localStorage.setItem('authToken', data.token);
-          localStorage.setItem('userEmail', data.user.email);
-          localStorage.setItem('subscriptionStatus', data.user.subscriptionStatus);
-          
-          showMessage('Login successful! Redirecting to dashboard...', 'success');
+    if (data.success) {
+      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("userEmail", data.user.email);
+      localStorage.setItem("subscriptionStatus", data.user.subscriptionStatus);
+
+      showMessage("Login successful! Redirecting...", "success");
           
           // Redirect to tools dashboard after short delay
           setTimeout(() => {
-            window.location.href = 'https://simplififootballtools.vercel.app/free.html';
+            window.location.href = 'https://simplififootballtools.vercel.app/market.html';
           }, 1500);
           
         } else {
