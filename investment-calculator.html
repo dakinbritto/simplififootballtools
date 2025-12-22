@@ -451,7 +451,7 @@
 
   <script>
     // Global variables
-    const API_BASE = "https://us-central1-simplififootball-1234.cloudfunctions.net/api/calculator";
+    const CALC_BASE = "https://us-central1-simplififootball-1234.cloudfunctions.net/api/calculator";
 
     let processedData = [];
     let chart = null;
@@ -469,7 +469,7 @@
     // Load filters from secure API
     async function loadFilters() {
       try {
-        const response = await fetch(`${API_BASE}/filters`);
+        const response = await fetch(`${CALC_BASE}/filters`);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const data = await response.json();
@@ -502,7 +502,7 @@
           return;
         }
 
-        const response = await fetch(`${API_BASE}/calculate`, {
+        const response = await fetch(`${CALC_BASE}/calculate`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -550,7 +550,7 @@
 
         if (!params.selectedLeague) return;
 
-        const response = await fetch(`${API_BASE}/teams-ranking`, {
+        const response = await fetch(`${CALC_BASE}/teams-ranking`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
