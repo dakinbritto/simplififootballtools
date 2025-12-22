@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Forgot Password – Simplifi Football</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen flex items-center justify-center bg-black text-white">
+
+  <div class="w-full max-w-md bg-gray-900 border border-gray-800 rounded-xl p-8">
+    <h1 class="text-2xl font-semibold mb-2 text-center">Forgot your password?</h1>
+    <p class="text-gray-400 text-sm mb-6 text-center">
+      Enter your email and we’ll send you a reset link.
+    </p>
+
+    <div id="message" class="hidden mb-4 text-sm rounded-lg p-3"></div>
+
+    <form id="forgotForm" class="space-y-4">
+      <div>
+        <label class="block text-sm mb-1">Email address</label>
+        <input
+          id="email"
+          type="email"
+          required
+          class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:border-emerald-500"
+          placeholder="you@email.com"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="w-full py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 transition font-medium"
+      >
+        Send reset link
+      </button>
+    </form>
+
+    <div class="text-center mt-6">
+      <a href="/auth.html" class="text-sm text-emerald-400 hover:text-emerald-300">
+        Back to login
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE =
+      "https://us-central1-simplififootball-1234.cloudfunctions.net/api";
+
+    const form = document.getElementById("forgotForm");
+    const message = document.getElementById("message");
+
+    function showMessage(text, success = true) {
+      message.textContent = text;
+      message.className =
+        "mb-4 text-sm rounded-lg p-3 " +
+        (success
+          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+          : "bg-red-500/10 text-red-400 border border-red-500/30");
+      message.classList.remove("hidden");
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      message.classList.add("hidden");
+
+      const email = document.getElementById("email").value.trim();
+
+      try {
+        const res = await fetch(`${API_BASE}/auth/forgot-password`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+
+        await res.json();
+
+        // Always success (no user enumeration)
+        showMessage(
+          "If that email exists, a reset link has been sent."
+        );
+        form.reset();
+      } catch (err) {
+        showMessage("Something went wrong. Please try again.", false);
+      }
+    });
+  </script>
+</body>
+</html>
