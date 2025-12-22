@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reset Password – Simplifi Football</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: #020617;
+      padding: 32px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    h1 {
+      margin-bottom: 12px;
+      font-size: 22px;
+    }
+
+    p {
+      font-size: 14px;
+      opacity: 0.8;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 14px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .msg {
+      margin-top: 16px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Reset your password</h1>
+    <p>Enter a new password for your account.</p>
+
+    <input id="password" type="password" placeholder="New password (min 6 chars)" />
+    <button id="btn">Reset Password</button>
+
+    <div id="msg" class="msg"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get("email");
+    const token = params.get("token");
+
+    const btn = document.getElementById("btn");
+    const msg = document.getElementById("msg");
+
+    if (!email || !token) {
+      msg.textContent = "Invalid or missing reset link.";
+      btn.disabled = true;
+    }
+
+    btn.onclick = async () => {
+      const password = document.getElementById("password").value;
+
+      if (password.length < 6) {
+        msg.textContent = "Password must be at least 6 characters.";
+        return;
+      }
+
+      btn.disabled = true;
+      msg.textContent = "Resetting password…";
+
+      try {
+        const res = await fetch(
+          "https://api-7wyko6woyq-uc.a.run.app/auth/reset-password",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email,
+              token,
+              newPassword: password,
+            }),
+          }
+        );
+
+        const data = await res.json();
+
+        if (data.success) {
+          msg.textContent = "✅ Password reset successful. You can now log in.";
+        } else {
+          msg.textContent = data.error || "Reset failed.";
+          btn.disabled = false;
+        }
+      } catch (err) {
+        msg.textContent = "Network error. Try again.";
+        btn.disabled = false;
+      }
+    };
+  </script>
+</body>
+</html>
