@@ -55,12 +55,7 @@
 
   (async function requireLogin() {
     const token = localStorage.getItem("authToken");
-
-    if (!token) {
-      window.location.href = "https://simplififootballtools.vercel.app/auth.html";
-      return;
-    }
-
+   
     // If user has been inactive too long -> logout
     const last = Number(localStorage.getItem(LAST_ACTIVE_KEY) || "0");
     if (last && Date.now() - last > INACTIVITY_LIMIT_MS) {
