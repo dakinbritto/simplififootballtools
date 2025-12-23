@@ -609,44 +609,36 @@ showMessage(msg);
     });
 
     // Check if already logged in
-    window.addEventListener('load', () => {
-      const token = localStorage.getItem('authToken');
-      if (token) {
-        // Verify token is still valid
-        fetch(`${API_BASE}/auth/profile`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            // Already logged in, redirect to dashboard
-            window.location.href = 'https://simplififootballtools.vercel.app/market.html';
-          } else {
-            // Token expired, remove it
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('userEmail');
-            localStorage.removeItem('subscriptionStatus');
-             if (window.firebase && firebase.auth) {
-  firebase.auth().signOut().catch(() => {});
-}
-          }
-        })
-        .catch(() => {
-          .catch(() => {
-  // Network error, assume token is invalid
-  localStorage.removeItem('authToken');
-  localStorage.removeItem('userEmail');
-  localStorage.removeItem('subscriptionStatus');
+window.addEventListener("load", () => {
+  const token = localStorage.getItem("authToken");
+  if (!token) return;
 
-  if (window.firebase && firebase.auth) {
-    firebase.auth().signOut().catch(() => {});
-  }
-});
-
+  fetch(`${API_BASE}/auth/profile`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        window.location.href = "https://simplififootballtools.vercel.app/market.html";
+      } else {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("subscriptionStatus");
+        if (window.firebase && firebase.auth) {
+          firebase.auth().signOut().catch(() => {});
+        }
+      }
+    })
+    .catch(() => {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("subscriptionStatus");
+      if (window.firebase && firebase.auth) {
+        firebase.auth().signOut().catch(() => {});
       }
     });
+});
+
 
     // Enable buttons initially
     document.querySelector('.btn').disabled = false;
