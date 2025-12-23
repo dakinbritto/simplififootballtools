@@ -360,11 +360,15 @@ const firebaseConfig = {
   apiKey: "AIzaSyC2ILk_So6nzqGuZifYfTEktwZUqwu0TdM",
   authDomain: "simplififootball-1234.firebaseapp.com",
   projectId: "simplififootball-1234",
+  storageBucket: "simplififootball-1234.firebasestorage.app",
+  messagingSenderId: "953983072540",
   appId: "1:953983072540:web:2e8d75afa04dd84a6762d9",
 };
 
 // 2) Init Firebase
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 const fbAuth = firebase.auth();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 
@@ -408,7 +412,11 @@ if (googleBtn) {
 
     } catch (err) {
       console.error("Google sign-in error:", err);
-      showMessage(err.message || "Google sign-in failed. Please try again.");
+      const msg =
+  err.code === "auth/popup-blocked"
+    ? "Popup blocked. Please allow popups and try again."
+    : (err.message || "Google sign-in failed. Please try again.");
+showMessage(msg);
     }
   });
 }
@@ -620,14 +628,23 @@ if (googleBtn) {
             localStorage.removeItem('authToken');
             localStorage.removeItem('userEmail');
             localStorage.removeItem('subscriptionStatus');
+             if (window.firebase && firebase.auth) {
+  firebase.auth().signOut().catch(() => {});
+}
           }
         })
         .catch(() => {
-          // Network error, assume token is invalid
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('userEmail');
-          localStorage.removeItem('subscriptionStatus');
-        });
+          .catch(() => {
+  // Network error, assume token is invalid
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('userEmail');
+  localStorage.removeItem('subscriptionStatus');
+
+  if (window.firebase && firebase.auth) {
+    firebase.auth().signOut().catch(() => {});
+  }
+});
+
       }
     });
 
