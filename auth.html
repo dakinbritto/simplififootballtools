@@ -18,6 +18,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
+<!-- Firebase (for Google Sign-In) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>   
 <style>
   .btn {
     display: flex;
@@ -348,17 +351,68 @@
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
     const messageContainer = document.getElementById('messageContainer');
-     
-     // Google OAuth button
+    // =============================
+// Firebase Google Sign-In Setup
+// =============================
+
+// 1) Paste your Firebase Web App config here (from Firebase Console -> Project settings -> Your apps)
+const firebaseConfig = {
+  apiKey: "AIzaSyC2ILk_So6nzqGuZifYfTEktwZUqwu0TdM",
+  authDomain: "simplififootball-1234.firebaseapp.com",
+  projectId: "simplififootball-1234",
+  appId: "1:953983072540:web:2e8d75afa04dd84a6762d9",
+};
+
+// 2) Init Firebase
+firebase.initializeApp(firebaseConfig);
+const fbAuth = firebase.auth();
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+// 3) Handle Google button click -> Firebase popup -> send idToken to your backend
 const googleBtn = document.getElementById("googleBtn");
+
 if (googleBtn) {
-  googleBtn.addEventListener("click", () => {
-    window.location.href =
-      "https://us-central1-simplififootball-1234.cloudfunctions.net/api/auth/google/start";
+  googleBtn.addEventListener("click", async () => {
+    try {
+      hideMessage();
+
+      // Firebase popup sign-in
+      const result = await fbAuth.signInWithPopup(googleProvider);
+
+      // Get Firebase ID token
+      const idToken = await result.user.getIdToken();
+
+      // Send token to your backend -> your backend returns YOUR JWT
+      const res = await fetch(`${API_BASE}/auth/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        throw new Error(data.error || "Google sign-in failed");
+      }
+
+      // Store your existing JWT system
+      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("userEmail", data.user.email);
+      localStorage.setItem("subscriptionStatus", data.user.subscriptionStatus);
+
+      showMessage("Google login successful! Redirecting...", "success");
+
+      setTimeout(() => {
+        window.location.href = "https://simplififootballtools.vercel.app/market.html";
+      }, 800);
+
+    } catch (err) {
+      console.error("Google sign-in error:", err);
+      showMessage(err.message || "Google sign-in failed. Please try again.");
+    }
   });
 }
-
-
+ 
     // Tab Switching
     loginTab.addEventListener('click', () => switchTab('login'));
     registerTab.addEventListener('click', () => switchTab('register'));
