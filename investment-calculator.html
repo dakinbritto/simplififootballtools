@@ -440,11 +440,17 @@
           <span class="text-xs font-medium">Backtesting</span>
         </button>
         
-<!-- Journal -->
-<button class="flex-1 flex flex-col items-center justify-center py-3 px-2 text-gray-400 hover:text-gray-200 transition-colors" data-nav="journal">
-  <i data-lucide="book-open" class="w-5 h-5 mb-1"></i>
-  <span class="text-xs font-medium">Journal</span>
-</button>
+        <!-- Journal -->
+        <button class="flex-1 flex flex-col items-center justify-center py-3 px-2 text-gray-400 hover:text-gray-200 transition-colors" data-nav="journal">
+          <i data-lucide="book-open" class="w-5 h-5 mb-1"></i>
+          <span class="text-xs font-medium">Journal</span>
+        </button>
+
+        <!-- ✅ NEW: Account -->
+        <button class="flex-1 flex flex-col items-center justify-center py-3 px-2 text-gray-400 hover:text-gray-200 transition-colors" data-nav="account">
+          <i data-lucide="user" class="w-5 h-5 mb-1"></i>
+          <span class="text-xs font-medium">Account</span>
+        </button>
       </div>
     </div>
   </nav>
@@ -571,37 +577,37 @@
         console.error('Error loading team rankings:', error);
       }
     }
-// Handle league and strategy parameters from market list navigation
-function loadLeagueFromURL() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const leagueCode = urlParams.get('league');
-  const strategy = urlParams.get('strategy');
+    // Handle league and strategy parameters from market list navigation
+    function loadLeagueFromURL() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const leagueCode = urlParams.get('league');
+      const strategy = urlParams.get('strategy');
 
-  if (leagueCode || strategy) {
-    // Wait for dropdowns to be populated, then set the values
-    setTimeout(() => {
-      const leagueSelect = document.getElementById('selectedLeague');
-      const marketSelect = document.getElementById('selectedMarket');
+      if (leagueCode || strategy) {
+        // Wait for dropdowns to be populated, then set the values
+        setTimeout(() => {
+          const leagueSelect = document.getElementById('selectedLeague');
+          const marketSelect = document.getElementById('selectedMarket');
 
-      if (leagueSelect && leagueCode) {
-        leagueSelect.value = leagueCode;
-        updateT9Button();
+          if (leagueSelect && leagueCode) {
+            leagueSelect.value = leagueCode;
+            updateT9Button();
+          }
+
+          if (marketSelect && strategy) {
+            if (strategy === 'over') {
+              marketSelect.value = 'over2.5';
+            } else if (strategy === 'under') {
+              marketSelect.value = 'under2.5';
+            } else if (strategy === 'under6') {
+              marketSelect.value = 'under6';
+            }
+          }
+
+          updateCalculation();
+        }, 1000);
       }
-
-      if (marketSelect && strategy) {
-        if (strategy === 'over') {
-          marketSelect.value = 'over2.5';
-        } else if (strategy === 'under') {
-          marketSelect.value = 'under2.5';
-        } else if (strategy === 'under6') {
-          marketSelect.value = 'under6';
-        }
-      }
-
-      updateCalculation();
-    }, 1000);
-  }
-}
+    }
     // Populate filter dropdowns from secure API data
     function populateFilters() {
       if (!availableFilters) return;
@@ -1136,6 +1142,13 @@ function loadLeagueFromURL() {
         });
       }
 
+      // ✅ NEW: Account nav handler (kept outside bindUI to avoid touching your structure)
+      const accountBtn = document.querySelector('nav button[data-nav="account"]');
+      if (accountBtn) {
+        accountBtn.addEventListener('click', () => {
+          window.location.href = 'https://simplififootballtools.vercel.app/account.html';
+        });
+      }
 
   // Initialize
   document.addEventListener('DOMContentLoaded', () => {
