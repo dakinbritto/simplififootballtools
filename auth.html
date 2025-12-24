@@ -344,6 +344,7 @@
   <script>
     // Configuration (LIVE Firebase Functions backend)
     const API_BASE = "https://us-central1-simplififootball-1234.cloudfunctions.net/api";
+    const LAST_ACTIVE_KEY = "lastActiveAt";
     
     // DOM Elements
     const loginTab = document.getElementById('loginTab');
@@ -403,6 +404,7 @@ if (googleBtn) {
       localStorage.setItem("authToken", data.token);
       localStorage.setItem("userEmail", data.user.email);
       localStorage.setItem("subscriptionStatus", data.user.subscriptionStatus);
+      localStorage.setItem(LAST_ACTIVE_KEY, String(Date.now()));
 
       showMessage("Google login successful! Redirecting...", "success");
 
@@ -505,6 +507,7 @@ showMessage(msg);
       localStorage.setItem("authToken", data.token);
       localStorage.setItem("userEmail", data.user.email);
       localStorage.setItem("subscriptionStatus", data.user.subscriptionStatus);
+      localStorage.setItem(LAST_ACTIVE_KEY, String(Date.now()));
 
       showMessage("Login successful! Redirecting...", "success");
           
@@ -556,6 +559,7 @@ showMessage(msg);
           localStorage.setItem('authToken', data.token);
           localStorage.setItem('userEmail', data.user.email);
           localStorage.setItem('subscriptionStatus', data.user.subscriptionStatus);
+          localStorage.setItem(LAST_ACTIVE_KEY, String(Date.now()));
           
           showMessage('Account created successfully! Redirecting to dashboard...', 'success');
           
