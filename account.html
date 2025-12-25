@@ -174,7 +174,7 @@
               type="text"
               readonly
               class="w-full rounded-lg bg-gray-900/70 border border-gray-700 px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
-              value="https://simplififootballtools.vercel.app/auth.html"
+              value="https://simplififootballtools.vercel.app/free.html"
             />
             <button id="copyBtn" class="btn btn-primary w-[9.5rem]">
               <span class="text-[12px] tracking-[0.2em] font-semibold">COPY</span>
@@ -211,7 +211,7 @@
 
     // Marketing / share link you want people to use
     // (You can change this to market.html if you prefer)
-    const DEFAULT_SHARE_LINK = "https://simplififootballtools.vercel.app/auth.html";
+    const DEFAULT_SHARE_LINK = "https://simplififootballtools.vercel.app/free.html";
 
     const messageContainer = document.getElementById("messageContainer");
     const emailValue = document.getElementById("emailValue");
@@ -264,7 +264,7 @@
       // 1) Auth gate
       const token = getToken();
       if (!token) {
-        window.location.href = "https://simplififootballtools.vercel.app/auth.html";
+        window.location.href = "https://simplififootballtools.vercel.app/free.html";
         return;
       }
 
@@ -281,7 +281,7 @@
           localStorage.removeItem("authToken");
           localStorage.removeItem("userEmail");
           localStorage.removeItem("subscriptionStatus");
-          window.location.href = "https://simplififootballtools.vercel.app/auth.html";
+          window.location.href = "https://simplififootballtools.vercel.app/free.html";
           return;
         }
         setAccountUI({ email: user.email, subscriptionStatus: user.subscriptionStatus });
@@ -337,7 +337,7 @@
         localStorage.removeItem("authToken");
         localStorage.removeItem("userEmail");
         localStorage.removeItem("subscriptionStatus");
-        window.location.href = "https://simplififootballtools.vercel.app/auth.html";
+        window.location.href = "https://simplififootballtools.vercel.app/free.html";
       });
     }
 
