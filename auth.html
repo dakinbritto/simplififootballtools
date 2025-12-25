@@ -380,9 +380,10 @@ if (googleBtn) {
   googleBtn.addEventListener("click", async () => {
     try {
       hideMessage();
-
+// Firebase popup sign-in  ✅ (THIS WAS MISSING)
+const result = await fbAuth.signInWithPopup(googleProvider);
       // Get Firebase ID token
-const idToken = await result.user.getIdToken();
+const idToken = await result.user.getIdToken();      
 
 // ✅ STEP 1 DEBUG: prove we have a token before calling backend
 console.log("✅ Google user email:", result.user.email);
@@ -399,6 +400,7 @@ const res = await fetch(`${API_BASE}/auth/google`, {
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ idToken: idToken }),
 });
+      console.log("✅ backend status:", res.status);
 
       const data = await res.json();
 
