@@ -381,18 +381,24 @@ if (googleBtn) {
     try {
       hideMessage();
 
-      // Firebase popup sign-in
-      const result = await fbAuth.signInWithPopup(googleProvider);
-
       // Get Firebase ID token
-      const idToken = await result.user.getIdToken();
+const idToken = await result.user.getIdToken();
 
-      // Send token to your backend -> your backend returns YOUR JWT
-      const res = await fetch(`${API_BASE}/auth/google`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idToken }),
-      });
+// ✅ STEP 1 DEBUG: prove we have a token before calling backend
+console.log("✅ Google user email:", result.user.email);
+console.log("✅ idToken type:", typeof idToken);
+console.log("✅ idToken length:", idToken ? idToken.length : 0);
+
+if (!idToken || typeof idToken !== "string" || idToken.length < 100) {
+  throw new Error("Google login failed: idToken missing/invalid BEFORE backend call");
+}
+
+// Send token to your backend -> your backend returns YOUR JWT
+const res = await fetch(`${API_BASE}/auth/google`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ idToken: idToken }),
+});
 
       const data = await res.json();
 
