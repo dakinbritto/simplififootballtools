@@ -381,7 +381,7 @@ if (googleBtn) {
     try {
       hideMessage();
 // Firebase popup sign-in  ✅ (THIS WAS MISSING)
-const result = await fbAuth.signInWithPopup(googleProvider);
+await fbAuth.signInWithRedirect(googleProvider);
       // Get Firebase ID token
 const idToken = await result.user.getIdToken();      
 
