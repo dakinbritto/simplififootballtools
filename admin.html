@@ -46,7 +46,7 @@
       const token = localStorage.getItem("authToken");
 
       if (!token) {
-        window.location.href = "/auth.html";
+        window.location.href = "/free.html";
         return;
       }
 
@@ -78,7 +78,7 @@
 
       } catch (err) {
         localStorage.clear();
-        window.location.href = "/auth.html";
+        window.location.href = "/free.html";
       }
     }
 
