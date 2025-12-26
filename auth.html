@@ -372,6 +372,41 @@ if (!firebase.apps.length) {
 }
 const fbAuth = firebase.auth();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
+// ✅ STEP: If Google sign-in used redirect, finish it here after the page returns
+window.addEventListener("load", async () => {
+  try {
+    const result = await fbAuth.getRedirectResult();
+
+    // If user didn’t just come back from Google redirect, do nothing
+    if (!result || !result.user) return;
+
+    const idToken = await result.user.getIdToken();
+
+    console.log("✅ Google user email:", result.user.email);
+    console.log("✅ idToken type:", typeof idToken);
+    console.log("✅ idToken length:", idToken ? idToken.length : 0);
+
+    const res = await fetch(`${API_BASE}/auth/google`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idToken }),
+    });
+
+    console.log("✅ backend status:", res.status);
+
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || "Google sign-in failed");
+
+    localStorage.setItem("authToken", data.token);
+    localStorage.setItem("userEmail", data.user.email);
+    localStorage.setItem("subscriptionStatus", data.user.subscriptionStatus);
+    localStorage.setItem(LAST_ACTIVE_KEY, String(Date.now()));
+
+    window.location.href = "https://simplififootballtools.vercel.app/market.html";
+  } catch (err) {
+    console.error("❌ Redirect login error:", err);
+  }
+});
 
 // 3) Handle Google button click -> Firebase popup -> send idToken to your backend
 const googleBtn = document.getElementById("googleBtn");
