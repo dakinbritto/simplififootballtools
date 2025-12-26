@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin – Simplifi Football</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-black text-white flex items-center justify-center">
+
+  <div class="w-full max-w-3xl p-8 rounded-xl border border-emerald-500/20 bg-gray-900">
+    <h1 class="text-3xl font-bold text-emerald-400 mb-4">
+      Simplifi Football – Admin
+    </h1>
+
+    <p class="text-gray-400 mb-6">
+      This page is restricted to administrators only.
+    </p>
+
+    <div id="status" class="text-sm text-gray-300 mb-6">
+      Checking permissions…
+    </div>
+
+    <div id="adminPanel" class="hidden">
+      <div class="border-t border-gray-700 pt-6">
+        <h2 class="text-xl font-semibold mb-4">Admin Controls</h2>
+
+        <ul class="list-disc list-inside text-gray-300 space-y-2">
+          <li>View users</li>
+          <li>Manage subscriptions</li>
+          <li>Grant / revoke access</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "https://us-central1-simplififootball-1234.cloudfunctions.net/api";
+
+    const statusEl = document.getElementById("status");
+    const adminPanel = document.getElementById("adminPanel");
+
+    async function checkAdmin() {
+      const token = localStorage.getItem("authToken");
+
+      if (!token) {
+        window.location.href = "/auth.html";
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/auth/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+          throw new Error("Not authenticated");
+        }
+
+        // 🔒 THIS is the key line
+        if (!data.user.isAdmin) {
+          statusEl.textContent = "Access denied. Admins only.";
+          setTimeout(() => {
+            window.location.href = "/market.html";
+          }, 1500);
+          return;
+        }
+
+        // ✅ Admin confirmed
+        statusEl.textContent = "Admin access granted.";
+        adminPanel.classList.remove("hidden");
+
+      } catch (err) {
+        localStorage.clear();
+        window.location.href = "/auth.html";
+      }
+    }
+
+    checkAdmin();
+  </script>
+
+</body>
+</html>
