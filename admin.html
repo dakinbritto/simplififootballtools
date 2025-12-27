@@ -8,39 +8,219 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="min-h-screen bg-black text-white flex items-center justify-center">
+<body class="min-h-screen bg-black text-white">
 
-  <div class="w-full max-w-3xl p-8 rounded-xl border border-emerald-500/20 bg-gray-900">
-    <h1 class="text-3xl font-bold text-emerald-400 mb-4">
-      Simplifi Football – Admin
-    </h1>
+  <div class="min-h-screen flex items-center justify-center p-6">
+    <div class="w-full max-w-6xl p-8 rounded-xl border border-emerald-500/20 bg-gray-900">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h1 class="text-3xl font-bold text-emerald-400 mb-2">
+            Simplifi Football – Admin
+          </h1>
+          <p class="text-gray-400">
+            Admin control panel (users + subscriptions).
+          </p>
+        </div>
 
-    <p class="text-gray-400 mb-6">
-      This page is restricted to administrators only.
-    </p>
+        <button
+          id="logoutBtn"
+          class="hidden px-4 py-2 rounded-lg border border-gray-700 bg-black/30 hover:bg-black/50 text-sm"
+        >
+          Logout
+        </button>
+      </div>
 
-    <div id="status" class="text-sm text-gray-300 mb-6">
-      Checking permissions…
-    </div>
+      <div id="status" class="mt-6 text-sm text-gray-300">
+        Checking permissions…
+      </div>
 
-    <div id="adminPanel" class="hidden">
-      <div class="border-t border-gray-700 pt-6">
-        <h2 class="text-xl font-semibold mb-4">Admin Controls</h2>
+      <!-- ✅ CONTROL PANEL -->
+      <div id="adminPanel" class="hidden mt-6">
+        <div class="border-t border-gray-800 pt-6">
 
-        <ul class="list-disc list-inside text-gray-300 space-y-2">
-          <li>View users</li>
-          <li>Manage subscriptions</li>
-          <li>Grant / revoke access</li>
-        </ul>
+          <!-- Top controls -->
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h2 class="text-xl font-semibold">Users</h2>
+              <p class="text-sm text-gray-400">Search + view all registered users.</p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+              <input
+                id="searchInput"
+                type="text"
+                placeholder="Search email…"
+                class="w-full sm:w-80 rounded-lg bg-black/40 border border-gray-700 px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+              />
+              <button
+                id="refreshBtn"
+                class="px-4 py-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-sm"
+              >
+                Refresh
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading / errors -->
+          <div id="usersMeta" class="mt-4 text-sm text-gray-400"></div>
+          <div id="errorBox" class="hidden mt-4 text-sm rounded-lg border border-red-500/30 bg-red-500/10 text-red-300 p-3"></div>
+
+          <!-- Users table -->
+          <div class="mt-4 overflow-x-auto rounded-xl border border-gray-800">
+            <table class="w-full text-sm">
+              <thead class="bg-black/30 text-gray-300">
+                <tr>
+                  <th class="text-left px-4 py-3 font-medium">Email</th>
+                  <th class="text-left px-4 py-3 font-medium">Plan</th>
+                  <th class="text-left px-4 py-3 font-medium">Provider</th>
+                  <th class="text-left px-4 py-3 font-medium">Created</th>
+                  <th class="text-right px-4 py-3 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTbody" class="divide-y divide-gray-800">
+                <!-- rows injected -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mt-4 text-xs text-gray-500">
+            Actions are UI-only right now. Next step is wiring “Upgrade / Downgrade / Disable” to backend endpoints.
+          </div>
+
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    const API_BASE = "https://us-central1-simplififootball-1234.cloudfunctions.net/api";
+    // ✅ IMPORTANT:
+    // Your deployed Functions base (Cloud Run URL) is:
+    // https://api-7wyko6woyq-uc.a.run.app
+    // Your auth endpoints are working at:
+    // /auth/login, /auth/profile, /auth/admin-check, /auth/admin/users
+    const API_BASE = "https://api-7wyko6woyq-uc.a.run.app";
 
     const statusEl = document.getElementById("status");
     const adminPanel = document.getElementById("adminPanel");
+    const usersTbody = document.getElementById("usersTbody");
+    const usersMeta = document.getElementById("usersMeta");
+    const errorBox = document.getElementById("errorBox");
+    const searchInput = document.getElementById("searchInput");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    let ALL_USERS = [];
+
+    function fmtDate(value) {
+      if (!value) return "—";
+      // Firestore Timestamp might come as { _seconds } depending on serialization
+      if (typeof value === "object" && value._seconds) {
+        return new Date(value._seconds * 1000).toLocaleString();
+      }
+      // or ISO string / number
+      try {
+        return new Date(value).toLocaleString();
+      } catch {
+        return "—";
+      }
+    }
+
+    function showError(msg) {
+      errorBox.textContent = msg;
+      errorBox.classList.remove("hidden");
+    }
+    function clearError() {
+      errorBox.classList.add("hidden");
+      errorBox.textContent = "";
+    }
+
+    function renderUsers(list) {
+      usersTbody.innerHTML = "";
+
+      if (!list.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="px-4 py-6 text-gray-400" colspan="5">
+            No users found.
+          </td>
+        `;
+        usersTbody.appendChild(tr);
+        return;
+      }
+
+      for (const u of list) {
+        const email = u.email || "—";
+        const plan = u.subscriptionStatus || "free";
+        const provider = u.authProvider || "email";
+        const created = fmtDate(u.createdAt);
+
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-black/20";
+        tr.innerHTML = `
+          <td class="px-4 py-3 text-gray-100">${email}</td>
+          <td class="px-4 py-3">
+            <span class="inline-flex items-center px-2 py-1 rounded-md text-xs border border-emerald-500/30 bg-emerald-500/10 text-emerald-200">
+              ${plan}
+            </span>
+          </td>
+          <td class="px-4 py-3 text-gray-300">${provider}</td>
+          <td class="px-4 py-3 text-gray-400">${created}</td>
+          <td class="px-4 py-3 text-right">
+            <div class="inline-flex gap-2">
+              <button class="px-3 py-1.5 rounded-lg border border-gray-700 bg-black/30 hover:bg-black/50 text-xs"
+                data-action="upgrade" data-email="${email}">
+                Upgrade
+              </button>
+              <button class="px-3 py-1.5 rounded-lg border border-gray-700 bg-black/30 hover:bg-black/50 text-xs"
+                data-action="downgrade" data-email="${email}">
+                Downgrade
+              </button>
+              <button class="px-3 py-1.5 rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-xs text-red-200"
+                data-action="disable" data-email="${email}">
+                Disable
+              </button>
+            </div>
+          </td>
+        `;
+        usersTbody.appendChild(tr);
+      }
+    }
+
+    function applySearch() {
+      const q = (searchInput.value || "").trim().toLowerCase();
+      if (!q) {
+        usersMeta.textContent = `Showing ${ALL_USERS.length} users`;
+        renderUsers(ALL_USERS);
+        return;
+      }
+
+      const filtered = ALL_USERS.filter(u =>
+        String(u.email || "").toLowerCase().includes(q)
+      );
+
+      usersMeta.textContent = `Showing ${filtered.length} of ${ALL_USERS.length} users`;
+      renderUsers(filtered);
+    }
+
+    async function fetchUsers(token) {
+      clearError();
+      usersMeta.textContent = "Loading users…";
+      usersTbody.innerHTML = "";
+
+      const res = await fetch(`${API_BASE}/auth/admin/users`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        throw new Error(data.error || "Failed to load users");
+      }
+
+      ALL_USERS = Array.isArray(data.users) ? data.users : [];
+      usersMeta.textContent = `Showing ${ALL_USERS.length} users`;
+      renderUsers(ALL_USERS);
+    }
 
     async function checkAdmin() {
       const token = localStorage.getItem("authToken");
@@ -51,31 +231,64 @@
       }
 
       try {
+        // 1) Check admin permission
         const res = await fetch(`${API_BASE}/auth/admin-check`, {
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-});
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
 
-const data = await res.json();
+        if (!data.success || !data.isAdmin) {
+          statusEl.textContent = "Access denied. Admins only.";
+          setTimeout(() => {
+            window.location.href = "/market.html";
+          }, 1200);
+          return;
+        }
 
-if (!data.success || !data.isAdmin) {
-  statusEl.textContent = "Access denied. Admins only.";
-  setTimeout(() => {
-    window.location.href = "/market.html";
-  }, 1500);
-  return;
-}
-
-        // ✅ Admin confirmed
+        // ✅ Admin confirmed -> show control panel
         statusEl.textContent = "Admin access granted.";
         adminPanel.classList.remove("hidden");
+        logoutBtn.classList.remove("hidden");
+
+        // 2) Load users
+        await fetchUsers(token);
 
       } catch (err) {
         localStorage.clear();
         window.location.href = "/free.html";
       }
     }
+
+    // Wire up UI events
+    searchInput.addEventListener("input", applySearch);
+
+    refreshBtn.addEventListener("click", async () => {
+      const token = localStorage.getItem("authToken");
+      if (!token) return;
+      try {
+        await fetchUsers(token);
+        applySearch();
+      } catch (e) {
+        showError(e.message || "Failed to refresh users");
+        usersMeta.textContent = "";
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      localStorage.clear();
+      window.location.href = "/free.html";
+    });
+
+    // Actions are placeholders (UI only)
+    usersTbody.addEventListener("click", (e) => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+
+      const action = btn.getAttribute("data-action");
+      const email = btn.getAttribute("data-email");
+
+      alert(`UI only for now:\n${action.toUpperCase()} -> ${email}\n\nNext step: we create backend endpoints to actually change subscriptionStatus / disable users.`);
+    });
 
     checkAdmin();
   </script>
