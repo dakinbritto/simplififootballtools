@@ -489,11 +489,16 @@
           localStorage.setItem(LAST_ACTIVE_KEY, String(Date.now()));
 
           showMessage("Login successful! Redirecting...", "success");
-              
+
+          /* ✅ CHANGE #1: SMART REDIRECT AFTER LOGIN */
           setTimeout(() => {
-            window.location.href = 'https://simplififootballtools.vercel.app/market.html';
+            if (data.user && data.user.isAdmin) {
+              window.location.href = "https://simplififootballtools.vercel.app/admin.html";
+            } else {
+              window.location.href = "https://simplififootballtools.vercel.app/market.html";
+            }
           }, 1500);
-              
+
         } else {
           showMessage(data.error || 'Login failed. Please try again.');
         }
@@ -598,7 +603,14 @@
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            window.location.href = "https://simplififootballtools.vercel.app/market.html";
+
+            /* ✅ CHANGE #2: SMART REDIRECT ON PAGE LOAD */
+            if (data.user && data.user.isAdmin) {
+              window.location.href = "https://simplififootballtools.vercel.app/admin.html";
+            } else {
+              window.location.href = "https://simplififootballtools.vercel.app/market.html";
+            }
+
           } else {
             localStorage.removeItem("authToken");
             localStorage.removeItem("userEmail");
