@@ -51,26 +51,21 @@
       }
 
       try {
-        const res = await fetch(`${API_BASE}/auth/profile`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(`${API_BASE}/auth/admin-check`, {
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});
 
-        const data = await res.json();
+const data = await res.json();
 
-        if (!data.success) {
-          throw new Error("Not authenticated");
-        }
-
-        // 🔒 THIS is the key line
-        if (!data.user.isAdmin) {
-          statusEl.textContent = "Access denied. Admins only.";
-          setTimeout(() => {
-            window.location.href = "/market.html";
-          }, 1500);
-          return;
-        }
+if (!data.success || !data.isAdmin) {
+  statusEl.textContent = "Access denied. Admins only.";
+  setTimeout(() => {
+    window.location.href = "/market.html";
+  }, 1500);
+  return;
+}
 
         // ✅ Admin confirmed
         statusEl.textContent = "Admin access granted.";
