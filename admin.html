@@ -93,12 +93,11 @@
   </div>
 
   <script>
-    // ✅ IMPORTANT:
-    // Your deployed Functions base (Cloud Run URL) is:
-    // https://api-7wyko6woyq-uc.a.run.app
-    // Your auth endpoints are working at:
-    // /auth/login, /auth/profile, /auth/admin-check, /auth/admin/users
+    // ✅ Your deployed Functions base (Cloud Run URL):
     const API_BASE = "https://api-7wyko6woyq-uc.a.run.app";
+
+    // ✅ Use ABSOLUTE redirects (prevents weird host/path issues)
+    const FRONTEND_BASE = "https://simplififootballtools.vercel.app";
 
     const statusEl = document.getElementById("status");
     const adminPanel = document.getElementById("adminPanel");
@@ -117,7 +116,6 @@
       if (typeof value === "object" && value._seconds) {
         return new Date(value._seconds * 1000).toLocaleString();
       }
-      // or ISO string / number
       try {
         return new Date(value).toLocaleString();
       } catch {
@@ -211,10 +209,16 @@
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const data = await res.json();
+      // ✅ Handle non-JSON / non-200 responses safely
+      let data = null;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error(`Users endpoint returned non-JSON (HTTP ${res.status})`);
+      }
 
-      if (!data.success) {
-        throw new Error(data.error || "Failed to load users");
+      if (!res.ok || !data || !data.success) {
+        throw new Error((data && data.error) ? data.error : `Failed to load users (HTTP ${res.status})`);
       }
 
       ALL_USERS = Array.isArray(data.users) ? data.users : [];
@@ -226,21 +230,39 @@
       const token = localStorage.getItem("authToken");
 
       if (!token) {
-        window.location.href = "/free.html";
+        window.location.href = `${FRONTEND_BASE}/free.html`;
         return;
       }
+
+      clearError();
 
       try {
         // 1) Check admin permission
         const res = await fetch(`${API_BASE}/auth/admin-check`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const data = await res.json();
+
+        let data = null;
+        try {
+          data = await res.json();
+        } catch {
+          showError(`Admin check returned non-JSON (HTTP ${res.status}).`);
+          statusEl.textContent = "Admin check failed (bad response).";
+          console.error("admin-check non-json", res.status);
+          return; // ✅ DO NOT LOG OUT
+        }
+
+        if (!res.ok) {
+          showError(data.error || `Admin check failed (HTTP ${res.status}).`);
+          statusEl.textContent = "Admin check failed.";
+          console.error("admin-check failed", data);
+          return; // ✅ DO NOT LOG OUT
+        }
 
         if (!data.success || !data.isAdmin) {
           statusEl.textContent = "Access denied. Admins only.";
           setTimeout(() => {
-            window.location.href = "/market.html";
+            window.location.href = `${FRONTEND_BASE}/market.html`;
           }, 1200);
           return;
         }
@@ -250,12 +272,23 @@
         adminPanel.classList.remove("hidden");
         logoutBtn.classList.remove("hidden");
 
-        // 2) Load users
-        await fetchUsers(token);
+        // 2) Load users (IMPORTANT: failure here should NOT log you out)
+        try {
+          await fetchUsers(token);
+        } catch (e) {
+          showError(e.message || "Failed to load users");
+          usersMeta.textContent = "";
+          console.error("fetchUsers failed:", e);
+          // ✅ stay on page; don't log out
+        }
 
       } catch (err) {
-        localStorage.clear();
-        window.location.href = "/free.html";
+        // ✅ IMPORTANT: do NOT clear localStorage here.
+        // A temporary network/CORS issue should not log you out.
+        statusEl.textContent = "Admin check failed. Not logging you out.";
+        showError(err.message || "Admin check failed");
+        console.error(err);
+        return;
       }
     }
 
@@ -265,6 +298,7 @@
     refreshBtn.addEventListener("click", async () => {
       const token = localStorage.getItem("authToken");
       if (!token) return;
+
       try {
         await fetchUsers(token);
         applySearch();
@@ -276,7 +310,7 @@
 
     logoutBtn.addEventListener("click", () => {
       localStorage.clear();
-      window.location.href = "/free.html";
+      window.location.href = `${FRONTEND_BASE}/free.html`;
     });
 
     // Actions are placeholders (UI only)
@@ -287,7 +321,7 @@
       const action = btn.getAttribute("data-action");
       const email = btn.getAttribute("data-email");
 
-      alert(`UI only for now:\n${action.toUpperCase()} -> ${email}\n\nNext step: we create backend endpoints to actually change subscriptionStatus / disable users.`);
+      alert(`UI only for now:\n${action.toUpperCase()} -> ${email}\n\nNext step: backend endpoints to change subscriptionStatus / disable users.`);
     });
 
     checkAdmin();
