@@ -1,12 +1,23 @@
-<html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6CNT4R53SX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-6CNT4R53SX');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANALYZE THE FOOTBALL MARKETS BEFORE YOU INVEST - Simplifi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         body {
@@ -14,6 +25,43 @@
             margin: 0;
             padding: 0;
             overflow-x: hidden;
+            background-color: #000000;
+        }
+        
+        /* Neon glow button styles from home page */
+        .neon-subscribe {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: 2px solid #10b981;
+            box-shadow: 0 0 10px #10b981, 0 0 20px #10b981, 0 0 30px #10b981;
+            text-shadow: 0 0 5px #ffffff;
+            animation: neonGlow 2s ease-in-out infinite alternate;
+        }
+        
+        .neon-subscribe:hover {
+            box-shadow: 0 0 15px #10b981, 0 0 25px #10b981, 0 0 35px #10b981, 0 0 45px #10b981;
+            transform: scale(1.05);
+        }
+        
+        @keyframes neonGlow {
+            from {
+                box-shadow: 0 0 10px #10b981, 0 0 20px #10b981, 0 0 30px #10b981;
+            }
+            to {
+                box-shadow: 0 0 15px #10b981, 0 0 25px #10b981, 0 0 35px #10b981, 0 0 45px #10b981;
+            }
+        }
+
+        /* Solutions dropdown styles from home page */
+        .solutions-dropdown {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease-in-out;
+        }
+        .solutions-parent:hover .solutions-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
         }
         
         .hero-container {
@@ -170,6 +218,81 @@
     </style>
 </head>
 <body>
+    <!-- Navigation from Home Page -->
+    <nav class="container mx-auto px-4 sm:px-6 py-4 sm:py-6 relative z-50">
+        <div class="flex items-center justify-between">
+            <div>
+                <a href="/" class="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+                    <img src="https://i.postimg.cc/Qdyb2v4b/reallygreatsite-com-3-removebg-preview.png" alt="Simplifi Football Logo" class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg">
+                </a>
+            </div>
+            <div class="hidden md:flex items-center space-x-6 sm:space-x-8">
+                <div class="flex space-x-6 sm:space-x-8 text-xs sm:text-sm text-slate-300">
+                    <a href="https://www.simplififootball.com/investmentguide.html" class="hover:text-green-400 transition-colors">Guide</a>
+                    
+                    <!-- Solutions Dropdown -->
+                    <div class="relative solutions-parent">
+                        <button class="hover:text-green-400 transition-colors cursor-pointer flex items-center space-x-1">
+                            <span>Solutions</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="solutions-dropdown absolute top-full left-0 mt-2 w-56 bg-black/90 backdrop-blur-sm border border-green-400/20 rounded-lg shadow-lg z-50">
+                            <div class="py-2">
+                                <a href="https://www.simplififootball.com/waitlist.html" 
+                                   class="block px-4 py-2 text-slate-300 hover:text-green-400 hover:bg-green-400/10 transition-colors">
+                                    Our Gold Standard Edge
+                                </a>
+                                <a href="https://www.simplififootball.com/testyourbet.html" 
+                                   class="block px-4 py-2 text-slate-300 hover:text-green-400 hover:bg-green-400/10 transition-colors">
+                                    Test Your Bet
+                                </a>
+                                <a href="https://www.simplififootball.com/betjournal.html" 
+                                   class="block px-4 py-2 text-slate-300 hover:text-green-400 hover:bg-green-400/10 transition-colors">
+                                    betjournal
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="https://www.simplififootball.com/betbehavioursurvey.html" class="hover:text-green-400 transition-colors">Survey</a>
+                    <a href="https://www.simplififootball.com/gallery.html" class="hover:text-green-400 transition-colors">Gallery</a>
+                    <a href="https://www.simplififootball.com/about.html" class="hover:text-green-400 transition-colors">About Us</a>
+                </div>
+                <button id="subscribeBtn" class="neon-subscribe px-4 py-2 text-white font-semibold rounded-lg transition-all duration-300 text-sm">
+                    Subscribe
+                </button>
+            </div>
+            <button id="mobileMenuBtn" class="md:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500" aria-label="Open menu">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <line x1="4" y1="7" x2="20" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></line>
+                    <line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></line>
+                    <line x1="4" y1="17" x2="20" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></line>
+                </svg>
+            </button>
+        </div>
+        <div id="mobileNav" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center space-y-6 text-lg text-slate-200 font-light transition-all duration-200 opacity-0 pointer-events-none md:hidden">
+            <button id="closeMobileMenu" class="absolute top-6 right-6 p-2 hover:bg-zinc-800 rounded focus:outline-none" aria-label="Close menu">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12"></path>
+                </svg>
+            </button>
+            <a href="https://www.simplififootball.com/investmentguide.html" class="hover:text-green-400 transition-colors">Guide</a>
+            <a href="https://www.simplififootball.com/waitlist.html" class="hover:text-green-400 transition-colors">Our Gold Standard Edge</a>
+            <a href="https://www.simplififootball.com/testyourbet.html" class="hover:text-green-400 transition-colors">Test Your Bet</a>
+            <a href="https://www.simplififootball.com/betjournal.html" class="hover:text-green-400 transition-colors">betjournal</a>
+            <a href="https://www.simplififootball.com/betbehavioursurvey.html" class="hover:text-green-400 transition-colors">Survey</a>
+            <a href="https://www.simplififootball.com/gallery.html" class="hover:text-green-400 transition-colors">Gallery</a>
+            <a href="https://www.simplififootball.com/about.html" class="hover:text-green-400 transition-colors">About Us</a>
+            <button id="mobileSubscribeBtn" class="neon-subscribe px-6 py-3 text-white font-semibold rounded-lg transition-all duration-300">
+                Subscribe
+            </button>
+        </div>
+    </nav>
+
+    <div class="h-px bg-zinc-900"></div>
+
     <div class="hero-container">
         <!-- Animated Grid Background -->
         <div class="chart-grid-lines"></div>
@@ -206,31 +329,26 @@
         <!-- Trader Silhouette -->
         <div class="trader-silhouette"></div>
         
-        <!-- Logo at top middle -->
-        <div class="absolute top-8 left-1/2 transform -translate-x-1/2 z-30">
-            <img src="https://i.postimg.cc/1z8RL6S7/reallygreatsite-com-3-removebg-preview.png?w=800&q=80" alt="Simplifi Logo" class="h-16 md:h-20 w-auto">
-        </div>
-        
         <!-- Hero Content -->
         <div class="hero-content">
             <div class="mb-8">
                 <h1 class="text-4xl md:text-6xl lg:text-7xl font-light tracking-tight text-white mb-4 glow-text">
-                    OBSERVE
+                    ARE YOU READY TO BE PROFITABLE
                 </h1>
                 <h2 class="text-2xl md:text-4xl lg:text-5xl font-light tracking-tight bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-6">
-                    BEFORE YOU INVEST
+                    IN YOUR SPORTS BETTING
                 </h2>
             </div>
             
             <p class="text-lg md:text-xl text-gray-300 mb-12 font-light italic max-w-2xl mx-auto">
-                Smart betting starts with observing the market performance.
+                Subscribe to our FREE Market tool to find an EDGE. DISCIPLINE. STRATEGY. BUDGETING.
             </p>
             
             <!-- CTA Button -->
             <div class="flex justify-center items-center">
-                <button onclick="window.location.href='https://simplififootballtools.vercel.app/auth.html'" class="group neon-border bg-gradient-to-r from-cyan-500/20 to-purple-500/20 backdrop-blur-sm text-white px-10 py-4 rounded-xl font-semibold text-lg hover:from-cyan-500/30 hover:to-purple-500/30 transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/25">
+                <button onclick="window.location.href='https://simplififootballtools.vercel.app/free.html'" class="group bg-[#CC5500] text-white px-10 py-4 rounded-xl font-semibold text-lg hover:brightness-110 transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-orange-500/50">
                     <span class="flex items-center">
-                        Start Analysis
+                        SUBSCRIBE
                         <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                         </svg>
@@ -265,6 +383,202 @@
         </div>
     </div>
     
+    <!-- FEATURES SECTION WITH SEO HEADINGS -->
+    <section id="features" class="bg-gradient-to-b from-black to-zinc-900 py-16 md:py-24">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-white mb-4">
+                    Why Choose <span class="text-green-400">Simplifi</span> for Your Football Markets Analysis?
+                </h2>
+                <p class="text-lg text-slate-300 max-w-3xl mx-auto">
+                    Stop gambling. Start investing. Transform your sports betting approach with institutional-grade strategies used by professional investors.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Feature 1: Data-Driven Analysis -->
+                <div class="bg-zinc-800/50 rounded-2xl p-6 border border-zinc-700 hover:border-green-400/50 transition-all duration-300">
+                    <div class="mb-4">
+                        <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-3">Data-Driven Football Analytics</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Move beyond hunches. Our platform analyzes market movements, team performance patterns, and statistical edges to identify high-probability investment opportunities in football markets.
+                    </p>
+                </div>
+
+                <!-- Feature 2: Risk Management -->
+                <div class="bg-zinc-800/50 rounded-2xl p-6 border border-zinc-700 hover:border-green-400/50 transition-all duration-300">
+                    <div class="mb-4">
+                        <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-3">Professional Bankroll Management</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Protect your capital with proven risk management strategies. Use only 2-7% of your bankroll per position, just like institutional investors manage portfolios.
+                    </p>
+                </div>
+
+                <!-- Feature 3: Disciplined Approach -->
+                <div class="bg-zinc-800/50 rounded-2xl p-6 border border-zinc-700 hover:border-green-400/50 transition-all duration-300">
+                    <div class="mb-4">
+                        <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-3">Disciplined Investment Behavior</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Control betting frequency and eliminate emotional decisions. Our systematic approach helps you stick to your strategy even when markets get volatile.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOCIAL PROOF SECTION -->
+    <section class="bg-zinc-900 py-16">
+        <div class="container mx-auto px-4 sm:px-6 text-center">
+            <h2 class="text-2xl md:text-3xl font-light text-white mb-8">
+                Join Smart Football Investors
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                <div class="bg-zinc-800/50 rounded-xl p-6 border border-zinc-700">
+                    <div class="text-3xl font-bold text-green-400 mb-2">1000+</div>
+                    <div class="text-slate-300">Active Users</div>
+                </div>
+                <div class="bg-zinc-800/50 rounded-xl p-6 border border-zinc-700">
+                    <div class="text-3xl font-bold text-green-400 mb-2">10+ Years</div>
+                    <div class="text-slate-300">Analytics Experience</div>
+                </div>
+                <div class="bg-zinc-800/50 rounded-xl p-6 border border-zinc-700">
+                    <div class="text-3xl font-bold text-green-400 mb-2">25+ Leagues</div>
+                    <div class="text-slate-300">Market Coverage</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="bg-gradient-to-r from-green-600 to-green-700 py-16">
+        <div class="container mx-auto px-4 sm:px-6 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                Ready to Transform Your Football Betting?
+            </h2>
+            <p class="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
+                Download our comprehensive investment guide and start your journey from sports bettor to smart investor today.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button id="downloadGuideBtn" class="inline-flex items-center justify-center px-8 py-4 bg-white text-green-700 font-semibold rounded-lg hover:bg-gray-100 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+                    <span>Download Free Investment Guide</span>
+                    <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-4-4m4 4l4-4m-4-10v6"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-black py-10 border-t border-zinc-800">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="md:col-span-2">
+                    <h3 class="text-xl font-semibold text-white mb-4">Simplifi Football</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                        Professional football investment platform transforming sports betting into disciplined, data-driven investing. Master bankroll management and risk control strategies with 10+ years of analytics expertise.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/About.html" class="text-slate-400 hover:text-green-400 transition-colors">About Us</a></li>
+                        <li><a href="/investmentguide.html" class="text-slate-400 hover:text-green-400 transition-colors">Investment Guide</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-zinc-800 mt-8 pt-8 text-center">
+                <p class="text-xs text-slate-500">
+                    © <span id="year">2025</span> Simplifi Football. All rights reserved. | Transform sports betting into professional investment with 10+ years of data analytics expertise.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- VIEW GUIDE MODAL WITH FORMSPREE INTEGRATION -->
+    <div id="guideModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 transform scale-95 transition-all duration-300">
+            <div class="text-center">
+                <div class="mb-4">
+                    <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Access Your Investment Guide</h3>
+                    <p class="text-gray-600 mb-6">Enter your email to access our comprehensive football investment guide and start your disciplined investing journey.</p>
+                </div>
+                
+                <form id="guideForm" action="https://formspree.io/f/xdkobqyv" method="POST" class="space-y-4">
+                    <input type="email" name="email" placeholder="Enter your email address" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none" required>
+                    <div class="flex gap-3">
+                        <button type="submit" class="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors font-medium">
+                            Access Guide
+                        </button>
+                        <button type="button" id="closeModal" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+                
+                <p class="text-xs text-gray-500 mt-4">
+                    We respect your privacy. No spam, unsubscribe at any time.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- DOWNLOAD MODAL WITH FORMSPREE INTEGRATION -->
+    <div id="downloadModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 transform scale-95 transition-all duration-300">
+            <div class="text-center">
+                <div class="mb-4">
+                    <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-4-4m4 4l4-4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Download Investment Guide</h3>
+                    <p class="text-gray-600 mb-6">Get instant access to our comprehensive football investment strategy guide delivered straight to your device.</p>
+                </div>
+                
+                <form id="downloadForm" action="https://formspree.io/f/xdkobqyv" method="POST" class="space-y-4">
+                    <input type="email" name="email" placeholder="Enter your email address" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none" required>
+                    <div class="flex gap-3">
+                        <button type="submit" class="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors font-medium">
+                            Download Guide
+                        </button>
+                        <button type="button" id="closeDownloadModal" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+                
+                <p class="text-xs text-gray-500 mt-4">
+                    We respect your privacy. No spam, unsubscribe at any time.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Generate floating particles
         function createParticles() {
@@ -387,6 +701,224 @@
                 }, 200);
             }
         }
+
+        // Navigation functionality from home page
+        function initNavigation() {
+            // Mobile menu functionality
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileNav = document.getElementById('mobileNav');
+            const closeMobileMenu = document.getElementById('closeMobileMenu');
+
+            if (mobileMenuBtn && mobileNav && closeMobileMenu) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileNav.classList.remove('opacity-0', 'pointer-events-none');
+                    mobileNav.classList.add('opacity-100');
+                });
+
+                closeMobileMenu.addEventListener('click', () => {
+                    mobileNav.classList.add('opacity-0', 'pointer-events-none');
+                    mobileNav.classList.remove('opacity-100');
+                });
+            }
+
+            // Subscribe Button functionality - redirect to onboarding page
+            const subscribeBtn = document.getElementById('subscribeBtn');
+            const mobileSubscribeBtn = document.getElementById('mobileSubscribeBtn');
+
+            function redirectToOnboarding() {
+                window.location.href = 'https://www.simplififootball.com/new.html';
+            }
+
+            if (subscribeBtn) {
+                subscribeBtn.addEventListener('click', redirectToOnboarding);
+            }
+            if (mobileSubscribeBtn) {
+                mobileSubscribeBtn.addEventListener('click', () => {
+                    // Close mobile menu first
+                    if (mobileNav) {
+                        mobileNav.classList.add('opacity-0', 'pointer-events-none');
+                        mobileNav.classList.remove('opacity-100');
+                    }
+                    // Then redirect to onboarding
+                    redirectToOnboarding();
+                });
+            }
+        }
+
+        // Modal functionality
+        function initModals() {
+            // View Guide Modal functionality
+            const guideModal = document.getElementById('guideModal');
+            const viewGuideBtn = document.getElementById('howItWorksNav');
+            const viewGuideMobileBtn = document.getElementById('howItWorksMobileNav');
+            const viewGuideDesktopNav = document.getElementById('howItWorksNavDesktop');
+            const closeModalBtn = document.getElementById('closeModal');
+            const guideForm = document.getElementById('guideForm');
+
+            // Download Modal functionality
+            const downloadModal = document.getElementById('downloadModal');
+            const downloadGuideBtn = document.getElementById('downloadGuideBtn');
+            const closeDownloadModalBtn = document.getElementById('closeDownloadModal');
+            const downloadForm = document.getElementById('downloadForm');
+
+            // Function to open guide modal
+            function openGuideModal() {
+                guideModal.classList.remove('opacity-0', 'pointer-events-none');
+                guideModal.classList.add('opacity-100');
+                guideModal.querySelector('.bg-white').classList.remove('scale-95');
+                guideModal.querySelector('.bg-white').classList.add('scale-100');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Function to close guide modal
+            function closeGuideModal() {
+                guideModal.classList.add('opacity-0', 'pointer-events-none');
+                guideModal.classList.remove('opacity-100');
+                guideModal.querySelector('.bg-white').classList.add('scale-95');
+                guideModal.querySelector('.bg-white').classList.remove('scale-100');
+                document.body.style.overflow = 'auto';
+            }
+
+            // Function to open download modal
+            function openDownloadModal() {
+                downloadModal.classList.remove('opacity-0', 'pointer-events-none');
+                downloadModal.classList.add('opacity-100');
+                downloadModal.querySelector('.bg-white').classList.remove('scale-95');
+                downloadModal.querySelector('.bg-white').classList.add('scale-100');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Function to close download modal
+            function closeDownloadModal() {
+                downloadModal.classList.add('opacity-0', 'pointer-events-none');
+                downloadModal.classList.remove('opacity-100');
+                downloadModal.querySelector('.bg-white').classList.add('scale-95');
+                downloadModal.querySelector('.bg-white').classList.remove('scale-100');
+                document.body.style.overflow = 'auto';
+            }
+
+            // Event listeners for opening guide modal
+            if (viewGuideBtn) {
+                viewGuideBtn.addEventListener('click', openGuideModal);
+            }
+            if (viewGuideMobileBtn) {
+                viewGuideMobileBtn.addEventListener('click', () => {
+                    openGuideModal();
+                    // Close mobile nav
+                    if (mobileNav) {
+                        mobileNav.classList.add('opacity-0', 'pointer-events-none');
+                        mobileNav.classList.remove('opacity-100');
+                    }
+                });
+            }
+            if (viewGuideDesktopNav) {
+                viewGuideDesktopNav.addEventListener('click', openGuideModal);
+            }
+
+            // Event listeners for opening download modal
+            if (downloadGuideBtn) {
+                downloadGuideBtn.addEventListener('click', openDownloadModal);
+            }
+
+            // Event listeners for closing modals
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener('click', closeGuideModal);
+            }
+            if (closeDownloadModalBtn) {
+                closeDownloadModalBtn.addEventListener('click', closeDownloadModal);
+            }
+
+            // Close modals when clicking outside
+            if (guideModal) {
+                guideModal.addEventListener('click', (e) => {
+                    if (e.target === guideModal) {
+                        closeGuideModal();
+                    }
+                });
+            }
+
+            if (downloadModal) {
+                downloadModal.addEventListener('click', (e) => {
+                    if (e.target === downloadModal) {
+                        closeDownloadModal();
+                    }
+                });
+            }
+
+            // Close modals with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (guideModal && !guideModal.classList.contains('opacity-0')) {
+                        closeGuideModal();
+                    }
+                    if (downloadModal && !downloadModal.classList.contains('opacity-0')) {
+                        closeDownloadModal();
+                    }
+                }
+            });
+
+            // Handle View Guide form submission with Formspree
+            if (guideForm) {
+                guideForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(guideForm);
+                    
+                    fetch(guideForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: { 'Accept': 'application/json' }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            // Direct redirect to guide page, no success message
+                            closeGuideModal();
+                            window.location.href = 'investmentguide.html';
+                        } else {
+                            alert('There was a problem submitting your form. Please try again.');
+                        }
+                    })
+                    .catch(() => {
+                        alert('There was a problem submitting your form. Please try again.');
+                    });
+                });
+            }
+
+            // Handle Download form submission with Formspree
+            if (downloadForm) {
+                downloadForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(downloadForm);
+                    
+                    fetch(downloadForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: { 'Accept': 'application/json' }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            // Direct download, no success message
+                            const link = document.createElement('a');
+                            link.href = 'Football_Investment_Guide.pdf';
+                            link.download = 'Simplifi_Football_Guide.pdf';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            
+                            // Close modal and reset form
+                            closeDownloadModal();
+                            downloadForm.reset();
+                        } else {
+                            alert('There was a problem submitting your form. Please try again.');
+                        }
+                    })
+                    .catch(() => {
+                        alert('There was a problem submitting your form. Please try again.');
+                    });
+                });
+            }
+        }
         
         // Initialize everything
         document.addEventListener('DOMContentLoaded', function() {
@@ -394,7 +926,30 @@
             initScottishChart();
             updateTimestamp();
             addGlitchEffect();
+            initNavigation();
+            initModals();
+            
             setInterval(updateTimestamp, 1000);
+
+            // Set current year
+            const yearElement = document.getElementById('year');
+            if (yearElement) {
+                yearElement.textContent = new Date().getFullYear();
+            }
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
         });
         
         // Smooth scroll for any future sections
@@ -410,389 +965,5 @@
         });
     </script>
 
-    
-  <!-- FEATURES SECTION WITH SEO HEADINGS -->
-  <section id="features" class="bg-gradient-to-b from-black to-zinc-900 py-16 md:py-24">
-    <div class="container mx-auto px-4 sm:px-6">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-white mb-4">
-          Why Choose <span class="text-green-400">Simplifi</span> for Your Football Markets Analysis?
-        </h2>
-        <p class="text-lg text-slate-300 max-w-3xl mx-auto">
-          Stop gambling. Start investing. Transform your sports betting approach with institutional-grade strategies used by professional investors.
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-        <!-- Feature 1: Data-Driven Analysis -->
-        <div class="bg-zinc-800/50 rounded-2xl p-6 border border-zinc-700 hover:border-green-400/50 transition-all duration-300">
-          <div class="mb-4">
-            <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-              <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-              </svg>
-            </div>
-          </div>
-          <h3 class="text-xl font-semibold text-white mb-3">Data-Driven Football Analytics</h3>
-          <p class="text-slate-300 text-sm leading-relaxed">
-            Move beyond hunches. Our platform analyzes market movements, team performance patterns, and statistical edges to identify high-probability investment opportunities in football markets.
-          </p>
-        </div>
-
-        <!-- Feature 2: Risk Management -->
-        <div class="bg-zinc-800/50 rounded-2xl p-6 border border-zinc-700 hover:border-green-400/50 transition-all duration-300">
-          <div class="mb-4">
-            <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-              <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-              </svg>
-            </div>
-          </div>
-          <h3 class="text-xl font-semibold text-white mb-3">Professional Bankroll Management</h3>
-          <p class="text-slate-300 text-sm leading-relaxed">
-            Protect your capital with proven risk management strategies. Use only 2-7% of your bankroll per position, just like institutional investors manage portfolios.
-          </p>
-        </div>
-
-        <!-- Feature 3: Disciplined Approach -->
-        <div class="bg-zinc-800/50 rounded-2xl p-6 border border-zinc-700 hover:border-green-400/50 transition-all duration-300">
-          <div class="mb-4">
-            <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-              <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-              </svg>
-            </div>
-          </div>
-          <h3 class="text-xl font-semibold text-white mb-3">Disciplined Investment Behavior</h3>
-          <p class="text-slate-300 text-sm leading-relaxed">
-            Control betting frequency and eliminate emotional decisions. Our systematic approach helps you stick to your strategy even when markets get volatile.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SOCIAL PROOF SECTION -->
-  <section class="bg-zinc-900 py-16">
-    <div class="container mx-auto px-4 sm:px-6 text-center">
-      <h2 class="text-2xl md:text-3xl font-light text-white mb-8">
-        Join Smart Football Investors
-      </h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-        <div class="bg-zinc-800/50 rounded-xl p-6 border border-zinc-700">
-          <div class="text-3xl font-bold text-green-400 mb-2">1000+</div>
-          <div class="text-slate-300">Active Users</div>
-        </div>
-        <div class="bg-zinc-800/50 rounded-xl p-6 border border-zinc-700">
-          <div class="text-3xl font-bold text-green-400 mb-2">10+ Years</div>
-          <div class="text-slate-300">Analytics Experience</div>
-        </div>
-        <div class="bg-zinc-800/50 rounded-xl p-6 border border-zinc-700">
-          <div class="text-3xl font-bold text-green-400 mb-2">25+ Leagues</div>
-          <div class="text-slate-300">Market Coverage</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA SECTION (REMOVED "Learn About Our Approach" Button) -->
-  <section class="bg-gradient-to-r from-green-600 to-green-700 py-16">
-    <div class="container mx-auto px-4 sm:px-6 text-center">
-      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-        Ready to Transform Your Football Betting?
-      </h2>
-      <p class="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
-        Download our comprehensive investment guide and start your journey from sports bettor to smart investor today.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <button id="downloadGuideBtn" class="inline-flex items-center justify-center px-8 py-4 bg-white text-green-700 font-semibold rounded-lg hover:bg-gray-100 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
-          <span>Download Free Investment Guide</span>
-          <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-4-4m4 4l4-4m-4-10v6"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- FOOTER (REMOVED Bankroll Calculator, ROI Tracker, Contact, Privacy Policy) -->
-  <footer class="bg-black py-10 border-t border-zinc-800">
-    <div class="container mx-auto px-4 sm:px-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="md:col-span-2">
-          <h3 class="text-xl font-semibold text-white mb-4">Simplifi Football</h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-4">
-            Professional football investment platform transforming sports betting into disciplined, data-driven investing. Master bankroll management and risk control strategies with 10+ years of analytics expertise.
-          </p>
-        </div>
-        <div>
-          <h4 class="text-white font-semibold mb-4">Company</h4>
-          <ul class="space-y-2 text-sm">
-            <li><a href="/About.html" class="text-slate-400 hover:text-green-400 transition-colors">About Us</a></li>
-            <li><a href="/investmentguide.html" class="text-slate-400 hover:text-green-400 transition-colors">Investment Guide</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="border-t border-zinc-800 mt-8 pt-8 text-center">
-        <p class="text-xs text-slate-500">
-          © <span id="year">2025</span> Simplifi Football. All rights reserved. | Transform sports betting into professional investment with 10+ years of data analytics expertise.
-        </p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- VIEW GUIDE MODAL WITH FORMSPREE INTEGRATION -->
-  <div id="guideModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 transform scale-95 transition-all duration-300">
-      <div class="text-center">
-        <div class="mb-4">
-          <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
-            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-            </svg>
-          </div>
-          <h3 class="text-2xl font-bold text-gray-900 mb-2">Access Your Investment Guide</h3>
-          <p class="text-gray-600 mb-6">Enter your email to access our comprehensive football investment guide and start your disciplined investing journey.</p>
-        </div>
-        
-        <form id="guideForm" action="https://formspree.io/f/xdkobqyv" method="POST" class="space-y-4">
-          <input type="email" name="email" placeholder="Enter your email address" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none" required="">
-          <div class="flex gap-3">
-            <button type="submit" class="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors font-medium">
-              Access Guide
-            </button>
-            <button type="button" id="closeModal" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-              Cancel
-            </button>
-          </div>
-        </form>
-        
-        <p class="text-xs text-gray-500 mt-4">
-          We respect your privacy. No spam, unsubscribe at any time.
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <!-- DOWNLOAD MODAL WITH FORMSPREE INTEGRATION -->
-  <div id="downloadModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 transform scale-95 transition-all duration-300">
-      <div class="text-center">
-        <div class="mb-4">
-          <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
-            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-4-4m4 4l4-4"></path>
-            </svg>
-          </div>
-          <h3 class="text-2xl font-bold text-gray-900 mb-2">Download Investment Guide</h3>
-          <p class="text-gray-600 mb-6">Get instant access to our comprehensive football investment strategy guide delivered straight to your device.</p>
-        </div>
-        
-        <form id="downloadForm" action="https://formspree.io/f/xdkobqyv" method="POST" class="space-y-4">
-          <input type="email" name="email" placeholder="Enter your email address" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none" required="">
-          <div class="flex gap-3">
-            <button type="submit" class="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors font-medium">
-              Download Guide
-            </button>
-            <button type="button" id="closeDownloadModal" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-              Cancel
-            </button>
-          </div>
-        </form>
-        
-        <p class="text-xs text-gray-500 mt-4">
-          We respect your privacy. No spam, unsubscribe at any time.
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Mobile menu functionality
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const mobileNav = document.getElementById('mobileNav');
-    const closeMobileMenu = document.getElementById('closeMobileMenu');
-
-    mobileMenuBtn.addEventListener('click', () => {
-      mobileNav.classList.remove('opacity-0', 'pointer-events-none');
-      mobileNav.classList.add('opacity-100');
-    });
-
-    closeMobileMenu.addEventListener('click', () => {
-      mobileNav.classList.add('opacity-0', 'pointer-events-none');
-      mobileNav.classList.remove('opacity-100');
-    });
-
-    // View Guide Modal functionality
-    const guideModal = document.getElementById('guideModal');
-    const viewGuideBtn = document.getElementById('howItWorksNav');
-    const viewGuideMobileBtn = document.getElementById('howItWorksMobileNav');
-    const viewGuideDesktopNav = document.getElementById('howItWorksNavDesktop');
-    const closeModalBtn = document.getElementById('closeModal');
-    const guideForm = document.getElementById('guideForm');
-
-    // Download Modal functionality
-    const downloadModal = document.getElementById('downloadModal');
-    const downloadGuideBtn = document.getElementById('downloadGuideBtn');
-    const closeDownloadModalBtn = document.getElementById('closeDownloadModal');
-    const downloadForm = document.getElementById('downloadForm');
-
-    // Function to open guide modal
-    function openGuideModal() {
-      guideModal.classList.remove('opacity-0', 'pointer-events-none');
-      guideModal.classList.add('opacity-100');
-      guideModal.querySelector('.bg-white').classList.remove('scale-95');
-      guideModal.querySelector('.bg-white').classList.add('scale-100');
-      document.body.style.overflow = 'hidden';
-    }
-
-    // Function to close guide modal
-    function closeGuideModal() {
-      guideModal.classList.add('opacity-0', 'pointer-events-none');
-      guideModal.classList.remove('opacity-100');
-      guideModal.querySelector('.bg-white').classList.add('scale-95');
-      guideModal.querySelector('.bg-white').classList.remove('scale-100');
-      document.body.style.overflow = 'auto';
-    }
-
-    // Function to open download modal
-    function openDownloadModal() {
-      downloadModal.classList.remove('opacity-0', 'pointer-events-none');
-      downloadModal.classList.add('opacity-100');
-      downloadModal.querySelector('.bg-white').classList.remove('scale-95');
-      downloadModal.querySelector('.bg-white').classList.add('scale-100');
-      document.body.style.overflow = 'hidden';
-    }
-
-    // Function to close download modal
-    function closeDownloadModal() {
-      downloadModal.classList.add('opacity-0', 'pointer-events-none');
-      downloadModal.classList.remove('opacity-100');
-      downloadModal.querySelector('.bg-white').classList.add('scale-95');
-      downloadModal.querySelector('.bg-white').classList.remove('scale-100');
-      document.body.style.overflow = 'auto';
-    }
-
-    // Event listeners for opening guide modal
-    viewGuideBtn.addEventListener('click', openGuideModal);
-    if (viewGuideMobileBtn) {
-      viewGuideMobileBtn.addEventListener('click', () => {
-        openGuideModal();
-        // Close mobile nav
-        mobileNav.classList.add('opacity-0', 'pointer-events-none');
-        mobileNav.classList.remove('opacity-100');
-      });
-    }
-    if (viewGuideDesktopNav) {
-      viewGuideDesktopNav.addEventListener('click', openGuideModal);
-    }
-
-    // Event listeners for opening download modal
-    downloadGuideBtn.addEventListener('click', openDownloadModal);
-
-    // Event listeners for closing modals
-    closeModalBtn.addEventListener('click', closeGuideModal);
-    closeDownloadModalBtn.addEventListener('click', closeDownloadModal);
-
-    // Close modals when clicking outside
-    guideModal.addEventListener('click', (e) => {
-      if (e.target === guideModal) {
-        closeGuideModal();
-      }
-    });
-
-    downloadModal.addEventListener('click', (e) => {
-      if (e.target === downloadModal) {
-        closeDownloadModal();
-      }
-    });
-
-    // Close modals with Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        if (!guideModal.classList.contains('opacity-0')) {
-          closeGuideModal();
-        }
-        if (!downloadModal.classList.contains('opacity-0')) {
-          closeDownloadModal();
-        }
-      }
-    });
-
-    // Handle View Guide form submission with Formspree
-    guideForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      const formData = new FormData(guideForm);
-      
-      fetch(guideForm.action, {
-        method: 'POST',
-        body: formData,
-        headers: { 'Accept': 'application/json' }
-      })
-      .then(response => {
-        if (response.ok) {
-          // Direct redirect to guide page, no success message
-          closeGuideModal();
-          window.location.href = 'investmentguide.html';
-        } else {
-          alert('There was a problem submitting your form. Please try again.');
-        }
-      })
-      .catch(() => {
-        alert('There was a problem submitting your form. Please try again.');
-      });
-    });
-
-    // Handle Download form submission with Formspree
-    downloadForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      const formData = new FormData(downloadForm);
-      
-      fetch(downloadForm.action, {
-        method: 'POST',
-        body: formData,
-        headers: { 'Accept': 'application/json' }
-      })
-      .then(response => {
-        if (response.ok) {
-          // Direct download, no success message
-          const link = document.createElement('a');
-          link.href = 'Football_Investment_Guide.pdf';
-          link.download = 'Simplifi_Football_Guide.pdf';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          
-          // Close modal and reset form
-          closeDownloadModal();
-          downloadForm.reset();
-        } else {
-          alert('There was a problem submitting your form. Please try again.');
-        }
-      })
-      .catch(() => {
-        alert('There was a problem submitting your form. Please try again.');
-      });
-    });
-
-    // Set current year
-    document.getElementById('year').textContent = new Date().getFullYear();
-
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      });
-    });
-  </script>
-
-</body></html>
+</body>
+</html>
