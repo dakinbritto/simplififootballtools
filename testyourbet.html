@@ -20,7 +20,7 @@
           <i data-lucide="loader-2" class="w-5 h-5 mr-1 animate-spin"></i>
           <i data-lucide="football" class="w-5 h-5 absolute -right-6 top-0 opacity-60"></i>
         </span>
-        <span>Loading team data securely...</span>
+        <span>Loading team data...</span>
       </div>
       <div class="text-sm text-zinc-500">Calculating team popularity metrics...</div>
     </div>
@@ -34,6 +34,9 @@
         <span>Error loading data</span>
       </div>
       <div class="text-sm text-zinc-400 mb-2">Please check your connection and try again.</div>
+      <button onclick="loadData()" class="mt-3 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm rounded-md transition-colors">
+        Retry
+      </button>
     </div>
   </div>
 
@@ -59,7 +62,7 @@
                 </span>
                 <i data-lucide="chevron-down" class="w-4 h-4"></i>
               </button>
-              <div id="marketMenu" class="hidden absolute left-0 mt-2 w-64 bg-[#0f141b] rounded-lg shadow-xl ring-1 ring-zinc-800 z-10 border border-zinc-800/80">
+              <div id="marketMenu" class="hidden fixed w-64 bg-[#0f141b] rounded-lg shadow-xl ring-1 ring-zinc-800 border border-zinc-800/80" style="z-index: 999999;">
                 <div class="max-h-64 overflow-y-auto py-1">
                   <ul id="marketList" class="py-1 text-xs">
                     <li>
@@ -157,237 +160,132 @@
                 <div id="statROI" class="font-mono text-lg">0%</div>
               </div>
               <div class="p-3 rounded-lg bg-[#111821] border border-zinc-800">
-                <div class="text-zinc-400 text-[11px] uppercase tracking-wide mb-1">Final Capital</div>
-                <div id="statFinalCapital" class="font-mono text-lg">£0</div>
+                <div class="text-zinc-400 text-[11px] uppercase tracking-wide mb-1">P&L</div>
+                <div id="statPL" class="font-mono text-lg">£0</div>
               </div>
             </div>
 
-            <div class="h-0.5 bg-zinc-800/60 rounded mb-5"></div>
-
-            <!-- Chart -->
-            <div class="relative">
-              <div class="h-80 relative rounded-lg border border-zinc-800 bg-[#0b1016]">
-                <div class="absolute inset-0 rounded-lg pointer-events-none" style="background-image: radial-gradient(circle at 20% 20%, rgba(234,179,8,0.06), transparent 40%), radial-gradient(circle at 80% 0%, rgba(99,102,241,0.06), transparent 40%);"></div>
-                <canvas id="capitalChart" class="w-full h-full"></canvas>
+            <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-zinc-800">
+              <div class="text-xs text-zinc-500">
+                <span id="selectedCount">0 teams</span> selected • Capital: £1,000 • Stakes: 5%
+              </div>
+              <div class="flex gap-2">
+                <button id="generateBetslips" disabled class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-zinc-700 disabled:text-zinc-500 text-white text-sm rounded-md transition-colors flex items-center gap-2">
+                  <i data-lucide="calendar-plus" class="w-4 h-4"></i>
+                  Generate Betslips
+                </button>
               </div>
             </div>
           </div>
 
           <!-- Selected Teams Info -->
-          <div id="selectedTeamsInfo" class="bg-[#0f141b] border border-zinc-900/60 p-4 rounded-lg">
-            <div class="flex items-center gap-2 mb-2">
-              <i data-lucide="list-checks" class="w-4 h-4 text-yellow-500"></i>
-              <h3 class="font-semibold text-yellow-400">Selected Teams Analysis</h3>
-            </div>
-            <div id="selectedTeamsList" class="text-sm text-zinc-300"></div>
+          <div class="bg-[#0f141b] rounded-xl p-5 border border-zinc-900/50">
+            <h3 class="text-sm font-semibold text-zinc-300 mb-3">Selected Teams Performance</h3>
+            <div id="selectedTeamsList" class="text-xs text-zinc-400">Select teams to see their performance data</div>
           </div>
 
+          <!-- Chart -->
+          <div class="bg-[#0f141b] rounded-xl p-5 border border-zinc-900/50">
+            <h3 class="text-sm font-semibold text-zinc-300 mb-4">Capital Movement</h3>
+            <div class="h-64 md:h-80">
+              <canvas id="capitalChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="fixed bottom-4 left-4 right-4 md:static md:mt-8 z-20">
+          <div class="bg-[#0f141b] rounded-xl p-4 border border-zinc-900/50 backdrop-blur-sm">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+              <div class="text-sm text-zinc-400">
+                <span id="selectedCount2">0 teams</span> selected for backtesting
+              </div>
+              <div class="flex gap-2">
+                <button id="runBacktest" disabled class="flex-1 sm:flex-none px-6 py-3 bg-yellow-600 hover:bg-yellow-700 disabled:bg-zinc-700 disabled:text-zinc-500 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
+                  <i data-lucide="play" class="w-4 h-4"></i>
+                  Run Backtest
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
       </section>
     </main>
- <!-- How it works - Dark Panel -->
-      <div class="bg-gradient-to-br from-[#161c23] via-[#0f1617] to-[#004e2b] border border-zinc-900/40 rounded-2xl p-5 shadow-innerBorder mb-8 animate-[fadeIn_0.8s_ease-in-out_1.2s_forwards] opacity-0">
-        <div class="flex items-center gap-2 mb-4">
-          <i data-lucide="info" class="w-5 h-5 text-blue-400"></i>
-          <h3 class="text-lg font-semibold text-zinc-200">How it works</h3>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <p class="text-sm leading-relaxed text-zinc-400">
-            Select your favorite teams from the leagues above. These teams will be analyzed against the chosen market strategy.
-            We'll show you historical performance data to help you identify profitable patterns and optimize your betting strategy.
-          </p>
-          <p class="text-sm leading-relaxed text-zinc-400">
-            After selecting your teams, click the "Next" button to proceed to the main backtesting tool where you can see detailed statistics,
-            performance metrics, and recommendations based on your selections.
-          </p>
-        </div>
-      </div>
 
-    <!-- Selected Teams + Run Button Row -->
-    <div class="max-w-7xl mx-auto px-4 mt-2 mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-      <div>
-        <label class="block text-xs font-medium text-zinc-400 mb-1">Selected Teams</label>
-        <div class="flex items-center gap-2 bg-[#111821] border border-zinc-800 rounded-md px-3 py-2">
-          <i data-lucide="users" class="w-4 h-4 text-yellow-500"></i>
-          <div id="selectedCount" class="text-sm font-medium text-yellow-400">0 teams</div>
-        </div>
-      </div>
-      <div class="sm:justify-self-end">
-        <button id="runBacktest" class="inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold rounded-md text-zinc-900 bg-yellow-600 hover:bg-yellow-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-yellow-600">
-          <i data-lucide="play" class="w-4 h-4"></i>
-          Run Backtest
+    <!-- Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#0b0f14] border-t border-zinc-800/80 md:hidden">
+      <div class="flex items-center justify-around py-2">
+        <button data-nav="markets" class="flex flex-col items-center gap-1 p-2 text-zinc-500 hover:text-yellow-500 transition-colors">
+          <i data-lucide="trending-up" class="w-5 h-5"></i>
+          <span class="text-xs">Markets</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 p-2 text-yellow-500">
+          <i data-lucide="line-chart" class="w-5 h-5"></i>
+          <span class="text-xs">Backtest</span>
+        </button>
+        <button data-nav="journal" class="flex flex-col items-center gap-1 p-2 text-zinc-500 hover:text-yellow-500 transition-colors">
+          <i data-lucide="book-open" class="w-5 h-5"></i>
+          <span class="text-xs">Journal</span>
         </button>
       </div>
-    </div>
-
-    <footer class="bg-gradient-to-br from-[#0f141b] via-[#0d1319] to-[#0a2a1b] border-t border-zinc-900/60 py-4 animate-[fadeIn_1s_ease-in-out_1.6s_forwards] opacity-0">
-      <div class="max-w-7xl mx-auto px-4 text-center text-xs text-zinc-500">
-        <p>Select your teams above to begin analyzing market performance and optimize your strategy</p>
-      </div>
-    </footer>
+    </nav>
   </div>
 
-  <!-- Bottom Navigation -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-[#0f141b] border-t border-zinc-800 z-50">
-    <div class="max-w-md mx-auto">
-      <div class="flex">
-        <!-- Markets -->
-        <button class="flex-1 flex flex-col items-center justify-center py-3 px-2 text-zinc-400 hover:text-zinc-200 transition-colors" data-nav="markets">
-          <i data-lucide="trending-up" class="w-5 h-5 mb-1"></i>
-          <span class="text-xs font-medium">Markets</span>
-        </button>
-        
-        <!-- Backtesting (Active) -->
-        <button class="flex-1 flex flex-col items-center justify-center py-3 px-2 text-yellow-500 transition-colors">
-          <i data-lucide="line-chart" class="w-5 h-5 mb-1"></i>
-          <span class="text-xs font-medium">Backtesting</span>
-          <div class="w-1 h-1 bg-yellow-500 rounded-full mt-1"></div>
-        </button>
-        
-        <!-- Journal -->
-        <button class="flex-1 flex flex-col items-center justify-center py-3 px-2 text-zinc-400 hover:text-zinc-200 transition-colors" data-nav="journal">
-          <i data-lucide="book-open" class="w-5 h-5 mb-1"></i>
-          <span class="text-xs font-medium">Journal</span>
-        </button>
-      </div>
-    </div>
-  </nav>
-
   <style>
+    .team-card {
+      transition: all 0.2s ease;
+    }
+    .team-card.selected {
+      background-color: rgba(234, 179, 8, 0.1);
+      border-color: rgba(234, 179, 8, 0.3);
+    }
+    .team-card:hover {
+      background-color: rgba(63, 63, 70, 0.3);
+    }
+
     @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
-    @keyframes slideInLeft {
-      0% { opacity: 0; transform: translateX(-20px); }
-      100% { opacity: 1; transform: translateX(0); }
-    }
+
     @keyframes slideInUp {
-      0% { opacity: 0; transform: translateY(20px); }
-      100% { opacity: 1; transform: translateY(0); }
+      from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
     }
-    .shadow-innerBorder { box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
-
-    /* Horizontal scroll styling */
-    #leaguesContainer { scrollbar-width: thin; scrollbar-color: #374151 #1f2937; }
-    #leaguesContainer::-webkit-scrollbar { height: 6px; }
-    #leaguesContainer::-webkit-scrollbar-track { background: #1f2937; border-radius: 3px; }
-    #leaguesContainer::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
-    #leaguesContainer::-webkit-scrollbar-thumb:hover { background: #4b5563; }
-
-    /* Team card styling */
-    .team-card { transition: all 0.2s ease; }
-    .team-card:hover { transform: translateY(-1px); border-color: #eab308; background: rgba(234,179,8,0.02); }
-    .team-card.selected { background: linear-gradient(135deg, rgba(234, 179, 8, 0.1), rgba(202, 138, 4, 0.08)); border-color: #eab308; }
   </style>
 
   <script>
-    // Global variables
+    // 🔒 SECURE: Global variables
     let teamPopularity = {};
-    let selectedTeams = new Set();
-    let processedData = [];
-    let chart = null;
-    let currentMarket = 'over2.5';
     let availableSeasons = [];
+    let selectedTeams = new Set();
+    let currentMarket = 'over2.5';
+    let currentChart = null;
 
-    const gbp0 = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
-    const gbp2 = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    // 🔒 SECURE: API Configuration
+    const API_BASE = 'https://api-7wyko6woyq-uc.a.run.app/calculator';
 
-    // League -> flag mapping (broad coverage of known leagues)
+    // League flag mapping
     const leagueFlagMap = [
-      // Specific overrides and abbreviations
-      { code: 'gb-eng', keys: ['epl', 'english premier league', 'english premiership'] }, // England flag for EPL
-      { code: 'gb', keys: ['england', 'premier league', 'championship', 'league one', 'league two', 'fa cup', 'efl'] },
-      { code: 'gb-sct', keys: ['scotland', 'scottish'] },
-      { code: 'ie', keys: ['ireland', 'league of ireland', 'eircom'] },
-      { code: 'es', keys: ['spain', 'la liga', 'laliga', 'segunda'] },
-      { code: 'it', keys: ['italy', 'serie a', 'serie b', 'seriab', 'coppa italia'] }, // add SeriaB alias
-      { code: 'de', keys: ['germany', 'bundesliga', 'zweite bundesliga', 'bundes2', 'dfb-pokal'] }, // add Bundes2 alias
-      { code: 'fr', keys: ['france', 'ligue 1', 'ligue 2', 'le championnat', 'coupe de france'] }, // add Le Championnat alias
-      { code: 'nl', keys: ['netherlands', 'eredivisie', 'eerste divisie', 'keuken kampioen', 'knvb'] },
-      { code: 'pt', keys: ['portugal', 'primeira', 'liga portugal', 'taca de portugal'] },
-      { code: 'tr', keys: ['turkey', 'süper lig', 'super lig', 'turkiye'] },
-      { code: 'be', keys: ['belgium', 'pro league', 'jupiler'] },
-      { code: 'at', keys: ['austria', 'admiral bundesliga'] },
-      { code: 'ch', keys: ['switzerland', 'swiss super league'] },
-      { code: 'dk', keys: ['denmark', 'superliga'] },
-      { code: 'no', keys: ['norway', 'eliteserien'] },
-      { code: 'se', keys: ['sweden', 'allsvenskan', 'superettan'] },
-      { code: 'fi', keys: ['finland', 'veikkausliiga'] },
-      { code: 'is', keys: ['iceland', 'úrvalsdeild', 'urvalsdeild'] },
-      { code: 'pl', keys: ['poland', 'ekstraklasa'] },
-      { code: 'cz', keys: ['czech', 'fortuna liga'] },
-      { code: 'sk', keys: ['slovakia', 'niké liga', 'nike liga'] },
-      { code: 'hu', keys: ['hungary', 'nb i'] },
-      { code: 'ro', keys: ['romania', 'liga i'] },
-      { code: 'bg', keys: ['bulgaria', 'parva liga', 'efbet'] },
-      { code: 'gr', keys: ['greece', 'super league greece'] },
-      { code: 'si', keys: ['slovenia', 'prva liga'] },
-      { code: 'hr', keys: ['croatia', 'hnl'] },
-      { code: 'rs', keys: ['serbia', 'superliga'] },
-      { code: 'ba', keys: ['bosnia', 'premijer liga'] },
-      { code: 'me', keys: ['montenegro'] },
-      { code: 'mk', keys: ['macedonia', 'north macedonia'] },
-      { code: 'al', keys: ['albania', 'kategoria superiore'] },
-      { code: 'lt', keys: ['lithuania', 'a lyga'] },
-      { code: 'lv', keys: ['latvia', 'virsliga'] },
-      { code: 'ee', keys: ['estonia', 'meistriliiga'] },
-      { code: 'ua', keys: ['ukraine', 'premier league (ukraine)'] },
-      { code: 'ru', keys: ['russia', 'premier liga'] },
-      { code: 'cy', keys: ['cyprus', 'first division (cyp)'] },
-      { code: 'mt', keys: ['malta', 'premier league (mlt)'] },
-      { code: 'lu', keys: ['luxembourg'] },
-      { code: 'li', keys: ['liechtenstein'] },
-      { code: 'sm', keys: ['san marino'] },
-      { code: 'ad', keys: ['andorra'] },
-      { code: 'mc', keys: ['monaco'] },
-
-      { code: 'us', keys: ['usa', 'united states', 'mls', 'major league soccer'] },
-      { code: 'ca', keys: ['canada', 'cpl', 'premier league (canada)'] },
-      { code: 'mx', keys: ['mexico', 'liga mx'] },
-      { code: 'br', keys: ['brazil', 'brasileirao', 'serie a (bra)', 'serie b (bra)'] },
-      { code: 'ar', keys: ['argentina', 'liga profesional', 'primera división (arg)'] },
-      { code: 'co', keys: ['colombia', 'primera a (col)'] },
-      { code: 'cl', keys: ['chile', 'primera division (chi)'] },
-      { code: 'uy', keys: ['uruguay'] },
-      { code: 'py', keys: ['paraguay'] },
-      { code: 'pe', keys: ['peru'] },
-      { code: 'ec', keys: ['ecuador'] },
-      { code: 'bo', keys: ['bolivia'] },
-      { code: 've', keys: ['venezuela'] },
-
-      { code: 'jp', keys: ['japan', 'j1 league', 'j-league', 'j2 league'] },
-      { code: 'kr', keys: ['korea', 'south korea', 'k league'] },
-      { code: 'cn', keys: ['china', 'csl', 'super league (chn)'] },
-      { code: 'au', keys: ['australia', 'a-league'] },
-      { code: 'nz', keys: ['new zealand'] },
-      { code: 'sa', keys: ['saudi', 'saudi arabia', 'pro league (ksa)'] },
-      { code: 'ae', keys: ['uae', 'united arab emirates'] },
-      { code: 'qa', keys: ['qatar'] },
-      { code: 'ir', keys: ['iran', 'persian gulf'] },
-      { code: 'il', keys: ['israel'] },
-      { code: 'in', keys: ['india', 'isl', 'i-league'] },
-      { code: 'id', keys: ['indonesia', 'liga 1 (idn)'] },
-      { code: 'my', keys: ['malaysia'] },
-      { code: 'th', keys: ['thailand'] },
-      { code: 'sg', keys: ['singapore'] },
-      { code: 'vn', keys: ['vietnam'] },
-      { code: 'ph', keys: ['philippines'] },
-      { code: 'hk', keys: ['hong kong'] },
-      { code: 'tw', keys: ['taiwan'] },
-
-      { code: 'za', keys: ['south africa', 'premier division (rsa)', 'psl'] },
-      { code: 'ng', keys: ['nigeria'] },
-      { code: 'gh', keys: ['ghana'] },
-      { code: 'cm', keys: ['cameroon'] },
-      { code: 'eg', keys: ['egypt'] },
-      { code: 'ma', keys: ['morocco', 'botola'] },
-      { code: 'dz', keys: ['algeria'] },
-      { code: 'tn', keys: ['tunisia'] },
-
-      // UEFA competitions (fallback to EU flag)
-      { code: 'eu', keys: ['champions league', 'europa league', 'conference league', 'uefa'] }
+      { keys: ['epl', 'england', 'premier'], code: 'gb' },
+      { keys: ['championship'], code: 'gb' },
+      { keys: ['laliga', 'spain', 'la liga'], code: 'es' },
+      { keys: ['bundesliga', 'bundes', 'german'], code: 'de' },
+      { keys: ['serie', 'italy', 'italian'], code: 'it' },
+      { keys: ['ligue', 'france', 'french', 'championnat'], code: 'fr' },
+      { keys: ['eredivisie', 'netherlands', 'dutch'], code: 'nl' },
+      { keys: ['portugal', 'primeira'], code: 'pt' },
+      { keys: ['scotland', 'scottish'], code: 'gb-sct' },
+      { keys: ['belgium', 'belgian'], code: 'be' },
+      { keys: ['greece', 'greek'], code: 'gr' },
+      { keys: ['turkey', 'turkish'], code: 'tr' }
     ];
 
     function getLeagueFlagCode(leagueName) {
@@ -406,87 +304,70 @@
         const src = `https://flagcdn.com/${code}.svg`;
         return `<div class="h-4 w-6 rounded-[3px] overflow-hidden ring-1 ring-zinc-700/60 bg-zinc-900"><img src="${src}" alt="${leagueName} flag" class="h-full w-full object-cover" loading="lazy"></div>`;
       }
-      // Fallback to existing icon if unknown
       return `<span class="inline-flex h-6 w-6 items-center justify-center rounded bg-yellow-600/10 ring-1 ring-yellow-600/20"><i data-lucide="shield" class="h-3.5 w-3.5 text-yellow-400"></i></span>`;
     }
 
-    // SECURE API CALLS - Replaces all client-side calculations
-
-    // Load seasons from secure API
-    async function loadSeasons() {
-      try {
-        const response = await fetch('https://simplififootball-backend.vercel.app/api/backtesting/seasons');
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        
-        const data = await response.json();
-        availableSeasons = data.seasons || [];
-        populateSeasonFilters();
-      } catch (error) {
-        console.error('Error loading seasons:', error);
-        // Fallback to empty array if API fails
-        availableSeasons = [];
+    // 🔒 SECURE: Generate betslips via API
+    async function generateBetslips() {
+      if (selectedTeams.size === 0) {
+        alert('Please select at least one team first.');
+        return;
       }
-    }
-
-    // Load team data from secure API
-    async function loadTeamData() {
-      try {
-        const seasonFilter = document.getElementById('seasonFilter').value;
-        const response = await fetch(`https://simplififootball-backend.vercel.app/api/backtesting/teams?season=${seasonFilter}`);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        
-        const data = await response.json();
-        teamPopularity = data.teamPopularity || {};
-        renderTeamSelection();
-        hideLoading();
-      } catch (error) {
-        console.error('Error loading team data:', error);
-        showError();
-      }
-    }
-
-    // Run backtest via secure API
-    async function runBacktest() {
-      if (selectedTeams.size === 0) return;
 
       try {
-        const seasonFilter = document.getElementById('seasonFilter').value;
-        const selectedTeamsArray = Array.from(selectedTeams);
-
-        const response = await fetch('https://simplififootball-backend.vercel.app/api/backtesting/run', {
+        const response = await fetch(`${API_BASE}/generate-betslips`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            selectedTeams: selectedTeamsArray,
-            market: currentMarket,
-            seasonFilter: seasonFilter,
-            startingCapital: 1000,
-            stakePercentage: 5
+            selectedTeams: Array.from(selectedTeams),
+            market: currentMarket
           })
         });
 
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        
         const data = await response.json();
-        
-        if (!data.success) {
-          throw new Error(data.error || 'Backtest failed');
+
+        if (data.success) {
+          // Redirect to fixtures page with the generated URL
+          window.location.href = data.redirectUrl;
+        } else {
+          alert('Error generating betslips: ' + (data.error || 'Unknown error'));
         }
-
-        processedData = data.processedData || [];
-        const stats = data.stats;
-
-        updateResults(stats);
-        updateChart(stats, 1000);
-        showSelectedTeamsInfo();
-
-        document.getElementById('resultsSection').style.display = 'block';
-        
       } catch (error) {
-        console.error('Error running backtest:', error);
-        alert('Error running backtest. Please try again.');
+        console.error('Error generating betslips:', error);
+        alert('Error generating betslips. Please try again.');
+      }
+    }
+
+    // 🔒 SECURE: Load team popularity data from API
+    async function loadData() {
+      try {
+        const response = await fetch(`${API_BASE}/team-popularity`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            startingSeason: 'all'
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          teamPopularity = data.teamPopularity;
+          availableSeasons = data.availableSeasons;
+          
+          populateSeasonFilters();
+          renderTeamSelection();
+          hideLoading();
+        } else {
+          throw new Error(data.error || 'Failed to load team data');
+        }
+      } catch (error) {
+        console.error('Error loading data:', error);
+        showError();
       }
     }
 
@@ -494,9 +375,7 @@
     function populateSeasonFilters() {
       const seasonFilter = document.getElementById('seasonFilter');
       // Clear existing options except "All Seasons"
-      while (seasonFilter.children.length > 1) {
-        seasonFilter.removeChild(seasonFilter.lastChild);
-      }
+      seasonFilter.innerHTML = '<option value="all">All Seasons</option>';
       
       availableSeasons.forEach(season => {
         const option = document.createElement('option');
@@ -506,9 +385,23 @@
       });
     }
 
-    // Render team selection interface with horizontal scrolling
+    // Get filtered teams based on current filters
+    function getFilteredTeams() {
+      const seasonFilter = document.getElementById('seasonFilter').value;
+      
+      if (seasonFilter === 'all') {
+        return teamPopularity;
+      }
+
+      // For season filtering, we'll need to call the API again
+      // For now, return all data (server handles filtering)
+      return teamPopularity;
+    }
+
+    // Render team selection interface
     function renderTeamSelection() {
       const container = document.getElementById('leaguesContainer');
+      const filteredPopularity = getFilteredTeams();
       container.innerHTML = '';
 
       let getPercentage, sortOrder;
@@ -524,8 +417,8 @@
         sortOrder = (a, b) => b[1].under6Percentage - a[1].under6Percentage;
       }
 
-      Object.keys(teamPopularity).forEach(league => {
-        const teams = teamPopularity[league];
+      Object.keys(filteredPopularity).forEach(league => {
+        const teams = filteredPopularity[league];
         const sortedTeams = Object.entries(teams).sort(sortOrder);
         if (sortedTeams.length === 0) return;
 
@@ -606,40 +499,96 @@
       }
     }
 
-    // Update selected count and enable/disable backtest button
+    // Update selected count and enable/disable buttons
     function updateSelectedCount() {
       const count = selectedTeams.size;
       document.getElementById('selectedCount').textContent = `${count} team${count !== 1 ? 's' : ''}`;
-      const btn = document.getElementById('runBacktest');
-      if (btn) btn.disabled = count === 0;
+      document.getElementById('selectedCount2').textContent = `${count} team${count !== 1 ? 's' : ''}`;
+      const runBtn = document.getElementById('runBacktest');
+      const genBtn = document.getElementById('generateBetslips');
+      if (runBtn) runBtn.disabled = count === 0;
+      if (genBtn) genBtn.disabled = count === 0;
+    }
+
+    // 🔒 SECURE: Run backtest via API
+    async function runBacktest() {
+      if (selectedTeams.size === 0) return;
+
+      const runBtn = document.getElementById('runBacktest');
+      const originalText = runBtn.innerHTML;
+      
+      try {
+        // Show loading state
+        runBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin mr-2"></i>Running...';
+        runBtn.disabled = true;
+
+        const seasonFilter = document.getElementById('seasonFilter').value;
+
+        const response = await fetch(`${API_BASE}/backtest`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            selectedTeams: Array.from(selectedTeams),
+            market: currentMarket,
+            startingSeason: seasonFilter,
+            startingCapital: 1000,
+            stakePercentage: 5
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          updateResults(data.stats);
+          updateChart(data.chartData, 1000);
+          showSelectedTeamsInfo(data.selectedTeamsInfo);
+          document.getElementById('resultsSection').style.display = 'block';
+        } else {
+          throw new Error(data.error || 'Backtesting failed');
+        }
+      } catch (error) {
+        console.error('Error running backtest:', error);
+        alert('Error running backtest: ' + error.message);
+      } finally {
+        // Restore button state
+        runBtn.innerHTML = originalText;
+        runBtn.disabled = selectedTeams.size === 0;
+        if (window.lucide) {
+          window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+        }
+      }
     }
 
     // Update results display
     function updateResults(stats) {
       document.getElementById('statGames').textContent = stats.totalGames;
       document.getElementById('statWinRate').textContent = `${stats.winRate.toFixed(1)}%`;
-
+      
+      const roi = stats.roi;
       const roiEl = document.getElementById('statROI');
-      const roiPrefix = stats.roi >= 0 ? '+' : '';
-      roiEl.textContent = `${roiPrefix}${stats.roi.toFixed(1)}%`;
-      roiEl.style.color = stats.roi >= 0 ? '#eab308' : '#ef4444';
+      roiEl.textContent = `${roi >= 0 ? '+' : ''}${roi.toFixed(1)}%`;
+      roiEl.className = `font-mono text-lg ${roi >= 0 ? 'text-green-400' : 'text-red-400'}`;
 
-      const finalCapitalEl = document.getElementById('statFinalCapital');
-      finalCapitalEl.textContent = gbp0.format(Math.round(stats.finalCapital));
-      finalCapitalEl.style.color = stats.finalCapital >= 1000 ? '#eab308' : '#ef4444';
+      const totalReturn = stats.totalReturn;
+      const plEl = document.getElementById('statPL');
+      plEl.textContent = `${totalReturn >= 0 ? '+' : ''}£${Math.abs(totalReturn).toFixed(0)}`;
+      plEl.className = `font-mono text-lg ${totalReturn >= 0 ? 'text-green-400' : 'text-red-400'}`;
     }
 
-    // Update investment chart
-    function updateChart(stats, startingCapital) {
-      const ctx = document.getElementById('capitalChart').getContext('2d');
-      const chartData = processedData.map(d => ({ x: d.gameNumber, y: d.capitalMovement }));
+    // Update chart
+    function updateChart(chartData, startingCapital) {
+      const ctx = document.getElementById('capitalChart');
+      
+      if (currentChart) {
+        currentChart.destroy();
+      }
 
-      const lineColor = stats.finalCapital >= startingCapital ? '#eab308' : '#ef4444';
-      const fillColor = stats.finalCapital >= startingCapital ? 'rgba(234, 179, 8, 0.1)' : 'rgba(239, 68, 68, 0.1)';
-
-      if (chart) chart.destroy();
-
-      chart = new Chart(ctx, {
+      const isProfit = chartData.length > 0 && chartData[chartData.length - 1].y >= startingCapital;
+      const lineColor = isProfit ? 'rgb(34, 197, 94)' : 'rgb(239, 68, 68)';
+      
+      currentChart = new Chart(ctx, {
         type: 'line',
         data: {
           datasets: [
@@ -647,22 +596,20 @@
               label: 'Capital Movement',
               data: chartData,
               borderColor: lineColor,
-              backgroundColor: fillColor,
+              backgroundColor: isProfit ? 
+                'rgba(34, 197, 94, 0.1)' : 
+                'rgba(239, 68, 68, 0.1)',
               borderWidth: 2,
               fill: true,
-              tension: 0.2,
               pointRadius: 0,
-              pointHoverRadius: 5,
-              pointHoverBackgroundColor: lineColor,
-              pointHoverBorderColor: '#ffffff',
-              pointHoverBorderWidth: 2,
-              pointHitRadius: 14
+              pointHoverRadius: 4,
+              tension: 0.1
             },
             {
-              label: `Starting Capital (${gbp0.format(startingCapital)})`,
+              label: 'Starting Capital',
               data: [
-                { x: 0, y: startingCapital },
-                { x: Math.max(chartData.length, 1), y: startingCapital }
+                {x: 0, y: startingCapital},
+                {x: chartData.length > 0 ? chartData[chartData.length - 1].x : 1, y: startingCapital}
               ],
               borderColor: 'rgba(255, 255, 255, 0.25)',
               borderDash: [5, 5],
@@ -688,7 +635,7 @@
               displayColors: false,
               callbacks: {
                 title: (context) => `Game ${context[0].dataIndex + 1}`,
-                label: (context) => `Capital: ${gbp0.format(Math.round(context.parsed.y))}`
+                label: (context) => `Capital: £${Math.round(context.parsed.y)}`
               }
             }
           },
@@ -703,7 +650,7 @@
             y: {
               display: true,
               grid: { color: 'rgba(255, 255, 255, 0.08)', drawBorder: false },
-              ticks: { color: '#6b7280', callback: (v) => gbp0.format(v) },
+              ticks: { color: '#6b7280', callback: (v) => `£${v}` },
               title: { display: true, text: 'Capital (£)', color: '#6b7280' }
             }
           }
@@ -712,18 +659,12 @@
     }
 
     // Show selected teams info
-    function showSelectedTeamsInfo() {
-      const teamsList = Array.from(selectedTeams).map(teamKey => {
-        const [league, team] = teamKey.split(':');
-        const stats = teamPopularity[league] && teamPopularity[league][team];
-        if (!stats) return `${team} (${league}) - No data`;
-
-        let percentage;
-        if (currentMarket === 'over2.5') percentage = stats.over25Percentage;
-        else if (currentMarket === 'under2.5') percentage = stats.under25Percentage;
-        else percentage = stats.under6Percentage;
-
-        return `${team} (${league}) - ${percentage.toFixed(1)}%`;
+    function showSelectedTeamsInfo(selectedTeamsInfo) {
+      const teamsList = selectedTeamsInfo.map(info => {
+        if (info.error) {
+          return `${info.team} (${info.league}) - ${info.error}`;
+        }
+        return `${info.team} (${info.league}) - ${info.percentage}% (${info.validMatches}m)`;
       }).join(', ');
 
       document.getElementById('selectedTeamsList').textContent = teamsList;
@@ -735,6 +676,7 @@
       document.getElementById('error').style.display = 'flex';
       document.getElementById('app').style.display = 'none';
     }
+
     function hideLoading() {
       document.getElementById('loading').style.display = 'none';
       document.getElementById('error').style.display = 'none';
@@ -752,14 +694,22 @@
       const menu = document.getElementById('marketMenu');
       const selectedMarketEl = document.getElementById('selectedMarket');
 
-      btn.addEventListener('click', () => {
-        menu.classList.toggle('hidden');
-      });
-
-      document.addEventListener('click', e => {
-        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        
+        if (menu.classList.contains('hidden')) {
+          const btnRect = btn.getBoundingClientRect();
+          menu.style.top = `${btnRect.bottom + 2}px`;
+          menu.style.left = `${btnRect.left}px`;
+          menu.classList.remove('hidden');
+        } else {
           menu.classList.add('hidden');
         }
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', () => {
+        menu.classList.add('hidden');
       });
 
       // Market selection
@@ -770,26 +720,17 @@
           selectedMarketEl.textContent = mbtn.dataset.market;
           menu.classList.add('hidden');
           renderTeamSelection(); // Re-render with new market
-          
-          // Re-run backtest if results are currently showing
-          if (document.getElementById('resultsSection').style.display === 'block' && selectedTeams.size > 0) {
-            runBacktest();
-          }
         });
       });
 
       // Filter change handlers
       document.getElementById('seasonFilter').addEventListener('change', () => {
-        loadTeamData(); // Reload team data with new season filter
-        
-        // Re-run backtest if results are currently showing
-        if (document.getElementById('resultsSection').style.display === 'block' && selectedTeams.size > 0) {
-          runBacktest();
-        }
+        renderTeamSelection();
       });
 
-      // Backtest button
+      // Button handlers
       document.getElementById('runBacktest').addEventListener('click', runBacktest);
+      document.getElementById('generateBetslips').addEventListener('click', generateBetslips);
 
       // Scroll buttons
       document.getElementById('scrollLeft').addEventListener('click', () => {
@@ -804,17 +745,14 @@
 
       // Navigation handlers
       document.querySelector('nav button[data-nav="markets"]').addEventListener('click', () => {
-        window.location.href = 'https://simplififootballtools.vercel.app/market.html';
+        window.location.href = 'https://www.simplififootball.com/zmarket.html';
       });
       
       document.querySelector('nav button[data-nav="journal"]').addEventListener('click', () => {
         window.location.href = 'https://www.simplififootball.com/dash.html';
       });
 
-      // Load data securely
-      loadSeasons().then(() => {
-        loadTeamData();
-      });
+      loadData();
     });
   </script>
 
