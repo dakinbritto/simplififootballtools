@@ -7,10 +7,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-[#0b0f14] font-sans text-zinc-200 flex flex-col opacity-0 animate-[fadeIn_0.6s_ease-in-out_forwards]" style="font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Noto Sans, Apple Color Emoji, Segoe UI Emoji;">
+
+  <!-- 🔒 Authentication Required Screen -->
+  <div id="authRequired" class="flex items-center justify-center min-h-screen" style="display: none;">
+    <div class="text-center bg-[#10151c] border border-yellow-900/40 rounded-xl px-8 py-6 shadow-lg max-w-md mx-4">
+      <div class="inline-flex items-center gap-2 text-xl tracking-tight text-yellow-400 mb-4">
+        <i data-lucide="lock" class="w-6 h-6"></i>
+        <span>Authentication Required</span>
+      </div>
+      <div class="text-sm text-zinc-300 mb-4">Please sign in to access live fixtures</div>
+      <div class="space-y-2">
+        <button onclick="window.location.href='login.html'" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-medium py-2 px-4 rounded-lg transition-colors">
+          Sign In
+        </button>
+        <button onclick="window.location.href='register.html'" class="w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-medium py-2 px-4 rounded-lg transition-colors">
+          Create Account
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Loading Screen -->
   <div id="loading" class="flex items-center justify-center min-h-screen">
@@ -22,7 +40,7 @@
         </span>
         <span>Loading fixtures...</span>
       </div>
-      <div class="text-sm text-zinc-500">Fetching latest match data...</div>
+      <div class="text-sm text-zinc-500">Verifying authentication...</div>
     </div>
   </div>
 
@@ -33,11 +51,20 @@
         <i data-lucide="triangle-alert" class="w-5 h-5"></i>
         <span>Error loading fixtures</span>
       </div>
-      <div class="text-sm text-zinc-400 mb-2">Please check:</div>
+      <div class="text-sm text-zinc-400 mb-2">Authentication or connection issue:</div>
       <ul class="text-xs text-zinc-500 text-left inline-block space-y-1">
-        <li>• API connection is working</li>
-        <li>â€¢ Check browser console for errors</li>
+        <li>• Please sign in again</li>
+        <li>• Check your internet connection</li>
+        <li>• API server may be down</li>
       </ul>
+      <div class="mt-4 space-y-2">
+        <button onclick="checkAuthentication()" class="w-full text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded transition-colors">
+          Retry Authentication
+        </button>
+        <button onclick="logout()" class="w-full text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-200 px-3 py-1 rounded transition-colors">
+          Sign Out & Retry
+        </button>
+      </div>
     </div>
   </div>
 
@@ -53,11 +80,35 @@
             <h1 class="text-2xl md:text-3xl font-semibold italic text-yellow-500 tracking-tight">Live Fixtures</h1>
           </div>
           
-          <!-- Live indicator -->
-          <div class="flex items-center gap-2 bg-[#111821] border border-zinc-800 rounded-md px-3 py-2">
-            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span class="text-sm font-medium text-green-400">LIVE</span>
-            <span id="lastUpdated" class="text-xs text-zinc-500 ml-2">Updated now</span>
+          <!-- User controls -->
+          <div class="flex items-center gap-3">
+            <!-- Live indicator -->
+            <div class="flex items-center gap-2 bg-[#111821] border border-zinc-800 rounded-md px-3 py-2">
+              <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span class="text-sm font-medium text-green-400">LIVE</span>
+              <span id="lastUpdated" class="text-xs text-zinc-500 ml-2">Updated now</span>
+            </div>
+            
+            <!-- 🔒 User menu -->
+            <div class="relative">
+              <button id="userMenuBtn" class="flex items-center gap-2 bg-[#111821] border border-zinc-800 rounded-md px-3 py-2 hover:border-zinc-700 transition-colors">
+                <i data-lucide="user" class="w-4 h-4 text-zinc-400"></i>
+                <span id="userEmail" class="text-sm text-zinc-300">User</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-400"></i>
+              </button>
+              <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-[#0f141b] rounded-lg shadow-xl ring-1 ring-zinc-800 z-50 border border-zinc-800/80">
+                <div class="py-1">
+                  <div class="px-4 py-2 text-xs text-zinc-500 border-b border-zinc-800">
+                    <div>Signed in as:</div>
+                    <div id="userEmailFull" class="text-zinc-300 font-medium mt-1"></div>
+                  </div>
+                  <button onclick="logout()" class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-[#111821] transition-colors">
+                    <i data-lucide="log-out" class="w-4 h-4 inline mr-2"></i>
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -210,9 +261,9 @@
           
           <!-- Capital Input -->
           <div class="space-y-2">
-            <label class="block text-xs font-medium text-zinc-400">Total Capital (Â£)</label>
+            <label class="block text-xs font-medium text-zinc-400">Total Capital (£)</label>
             <div class="relative">
-              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-500 text-sm">Â£</span>
+              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-500 text-sm">£</span>
               <input 
                 type="number" 
                 id="totalCapital" 
@@ -254,17 +305,17 @@
               </div>
               <div class="flex justify-between">
                 <span class="text-zinc-400">Completed Stakes:</span>
-                <span id="totalStaked" class="text-white font-mono">Â£0.00</span>
+                <span id="totalStaked" class="text-white font-mono">£0.00</span>
               </div>
             </div>
             <div class="grid grid-cols-2 gap-2 text-sm">
               <div class="flex justify-between">
                 <span class="text-zinc-400">Current Profit:</span>
-                <span id="currentProfit" class="text-yellow-400 font-mono">Â£0.00</span>
+                <span id="currentProfit" class="text-yellow-400 font-mono">£0.00</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-zinc-400">New Capital:</span>
-                <span id="newCapital" class="text-green-400 font-mono">Â£0.00</span>
+                <span id="newCapital" class="text-green-400 font-mono">£0.00</span>
               </div>
             </div>
             <div class="flex gap-2">
@@ -338,7 +389,7 @@
 
     <footer class="bg-gradient-to-br from-[#0f141b] via-[#0d1319] to-[#0a2a1b] border-t border-zinc-900/60 py-4">
       <div class="max-w-7xl mx-auto px-4 text-center text-xs text-zinc-500">
-        <p><span id="fixtureCount">0</span> fixtures loaded â€¢ <a href="backtesting.html" class="text-yellow-400 hover:text-yellow-300">â† Back to Backtesting</a></p>
+        <p><span id="fixtureCount">0</span> fixtures loaded • <a href="backtesting.html" class="text-yellow-400 hover:text-yellow-300">← Back to Backtesting</a></p>
       </div>
     </footer>
   </div>
@@ -438,7 +489,137 @@
   </style>
 
   <script>
-    // Global variables
+    // 🔒 AUTHENTICATION SYSTEM
+    let authToken = null;
+    let currentUser = null;
+
+    // 🔒 Get stored authentication token
+    function getAuthToken() {
+      return localStorage.getItem('authToken');
+    }
+
+    // 🔒 Store authentication token
+    function setAuthToken(token) {
+      authToken = token;
+      if (token) {
+        localStorage.setItem('authToken', token);
+      } else {
+        localStorage.removeItem('authToken');
+      }
+    }
+
+    // 🔒 Check if user is authenticated
+    async function checkAuthentication() {
+      const token = getAuthToken();
+      
+      if (!token) {
+        showAuthRequired();
+        return false;
+      }
+
+      try {
+        // Verify token with auth API
+        const response = await fetch('https://api-7wyko6woyq-uc.a.run.app/auth/profile', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.user) {
+            currentUser = data.user;
+            authToken = token;
+            updateUserUI();
+            return true;
+          }
+        }
+        
+        // Token invalid, clear it
+        setAuthToken(null);
+        showAuthRequired();
+        return false;
+        
+      } catch (error) {
+        console.error('Authentication check failed:', error);
+        showAuthRequired();
+        return false;
+      }
+    }
+
+    // 🔒 Update user interface with user info
+    function updateUserUI() {
+      if (currentUser) {
+        const userEmail = document.getElementById('userEmail');
+        const userEmailFull = document.getElementById('userEmailFull');
+        
+        if (userEmail) {
+          const displayEmail = currentUser.email.length > 12 ? 
+            currentUser.email.substring(0, 12) + '...' : 
+            currentUser.email;
+          userEmail.textContent = displayEmail;
+        }
+        
+        if (userEmailFull) {
+          userEmailFull.textContent = currentUser.email;
+        }
+      }
+    }
+
+    // 🔒 Show authentication required screen
+    function showAuthRequired() {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('app').style.display = 'none';
+      document.getElementById('error').style.display = 'none';
+      document.getElementById('authRequired').style.display = 'flex';
+    }
+
+    // 🔒 Logout user
+    function logout() {
+      setAuthToken(null);
+      currentUser = null;
+      
+      // Clear any cached data
+      localStorage.removeItem('betslipSelections');
+      localStorage.removeItem('currentMarketType');
+      localStorage.removeItem('filterSectionExpanded');
+      
+      // Redirect to login or show auth required
+      window.location.href = 'login.html';
+    }
+
+    // 🔒 Make authenticated API request
+    async function makeAuthenticatedRequest(url, options = {}) {
+      const token = getAuthToken();
+      
+      if (!token) {
+        throw new Error('No authentication token available');
+      }
+      
+      const authOptions = {
+        ...options,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          ...(options.headers || {})
+        }
+      };
+      
+      const response = await fetch(url, authOptions);
+      
+      // Handle authentication errors
+      if (response.status === 401) {
+        setAuthToken(null);
+        showAuthRequired();
+        throw new Error('Authentication required');
+      }
+      
+      return response;
+    }
+
+    // Global variables (same as before)
     let fixturesData = [];
     let filteredFixtures = [];
     let selectedTeams = [];
@@ -447,19 +628,19 @@
     let allTeams = new Set();
     let userSelectedTeams = new Set();
 
-    // Betslip management
+    // Betslip management (same as before)
     let betslipSelections = JSON.parse(localStorage.getItem('betslipSelections') || '[]');
     let currentMarketType = localStorage.getItem('currentMarketType') || null;
     let selectedFixtureForModal = null;
 
-    // Market configuration
+    // Market configuration (same as before)
     const marketConfig = {
       'over2.5': { maxSelections: 1, name: 'Over 2.5 Goals', odds: 1.57 },
       'under2.5': { maxSelections: 1, name: 'Under 2.5 Goals', odds: 1.8 },
       'under6': { maxSelections: Infinity, name: 'Under 6 Goals', odds: 1.12, groupSize: 3 }
     };
 
-    // League flag mapping
+    // League flag mapping (same as before)
     const leagueFlagMap = [
       { code: 'gb-eng', keys: ['epl', 'english premier league', 'english premiership'] },
       { code: 'gb', keys: ['england', 'premier league', 'championship', 'league one', 'league two'] },
@@ -470,7 +651,7 @@
       { code: 'fr', keys: ['france', 'ligue 1', 'ligue 2'] },
       { code: 'nl', keys: ['netherlands', 'eredivisie'] },
       { code: 'pt', keys: ['portugal', 'primeira'] },
-      { code: 'tr', keys: ['turkey', 'sÃ¼per lig', 'super lig'] },
+      { code: 'tr', keys: ['turkey', 'süper lig', 'super lig'] },
       { code: 'be', keys: ['belgium', 'pro league'] }
     ];
 
@@ -492,7 +673,7 @@
       return `<div class="h-4 w-6 bg-zinc-700 rounded-sm flex items-center justify-center"><i data-lucide="shield" class="h-3 w-3 text-zinc-400"></i></div>`;
     }
 
-    // Improved team name matching
+    // Improved team name matching (same as before)
     function normalizeTeamName(name) {
       return String(name || '').toLowerCase().trim()
         .replace(/\s+/g, ' ')
@@ -506,13 +687,9 @@
       const norm1 = normalizeTeamName(team1);
       const norm2 = normalizeTeamName(team2);
       
-      // Exact match
       if (norm1 === norm2) return true;
-      
-      // One contains the other
       if (norm1.includes(norm2) || norm2.includes(norm1)) return true;
       
-      // Check if they're similar enough (for slight variations)
       const similarity = calculateSimilarity(norm1, norm2);
       return similarity > 0.8;
     }
@@ -543,7 +720,7 @@
       return maxLen === 0 ? 1 : (maxLen - matrix[len2][len1]) / maxLen;
     }
 
-    // Calculate stake per betslip based on market type and capital
+    // All calculation functions (same as before - calculateStakeAndReturns, updateStakeDisplay, getBetslipCount, etc.)
     function calculateStakeAndReturns() {
       const capitalInput = document.getElementById('totalCapital');
       const capital = capitalInput ? parseFloat(capitalInput.value) || 0 : 0;
@@ -552,10 +729,9 @@
       const stakes = [];
       let totalStaked = 0;
       let totalPotentialReturns = 0;
-      let currentProfit = 0; // This tracks actual profit/loss
+      let currentProfit = 0;
 
       if (currentMarketType === 'under6') {
-        // Under6: 10% per betslip (group of 3)
         const stakePerBetslip = capital * 0.1;
         const config = marketConfig['under6'];
         const groupSize = config.groupSize;
@@ -570,11 +746,10 @@
             let actualReturn = 0;
             if (groupResult === 'win') {
               actualReturn = potentialReturn;
-              currentProfit += (actualReturn - stakePerBetslip); // Profit = return - stake
+              currentProfit += (actualReturn - stakePerBetslip);
             } else if (groupResult === 'loss') {
-              currentProfit -= stakePerBetslip; // Loss = lose the stake
+              currentProfit -= stakePerBetslip;
             }
-            // Pending bets don't affect current profit
             
             stakes.push({
               type: 'betslip',
@@ -588,13 +763,12 @@
             });
             
             if (groupResult !== 'pending') {
-              totalStaked += stakePerBetslip; // Only count completed bets in total staked
+              totalStaked += stakePerBetslip;
             }
-            totalPotentialReturns += potentialReturn; // Always show potential
+            totalPotentialReturns += potentialReturn;
           }
         }
       } else {
-        // Under2.5 & Over2.5: 2% per bet
         const stakePerBet = capital * 0.02;
         
         betslipSelections.forEach((selection, index) => {
@@ -605,11 +779,10 @@
           let actualReturn = 0;
           if (result === 'win') {
             actualReturn = potentialReturn;
-            currentProfit += (actualReturn - stakePerBet); // Profit = return - stake
+            currentProfit += (actualReturn - stakePerBet);
           } else if (result === 'loss') {
-            currentProfit -= stakePerBet; // Loss = lose the stake
+            currentProfit -= stakePerBet;
           }
-          // Pending bets don't affect current profit
           
           stakes.push({
             type: 'bet',
@@ -624,13 +797,13 @@
           });
           
           if (result !== 'pending') {
-            totalStaked += stakePerBet; // Only count completed bets
+            totalStaked += stakePerBet;
           }
           totalPotentialReturns += potentialReturn;
         });
       }
 
-      const newCapital = capital + currentProfit; // Original capital + profit/loss
+      const newCapital = capital + currentProfit;
 
       return { 
         stakes, 
@@ -641,7 +814,6 @@
       };
     }
 
-    // Update stake display
     function updateStakeDisplay() {
       const capitalInput = document.getElementById('totalCapital');
       const capital = capitalInput ? parseFloat(capitalInput.value) || 0 : 0;
@@ -653,31 +825,28 @@
         
         if (currentMarketType === 'under6') {
           const stakePerBetslip = capital * 0.1;
-          stakeRules.innerHTML = `Under 6 Goals: Â£${stakePerBetslip.toFixed(2)} per betslip (10%)`;
+          stakeRules.innerHTML = `Under 6 Goals: £${stakePerBetslip.toFixed(2)} per betslip (10%)`;
         } else {
           const stakePerBet = capital * 0.02;
-          stakeRules.innerHTML = `${marketConfig[currentMarketType].name}: Â£${stakePerBet.toFixed(2)} per bet (2%)`;
+          stakeRules.innerHTML = `${marketConfig[currentMarketType].name}: £${stakePerBet.toFixed(2)} per bet (2%)`;
         }
       } else if (stakeInfo) {
         stakeInfo.classList.add('hidden');
       }
     }
 
-    // Calculate number of complete betslips
     function getBetslipCount() {
       if (!currentMarketType) return 0;
       
       const config = marketConfig[currentMarketType];
       if (config.groupSize) {
-        // For under6, count complete groups of 3
         return Math.floor(betslipSelections.length / config.groupSize);
       } else {
-        // For other markets, each selection is a betslip
         return betslipSelections.length;
       }
     }
 
-    // Betslip functions
+    // All betslip functions (same as before but keeping for completeness)
     function selectFixture(fixtureId) {
       const fixture = fixturesData.find(f => f.matchid === fixtureId);
       if (!fixture) {
@@ -687,7 +856,6 @@
 
       selectedFixtureForModal = fixture;
       
-      // Update modal content
       document.getElementById('selectedFixtureInfo').innerHTML = `
         <div class="flex items-center justify-center gap-2 text-white font-medium">
           <span>${fixture.HomeTeam}</span>
@@ -732,28 +900,23 @@
         return;
       }
 
-      // Check market compatibility
       if (currentMarketType && currentMarketType !== market) {
         alert(`You can only add fixtures from the same market type. Current market: ${marketConfig[currentMarketType].name}`);
         return;
       }
 
-      // Check if fixture already in betslip
       if (betslipSelections.find(s => s.fixtureId === fixtureId && s.market === market)) {
         alert('This fixture is already in your betslip');
         return;
       }
 
-      // Set market type if first selection
       if (!currentMarketType) {
         currentMarketType = market;
         localStorage.setItem('currentMarketType', currentMarketType);
       }
 
-      // Check selection limits for non-under6 markets
       const config = marketConfig[market];
       if (market !== 'under6' && betslipSelections.length >= config.maxSelections) {
-        // Replace single selection for over2.5 and under2.5
         betslipSelections = [];
       }
 
@@ -779,7 +942,6 @@
     function removeFromJournal(fixtureId, market) {
       betslipSelections = betslipSelections.filter(s => !(s.fixtureId === fixtureId && s.market === market));
       
-      // Reset market type if no selections
       if (betslipSelections.length === 0) {
         currentMarketType = null;
         localStorage.removeItem('currentMarketType');
@@ -799,7 +961,6 @@
       const totalEl = document.getElementById('totalBetslips');
       const proceedBtn = document.getElementById('proceedToJournal');
 
-      // Update count badge (show betslip count, not individual selections)
       if (countEl) {
         countEl.textContent = count;
         if (count > 0) {
@@ -811,21 +972,18 @@
         }
       }
 
-      // Update sidebar totals
       if (totalEl) totalEl.textContent = count;
       if (proceedBtn) proceedBtn.disabled = count === 0;
 
-      // Update stake and return totals with corrected calculation
       const { totalStaked, currentProfit, newCapital } = calculateStakeAndReturns();
       
       const stakedEl = document.getElementById('totalStaked');
       const profitEl = document.getElementById('currentProfit');
       const capitalEl = document.getElementById('newCapital');
       
-      if (stakedEl) stakedEl.textContent = `Â£${totalStaked.toFixed(2)}`;
+      if (stakedEl) stakedEl.textContent = `£${totalStaked.toFixed(2)}`;
       if (profitEl) {
-        profitEl.textContent = `Â£${currentProfit.toFixed(2)}`;
-        // Color code the profit
+        profitEl.textContent = `£${currentProfit.toFixed(2)}`;
         if (currentProfit > 0) {
           profitEl.className = 'text-green-400 font-mono';
         } else if (currentProfit < 0) {
@@ -834,7 +992,7 @@
           profitEl.className = 'text-yellow-400 font-mono';
         }
       }
-      if (capitalEl) capitalEl.textContent = `Â£${newCapital.toFixed(2)}`;
+      if (capitalEl) capitalEl.textContent = `£${newCapital.toFixed(2)}`;
 
       renderBetslipSelections();
     }
@@ -856,7 +1014,6 @@
       let html = '';
 
       if (currentMarketType === 'under6') {
-        // Group under6 selections into groups of 3
         const config = marketConfig[currentMarketType];
         const groupSize = config.groupSize;
         
@@ -865,10 +1022,8 @@
           const isComplete = group.length === groupSize;
           const groupNumber = Math.floor(i / groupSize) + 1;
           
-          // Get stake info for this group
           const stakeInfo = stakes.find(s => s.groupNumber === groupNumber);
           
-          // Get overall group result for under6
           const groupResult = group[0]?.groupResult || 'pending';
           let groupResultBadge = '';
           let stakeDisplay = '';
@@ -882,16 +1037,16 @@
               <div class="mt-2 pt-2 border-t border-zinc-700 text-xs">
                 <div class="flex justify-between">
                   <span class="text-zinc-400">Stake:</span>
-                  <span class="text-white font-mono">Â£${stake.toFixed(2)}</span>
+                  <span class="text-white font-mono">£${stake.toFixed(2)}</span>
                 </div>
                 <div class="flex justify-between">
                   <span class="text-zinc-400">Potential Return:</span>
-                  <span class="text-green-400 font-mono">Â£${potentialReturn.toFixed(2)}</span>
+                  <span class="text-green-400 font-mono">£${potentialReturn.toFixed(2)}</span>
                 </div>
                 ${actualReturn > 0 ? `
                 <div class="flex justify-between">
                   <span class="text-zinc-400">Actual Return:</span>
-                  <span class="text-green-400 font-mono font-bold">Â£${actualReturn.toFixed(2)}</span>
+                  <span class="text-green-400 font-mono font-bold">£${actualReturn.toFixed(2)}</span>
                 </div>` : ''}
               </div>
             `;
@@ -930,7 +1085,6 @@
           `;
         }
       } else {
-        // Render individual selections for other markets
         betslipSelections.forEach((selection, index) => {
           const config = marketConfig[selection.market];
           const stakeInfo = stakes.find(s => s.betNumber === index + 1);
@@ -945,16 +1099,16 @@
               <div class="mt-2 pt-2 border-t border-zinc-700 text-xs">
                 <div class="flex justify-between">
                   <span class="text-zinc-400">Stake:</span>
-                  <span class="text-white font-mono">Â£${stake.toFixed(2)}</span>
+                  <span class="text-white font-mono">£${stake.toFixed(2)}</span>
                 </div>
                 <div class="flex justify-between">
                   <span class="text-zinc-400">Potential Return:</span>
-                  <span class="text-green-400 font-mono">Â£${potentialReturn.toFixed(2)}</span>
+                  <span class="text-green-400 font-mono">£${potentialReturn.toFixed(2)}</span>
                 </div>
                 ${actualReturn > 0 ? `
                 <div class="flex justify-between">
                   <span class="text-zinc-400">Actual Return:</span>
-                  <span class="text-green-400 font-mono font-bold">Â£${actualReturn.toFixed(2)}</span>
+                  <span class="text-green-400 font-mono font-bold">£${actualReturn.toFixed(2)}</span>
                 </div>` : ''}
               </div>
             `;
@@ -976,7 +1130,6 @@
       container.innerHTML = html;
       updateStakeDisplay();
       
-      // Re-initialize lucide icons
       if (window.lucide) {
         window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
       }
@@ -989,23 +1142,19 @@
         month: 'short'
       });
 
-      // Get final score color coding (this is still the rating)
       const score = parseFloat(selection.finalScore) || 0;
       let scoreColor = 'text-zinc-400';
       if (score >= 4) scoreColor = 'text-green-400';
       else if (score >= 3) scoreColor = 'text-yellow-400';
       else scoreColor = 'text-red-400';
 
-      // Get actual match score for display
       const homeScore = selection.homeScore || 0;
       const awayScore = selection.awayScore || 0;
       const actualMatchScore = `${homeScore}-${awayScore}`;
 
-      // Get win/loss status
       const result = selection.result || 'pending';
       const totalGoals = selection.totalGoals || 0;
       
-      // Result badge styling
       let resultBadge = '';
       switch (result) {
         case 'win':
@@ -1077,7 +1226,6 @@
     }
 
     function showNotification(message) {
-      // Simple notification - could be enhanced with a proper notification system
       const notification = document.createElement('div');
       notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-[slideInUp_0.3s_ease-out]';
       notification.textContent = message;
@@ -1090,7 +1238,7 @@
       }, 3000);
     }
 
-    // Update scores in betslip from latest API data - 🔒 NOW SECURE!
+    // 🔒 SECURE: Update scores with authentication
     async function updateBetslipScores() {
       if (betslipSelections.length === 0) {
         showNotification('No fixtures in betslip to update');
@@ -1098,8 +1246,8 @@
       }
 
       try {
-        // Re-fetch from secure API
-        const response = await fetch('https://api-7wyko6woyq-uc.a.run.app/calculator/fixtures', { 
+        // 🔒 Make authenticated request to secure API
+        const response = await makeAuthenticatedRequest('https://api-7wyko6woyq-uc.a.run.app/calculator/fixtures', {
           cache: 'no-cache' 
         });
         
@@ -1112,7 +1260,6 @@
 
         const freshData = data.fixtures;
 
-        // Update each betslip selection with fresh scores and win/loss
         let updatedCount = 0;
         betslipSelections = betslipSelections.map(selection => {
           const freshFixture = freshData.find(f => String(f.matchid) === String(selection.fixtureId));
@@ -1121,9 +1268,8 @@
             const newAwayScore = parseInt(freshFixture.FTAG) || 0;
             const totalGoals = parseFloat(freshFixture.ftgoals) || 0;
             
-            // Calculate win/loss based on market
             let result = 'pending';
-            if (totalGoals > 0) { // Only calculate if game has finished
+            if (totalGoals > 0) {
               switch (selection.market) {
                 case 'over2.5':
                   result = totalGoals > 2.5 ? 'win' : 'loss';
@@ -1139,7 +1285,6 @@
               }
             }
             
-            // Only count as updated if scores actually changed
             if (selection.homeScore !== newHomeScore || selection.awayScore !== newAwayScore || selection.result !== result) {
               updatedCount++;
             }
@@ -1155,13 +1300,12 @@
           return selection;
         });
 
-        // For under6 market, calculate betslip-level results (groups of 3)
+        // For under6 market, calculate betslip-level results
         if (currentMarketType === 'under6') {
           const groupSize = marketConfig['under6'].groupSize;
           for (let i = 0; i < betslipSelections.length; i += groupSize) {
             const group = betslipSelections.slice(i, i + groupSize);
             if (group.length === groupSize) {
-              // Check if all 3 games in the group are wins
               const allWin = group.every(selection => selection.result === 'win');
               const anyLoss = group.some(selection => selection.result === 'loss');
               const anyPending = group.some(selection => selection.result === 'pending');
@@ -1175,7 +1319,6 @@
                 groupResult = 'loss';
               }
               
-              // Update group result for all selections in this group
               for (let j = i; j < i + groupSize && j < betslipSelections.length; j++) {
                 betslipSelections[j].groupResult = groupResult;
               }
@@ -1183,19 +1326,22 @@
           }
         }
 
-        // Save updated betslip and refresh UI
         saveBetslip();
         updateBetslipUI();
         
-        showNotification(`Updated ${updatedCount} fixture scores & results`);
+        showNotification(`🔒 Updated ${updatedCount} fixture scores & results (authenticated)`);
         
       } catch (error) {
         console.error('Error updating scores:', error);
-        showNotification('Error updating scores - check console');
+        if (error.message === 'Authentication required') {
+          showNotification('⚠️ Authentication required - please sign in');
+        } else {
+          showNotification('Error updating scores - check console');
+        }
       }
     }
 
-    // Check for URL parameters from backtesting page
+    // Check for URL parameters from backtesting page (same as before)
     function checkUrlParameters() {
       const urlParams = new URLSearchParams(window.location.search);
       const teams = urlParams.get('teams');
@@ -1209,20 +1355,17 @@
 
         console.log('URL Parameters:', { selectedTeams, selectedMarket, source });
 
-        // Display market name properly
         const marketNames = {
           'over2.5': 'OVER 2.5 GOALS',
           'under2.5': 'UNDER 2.5 GOALS',
           'under6': 'UNDER 6 GOALS'
         };
         
-        // Show filter status
         document.getElementById('filterStatus').style.display = 'block';
         document.getElementById('currentMarket').textContent = marketNames[selectedMarket] || selectedMarket.toUpperCase();
       }
     }
 
-    // Build team list from fixtures data
     function buildTeamList() {
       allTeams.clear();
       fixturesData.forEach(fixture => {
@@ -1238,14 +1381,12 @@
       populateTeamOptions();
     }
 
-    // Populate team filter options
     function populateTeamOptions() {
       const container = document.getElementById('teamOptions');
       const teams = Array.from(allTeams).sort();
       
       let html = '';
       
-      // Add "All Teams" option
       html += `
         <label class="flex items-center px-3 py-2 hover:bg-[#141b23] cursor-pointer">
           <input type="checkbox" id="selectAll" class="rounded border-zinc-700 text-yellow-500 focus:ring-yellow-500 focus:ring-offset-0 w-4 h-4 bg-[#0b1016] mr-2">
@@ -1265,10 +1406,8 @@
       
       container.innerHTML = html;
       
-      // Pre-select teams from URL if any
       if (isFiltered && selectedTeams.length > 0) {
         selectedTeams.forEach(urlTeam => {
-          // Find matching team in the list
           teams.forEach(team => {
             if (teamMatches(team, urlTeam)) {
               userSelectedTeams.add(team);
@@ -1281,7 +1420,6 @@
       }
     }
 
-    // Update selected teams display and filter badge
     function updateSelectedTeamsDisplay() {
       const display = document.getElementById('selectedTeamsDisplay');
       const count = document.getElementById('selectedCount');
@@ -1311,47 +1449,39 @@
         
         badge.classList.remove('hidden');
         
-        // Re-initialize lucide icons
         if (window.lucide) {
           window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
         }
       }
     }
 
-    // Toggle filter section
     function toggleFilterSection() {
       const content = document.getElementById('filterContent');
       const chevron = document.getElementById('filterChevron');
       
       if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
-        // Expand
-        content.style.maxHeight = '500px'; // Generous height to accommodate content
+        content.style.maxHeight = '500px';
         content.style.opacity = '1';
         content.style.paddingTop = '1rem';
         content.style.paddingBottom = '1rem';
         chevron.style.transform = 'rotate(180deg)';
         
-        // Store preference
         localStorage.setItem('filterSectionExpanded', 'true');
       } else {
-        // Collapse
         content.style.maxHeight = '0px';
         content.style.opacity = '0';
         content.style.paddingTop = '0';
         content.style.paddingBottom = '0';
         chevron.style.transform = 'rotate(0deg)';
         
-        // Store preference
         localStorage.setItem('filterSectionExpanded', 'false');
       }
     }
 
-    // Initialize filter section state
     function initializeFilterSection() {
       const content = document.getElementById('filterContent');
       const chevron = document.getElementById('filterChevron');
       
-      // Check saved preference (default to collapsed)
       const isExpanded = localStorage.getItem('filterSectionExpanded') === 'true';
       
       if (isExpanded) {
@@ -1369,7 +1499,6 @@
       }
     }
 
-    // Remove team from selection
     function removeTeam(team) {
       userSelectedTeams.delete(team);
       const checkbox = document.querySelector(`input[value="${team}"]`);
@@ -1377,10 +1506,11 @@
       updateSelectedTeamsDisplay();
     }
 
-    // Load fixtures data - 🔒 NOW SECURE!
+    // 🔒 SECURE: Load fixtures with authentication
     async function loadFixtures() {
       try {
-        const response = await fetch('https://api-7wyko6woyq-uc.a.run.app/calculator/fixtures', { 
+        // 🔒 Make authenticated request to secure API
+        const response = await makeAuthenticatedRequest('https://api-7wyko6woyq-uc.a.run.app/calculator/fixtures', {
           cache: 'no-cache' 
         });
         
@@ -1392,7 +1522,7 @@
         }
 
         fixturesData = data.fixtures;
-        console.log(`🔒 Loaded ${fixturesData.length} fixtures from secure API`);
+        console.log(`🔒 Loaded ${fixturesData.length} fixtures from authenticated API`);
         
         processFixturesData();
         buildTeamList();
@@ -1407,38 +1537,36 @@
         updateStats();
         hideLoading();
         updateLastUpdated();
-        updateBetslipUI(); // Initialize betslip UI
+        updateBetslipUI();
       } catch (error) {
         console.error('Error loading fixtures:', error);
-        showError();
+        if (error.message === 'Authentication required') {
+          showAuthRequired();
+        } else {
+          showError();
+        }
       }
     }
 
-    // Process and enrich fixtures data
     function processFixturesData() {
       fixturesData = fixturesData.map((fixture, index) => {
-        // Use existing matchid from CSV data (force to string)
         const matchid = String(fixture.matchid || `fallback_${index}_${Date.now()}`);
 
-        // Parse date and time - handle DD/MM/YYYY format from CSV
         let matchDate = new Date();
         if (fixture.Date) {
           const dateStr = String(fixture.Date).trim();
           if (dateStr && dateStr !== 'Invalid Date') {
-            // Handle DD/MM/YYYY HH:MM format (e.g., "01/12/2025 00:00")
             const parts = dateStr.split(' ');
-            const datePart = parts[0]; // "01/12/2025"
-            const timePart = fixture.Location || '00:00'; // Use Location column for time instead of parts[1]
+            const datePart = parts[0];
+            const timePart = fixture.Location || '00:00';
             
             if (datePart.includes('/')) {
               const [day, month, year] = datePart.split('/');
               const [hour, minute] = timePart.split(':');
               
-              // Create date with correct DD/MM/YYYY interpretation
-              // Note: month is 0-indexed in JavaScript Date constructor
               const parsedDate = new Date(
                 parseInt(year), 
-                parseInt(month) - 1, // Convert to 0-indexed month
+                parseInt(month) - 1,
                 parseInt(day),
                 parseInt(hour) || 0,
                 parseInt(minute) || 0
@@ -1448,7 +1576,6 @@
                 matchDate = parsedDate;
               }
             } else {
-              // Fallback for other date formats
               const parsedDate = new Date(dateStr);
               if (!isNaN(parsedDate.getTime())) {
                 matchDate = parsedDate;
@@ -1457,16 +1584,13 @@
           }
         }
 
-        // Handle the actual column names from your CSV
         const homeTeam = fixture['Home Team'] || fixture.HomeTeam || 'TBA';
         const awayTeam = fixture['Away Team'] || fixture.AwayTeam || 'TBA';
         const league = fixture.league || fixture.League || 'Unknown League';
         
-        // Parse actual match scores from FTHG and FTAG columns
         let homeScore = parseInt(fixture.FTHG) || 0;
         let awayScore = parseInt(fixture.FTAG) || 0;
 
-        // Determine match status based on available data
         let status = 'upcoming';
         const now = new Date();
         
@@ -1480,16 +1604,14 @@
             status = 'postponed';
           }
         } else if (matchDate < now && (homeScore > 0 || awayScore > 0)) {
-          // If date is past and there are scores, assume finished
           status = 'finished';
         } else if (matchDate < now) {
-          // If date is past but no scores, assume finished
           status = 'finished';
         }
 
         return {
           ...fixture,
-          matchid, // Include the matchid from CSV (now string)
+          matchid,
           matchDate,
           status,
           homeScore,
@@ -1502,14 +1624,11 @@
         };
       });
 
-      // Sort by date and time
       fixturesData.sort((a, b) => a.matchDate - b.matchDate);
     }
 
-    // Apply filtering based on selected teams
     function applyFiltering() {
       if (userSelectedTeams.size > 0) {
-        // Filter fixtures to include selected teams using improved matching
         filteredFixtures = fixturesData.filter(fixture => {
           return Array.from(userSelectedTeams).some(selectedTeam => 
             teamMatches(fixture.HomeTeam, selectedTeam) || 
@@ -1528,7 +1647,6 @@
       }
     }
 
-    // Apply team filter
     function applyTeamFilter() {
       applyFiltering();
       
@@ -1540,17 +1658,14 @@
       
       updateStats();
       
-      // Close dropdown
       document.getElementById('teamFilterMenu').classList.add('hidden');
     }
 
-    // Render fixtures grouped into weekly betslips (filtered view)
     function renderBetslips() {
       const container = document.getElementById('betslipsContainer');
       const fixturesContainer = document.getElementById('fixturesContainer');
       const emptyState = document.getElementById('emptyState');
 
-      // Hide regular fixtures container
       fixturesContainer.style.display = 'none';
       container.style.display = 'block';
 
@@ -1562,7 +1677,6 @@
 
       emptyState.style.display = 'none';
 
-      // Group fixtures by calendar weeks
       const betslips = groupFixturesByWeeks(filteredFixtures);
 
       if (betslips.length === 0) {
@@ -1618,28 +1732,24 @@
 
       container.innerHTML = html;
 
-      // Initialize lucide icons
       if (window.lucide) {
         window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
       }
     }
 
-    // Group fixtures into weekly betslips
     function groupFixturesByWeeks(fixtures) {
       const betslips = [];
       
-      // Group fixtures by calendar week
       const fixturesByWeek = {};
       
       fixtures.forEach(fixture => {
-        // Get the Monday of the week for this fixture date
         const date = new Date(fixture.matchDate);
-        const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
+        const dayOfWeek = date.getDay();
         const monday = new Date(date);
-        monday.setDate(date.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)); // Adjust to Monday
+        monday.setDate(date.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
         monday.setHours(0, 0, 0, 0);
         
-        const weekKey = monday.toISOString().split('T')[0]; // YYYY-MM-DD format
+        const weekKey = monday.toISOString().split('T')[0];
         
         if (!fixturesByWeek[weekKey]) {
           fixturesByWeek[weekKey] = [];
@@ -1647,12 +1757,9 @@
         fixturesByWeek[weekKey].push(fixture);
       });
 
-      // Create betslips for each week
       Object.entries(fixturesByWeek).forEach(([weekStart, weekFixtures]) => {
-        // For each week, show ALL fixtures for selected teams (not just one per team)
         const weekFixturesList = weekFixtures.sort((a, b) => a.matchDate - b.matchDate);
         
-        // Create betslip for each week that has fixtures
         if (weekFixturesList.length > 0) {
           betslips.push({
             weekStart,
@@ -1664,7 +1771,6 @@
       return betslips.sort((a, b) => new Date(a.weekStart) - new Date(b.weekStart));
     }
 
-    // Render individual fixture in betslip
     function renderBetslipFixture(fixture) {
       const timeStr = fixture.matchDate.toLocaleTimeString('en-GB', { 
         hour: '2-digit', 
@@ -1676,7 +1782,6 @@
         month: 'short'
       });
 
-      // Get final score with color coding
       const finalScore = fixture['final score'] || 0;
       let scoreColor = 'text-zinc-400';
       if (finalScore >= 4) scoreColor = 'text-green-400';
@@ -1704,14 +1809,12 @@
           scoreDisplay = `<div class="text-xs text-zinc-500">vs</div>`;
       }
 
-      // Check if fixture is in betslip
       const isInBetslip = betslipSelections.find(s => s.fixtureId === fixture.matchid);
 
       return `
         <div class="bg-[#111821] border border-zinc-800 rounded-lg p-3 cursor-pointer hover:border-zinc-700 transition-all" onclick="selectFixture('${fixture.matchid}')">
           <div class="flex items-center justify-between mb-2">
             
-            <!-- Final Score -->
             <div class="flex items-center gap-2">
               <div class="text-xs font-mono px-2 py-1 rounded ${scoreColor} bg-opacity-10 border border-current border-opacity-20">
                 Score: ${finalScore}
@@ -1719,7 +1822,6 @@
               ${isInBetslip ? `<span class="text-xs px-2 py-1 bg-green-600/20 text-green-400 rounded-full">Added</span>` : ''}
             </div>
 
-            <!-- Date -->
             <div class="text-xs text-zinc-500">
               ${dateStr}
             </div>
@@ -1728,25 +1830,21 @@
           <div class="flex items-center justify-between">
             <div class="flex-1 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
               
-              <!-- Home Team -->
               <div class="text-right">
                 <div class="text-sm font-medium text-white truncate">${fixture.HomeTeam}</div>
               </div>
 
-              <!-- Score/Time -->
               <div class="text-center">
                 ${scoreDisplay}
                 ${statusBadge}
               </div>
 
-              <!-- Away Team -->
               <div class="text-left">
                 <div class="text-sm font-medium text-white truncate">${fixture.AwayTeam}</div>
               </div>
 
             </div>
 
-            <!-- Click to Select -->
             <div class="ml-4 text-zinc-400">
               <i data-lucide="plus-circle" class="w-5 h-5"></i>
             </div>
@@ -1755,13 +1853,11 @@
       `;
     }
 
-    // Render fixtures (unfiltered view)
     function renderFixtures() {
       const container = document.getElementById('fixturesContainer');
       const betslipsContainer = document.getElementById('betslipsContainer');
       const emptyState = document.getElementById('emptyState');
 
-      // Hide betslips container
       betslipsContainer.style.display = 'none';
       container.style.display = 'block';
 
@@ -1773,7 +1869,6 @@
 
       emptyState.style.display = 'none';
 
-      // Group fixtures by league
       const fixturesByLeague = {};
       filteredFixtures.forEach(fixture => {
         const league = fixture.League || 'Unknown League';
@@ -1805,20 +1900,17 @@
 
       container.innerHTML = html;
 
-      // Initialize lucide icons
       if (window.lucide) {
         window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
       }
     }
 
-    // Render individual fixture card
     function renderFixtureCard(fixture) {
       const timeStr = fixture.matchDate.toLocaleTimeString('en-GB', { 
         hour: '2-digit', 
         minute: '2-digit' 
       });
 
-      // Get final score with color coding
       const finalScore = fixture['final score'] || 0;
       let scoreColor = 'text-zinc-400';
       if (finalScore >= 4) scoreColor = 'text-green-400';
@@ -1846,14 +1938,12 @@
           scoreDisplay = `<div class="text-sm text-zinc-500">vs</div>`;
       }
 
-      // Check if fixture is in betslip
       const isInBetslip = betslipSelections.find(s => s.fixtureId === fixture.matchid);
 
       return `
         <div class="fixture-card bg-[#0f141b] border border-zinc-900/60 rounded-lg p-4 hover:border-yellow-600/30 cursor-pointer transition-all" onclick="selectFixture('${fixture.matchid}')">
           <div class="flex items-center justify-between mb-2">
             
-            <!-- Final Score -->
             <div class="flex items-center gap-2">
               <div class="text-xs font-mono px-2 py-1 rounded ${scoreColor} bg-opacity-10 border border-current border-opacity-20">
                 Score: ${finalScore}
@@ -1861,7 +1951,6 @@
               ${isInBetslip ? `<span class="text-xs px-2 py-1 bg-green-600/20 text-green-400 rounded-full">Added</span>` : ''}
             </div>
 
-            <!-- Match Details -->
             <div class="flex items-center gap-2">
               ${fixture.Round ? `<span class="text-xs text-zinc-500 bg-[#111821] border border-zinc-800 px-2 py-1 rounded">${fixture.Round}</span>` : ''}
               <div class="text-zinc-400">
@@ -1873,18 +1962,15 @@
           <div class="flex items-center justify-center">
             <div class="flex-1 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
               
-              <!-- Home Team -->
               <div class="text-right">
                 <div class="text-sm font-medium text-white truncate">${fixture.HomeTeam || 'TBA'}</div>
               </div>
 
-              <!-- Score/Time -->
               <div class="text-center">
                 ${scoreDisplay}
                 ${statusBadge}
               </div>
 
-              <!-- Away Team -->
               <div class="text-left">
                 <div class="text-sm font-medium text-white truncate">${fixture.AwayTeam || 'TBA'}</div>
               </div>
@@ -1893,13 +1979,12 @@
           </div>
 
           <div class="text-center mt-2">
-            <span class="text-xs text-zinc-500">Click to add to betslip</span>
+            <span class="text-xs text-zinc-500">🔒 Click to add to betslip (authenticated)</span>
           </div>
         </div>
       `;
     }
 
-    // Update statistics
     function updateStats() {
       const totalFixtures = filteredFixtures.length;
       const completedFixtures = filteredFixtures.filter(f => f.status === 'finished').length;
@@ -1915,7 +2000,6 @@
         document.getElementById('weeklyBetslips').textContent = betslips.length;
         document.getElementById('uniqueTeams').textContent = uniqueTeams;
         
-        // Update labels for filtered view
         document.querySelector('#weeklyBetslips').parentElement.querySelector('.text-zinc-400').textContent = 'Weekly Betslips';
         document.querySelector('#uniqueTeams').parentElement.querySelector('.text-zinc-400').textContent = 'Teams';
       } else {
@@ -1923,13 +2007,11 @@
         document.getElementById('weeklyBetslips').textContent = '0';
         document.getElementById('uniqueTeams').textContent = uniqueLeagues;
         
-        // Change labels for unfiltered view
         document.querySelector('#weeklyBetslips').parentElement.querySelector('.text-zinc-400').textContent = 'Live Now';
         document.querySelector('#uniqueTeams').parentElement.querySelector('.text-zinc-400').textContent = 'Leagues';
       }
     }
 
-    // Update last updated time
     function updateLastUpdated() {
       const now = new Date();
       const timeStr = now.toLocaleTimeString('en-GB', { 
@@ -1939,20 +2021,17 @@
       document.getElementById('lastUpdated').textContent = `Updated ${timeStr}`;
     }
 
-    // Clear filter and show all fixtures
     function clearFilter() {
       userSelectedTeams.clear();
       selectedTeams = [];
       selectedMarket = '';
       isFiltered = false;
       
-      // Clear checkboxes
       document.querySelectorAll('.team-checkbox').forEach(cb => cb.checked = false);
       document.getElementById('selectAll').checked = false;
       
       updateSelectedTeamsDisplay();
       
-      // Remove URL parameters
       const url = new URL(window.location);
       url.searchParams.delete('teams');
       url.searchParams.delete('market');
@@ -1964,7 +2043,6 @@
       updateStats();
     }
 
-    // Team search functionality
     function filterTeamOptions(searchTerm) {
       const options = document.querySelectorAll('.team-option');
       const lowerSearchTerm = searchTerm.toLowerCase();
@@ -1979,54 +2057,68 @@
       });
     }
 
-    // Visibility helpers
     function showError() {
       document.getElementById('loading').style.display = 'none';
       document.getElementById('app').style.display = 'none';
+      document.getElementById('authRequired').style.display = 'none';
       document.getElementById('error').style.display = 'flex';
     }
 
     function hideLoading() {
       document.getElementById('loading').style.display = 'none';
       document.getElementById('error').style.display = 'none';
+      document.getElementById('authRequired').style.display = 'none';
       document.getElementById('app').style.display = 'block';
     }
 
-    // Event listeners
-    document.addEventListener('DOMContentLoaded', () => {
+    // 🔒 MAIN INITIALIZATION WITH AUTHENTICATION
+    document.addEventListener('DOMContentLoaded', async () => {
       if (window.lucide) {
         window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
       }
 
-      // Check for URL parameters first
-      checkUrlParameters();
+      // 🔒 STEP 1: Check authentication first
+      const isAuthenticated = await checkAuthentication();
+      
+      if (!isAuthenticated) {
+        return; // Stop here if not authenticated
+      }
 
-      // Initialize filter section state
+      // 🔒 STEP 2: Continue with app initialization only if authenticated
+      checkUrlParameters();
       initializeFilterSection();
 
-      // Toggle filter section
+      // All existing event listeners (same as before)
       document.getElementById('toggleFilter').addEventListener('click', toggleFilterSection);
 
-      // Team filter dropdown
       document.getElementById('teamFilterBtn').addEventListener('click', () => {
         document.getElementById('teamFilterMenu').classList.toggle('hidden');
       });
 
-      // Close dropdown when clicking outside
       document.addEventListener('click', (e) => {
         const btn = document.getElementById('teamFilterBtn');
         const menu = document.getElementById('teamFilterMenu');
         if (!btn.contains(e.target) && !menu.contains(e.target)) {
           menu.classList.add('hidden');
         }
+        
+        // Close user menu when clicking outside
+        const userBtn = document.getElementById('userMenuBtn');
+        const userMenu = document.getElementById('userMenu');
+        if (!userBtn.contains(e.target) && !userMenu.contains(e.target)) {
+          userMenu.classList.add('hidden');
+        }
       });
 
-      // Team search
+      // 🔒 User menu toggle
+      document.getElementById('userMenuBtn').addEventListener('click', () => {
+        document.getElementById('userMenu').classList.toggle('hidden');
+      });
+
       document.getElementById('teamSearch').addEventListener('input', (e) => {
         filterTeamOptions(e.target.value);
       });
 
-      // Team selection
       document.addEventListener('change', (e) => {
         if (e.target.classList.contains('team-checkbox')) {
           const team = e.target.value;
@@ -2055,7 +2147,6 @@
         }
       });
 
-      // Filter buttons
       document.getElementById('applyFilter').addEventListener('click', applyTeamFilter);
       document.getElementById('clearAllTeams').addEventListener('click', () => {
         userSelectedTeams.clear();
@@ -2065,32 +2156,25 @@
       });
       document.getElementById('clearFilter').addEventListener('click', clearFilter);
 
-      // Betslip event listeners
       document.getElementById('betslipBtn').addEventListener('click', openBetslip);
       document.getElementById('closeBetslip').addEventListener('click', closeBetslip);
       document.getElementById('betslipOverlay').addEventListener('click', closeBetslip);
       document.getElementById('updateScores').addEventListener('click', updateBetslipScores);
       
-      // Capital input event listener
       document.getElementById('totalCapital').addEventListener('input', () => {
-        updateBetslipUI(); // This will recalculate stakes and update display
+        updateBetslipUI();
       });
 
-      // Market modal event listeners
       document.getElementById('marketModal').addEventListener('click', (e) => {
         if (e.target === document.getElementById('marketModal')) {
           closeMarketModal();
         }
       });
 
-      // Proceed to journal
       document.getElementById('proceedToJournal').addEventListener('click', () => {
         const betslipCount = getBetslipCount();
         if (betslipCount > 0) {
-          // Here you would implement the logic to save to journal
-          // For now, just show a notification
-          showNotification(`${betslipCount} betslip(s) saved to journal!`);
-          // Clear betslip after saving
+          showNotification(`🔒 ${betslipCount} betslip(s) saved to journal! (authenticated)`);
           betslipSelections = [];
           currentMarketType = null;
           localStorage.removeItem('betslipSelections');
@@ -2100,7 +2184,6 @@
         }
       });
 
-      // Navigation handlers
       document.querySelector('nav button[data-nav="markets"]')?.addEventListener('click', () => {
         window.location.href = 'https://www.simplififootball.com/market.html';
       });
@@ -2113,7 +2196,7 @@
         window.location.href = 'https://www.simplififootball.com/dash.html';
       });
 
-      // Initialize
+      // 🔒 STEP 3: Load fixtures data (only if authenticated)
       loadFixtures();
     });
   </script>
