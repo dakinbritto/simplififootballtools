@@ -1332,107 +1332,7 @@
     </div>
   </div>
 
-  <!-- ══════════════════ ACCORDION 3: INDICES ══════════════════ -->
-  <div class="accordion" id="acc-indices">
-    <button class="accordion-header" onclick="toggleAccordion('indices')">
-      <span class="accordion-title">Indices</span>
-      <span class="accordion-chevron">▾</span>
-    </button>
-    <div class="accordion-body">
-      <div class="accordion-content">
-        <a class="accordion-link">Explore →</a>
-        <div class="indices">
-
-          <div class="index-row">
-            <div class="index-left">
-              <div class="index-icon">⬡</div>
-              <div>
-                <div class="index-name">Corners Index</div>
-                <div class="index-desc" id="cornersIndexDesc">— ETFs · O5 Market</div>
-              </div>
-            </div>
-            <div class="index-right">
-              <div class="index-val" id="cornersIndexVal">—</div>
-              <div class="index-pct" id="cornersIndexPct">—</div>
-            </div>
-          </div>
-
-          <div class="index-row">
-            <div class="index-left">
-              <div class="index-icon">◈</div>
-              <div>
-                <div class="index-name">Goals Index</div>
-                <div class="index-desc" id="goalsIndexDesc">— ETFs · U6 Market</div>
-              </div>
-            </div>
-            <div class="index-right">
-              <div class="index-val" id="goalsIndexVal">—</div>
-              <div class="index-pct" id="goalsIndexPct">—</div>
-            </div>
-          </div>
-
-          <div class="index-row">
-            <div class="index-left">
-              <div class="index-icon">◇</div>
-              <div>
-                <div class="index-name">SeriaB Index</div>
-                <div class="index-desc" id="seriabIndexDesc">— ETFs · Multi-Market</div>
-              </div>
-            </div>
-            <div class="index-right">
-              <div class="index-val" id="seriabIndexVal">—</div>
-              <div class="index-pct" id="seriabIndexPct">—</div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══════════════════ ACCORDION 4: MARKET PULSE ══════════════════ -->
-  <div class="accordion" id="acc-pulse">
-    <button class="accordion-header" onclick="toggleAccordion('pulse')">
-      <span class="accordion-title">Market Pulse</span>
-      <span class="accordion-chevron">▾</span>
-    </button>
-    <div class="accordion-body">
-      <div class="accordion-content">
-        <a class="accordion-link" onclick="event.stopPropagation(); window.location.href='https://www.simplififootball.com/newdisc.html'">Details →</a>
-        <div class="pulse-section">
-          <div class="pulse-grid">
-
-            <div class="pulse-card" id="pulse1">
-              <div class="pulse-label" id="pulse1Label">Championship</div>
-              <div class="pulse-rate" id="pulse1Rate">—</div>
-              <div class="pulse-market">Under 6 Goals</div>
-            </div>
-
-            <div class="pulse-card" id="pulse2">
-              <div class="pulse-label" id="pulse2Label">Championship</div>
-              <div class="pulse-rate" id="pulse2Rate">—</div>
-              <div class="pulse-market">Over 5 Corners</div>
-            </div>
-
-            <div class="pulse-card" id="pulse3">
-              <div class="pulse-label" id="pulse3Label">SeriaB</div>
-              <div class="pulse-rate" id="pulse3Rate">—</div>
-              <div class="pulse-market">Under 6 Goals</div>
-            </div>
-
-            <div class="pulse-card" id="pulse4">
-              <div class="pulse-label" id="pulse4Label">LaLiga</div>
-              <div class="pulse-rate" id="pulse4Rate">—</div>
-              <div class="pulse-market">Under 13 Corners</div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══════════════════ ACCORDION 5: FIXTURES (NEW) ══════════════════ -->
+  <!-- ══════════════════ ACCORDION 3: FIXTURES (NEW) ══════════════════ -->
   <div class="accordion" id="acc-fixtures">
     <button class="accordion-header" onclick="toggleAccordion('fixtures')">
       <span class="accordion-title">Fixtures</span>
@@ -1695,12 +1595,6 @@ function renderETFCards(etfResults, etfs) {
   });
 }
 
-// ── Market Pulse ─────────────────────────────────────────────────────────────
-function calcPulseRate(data, div, fn) {
-  const rows = data.filter(r => r.Div === div);
-  if (!rows.length) return 0;
-  return (rows.filter(fn).length / rows.length) * 100;
-}
 
 // ── Run all simulations ───────────────────────────────────────────────────────
 function runAll() {
@@ -1740,49 +1634,6 @@ function runAll() {
     document.getElementById('heroReturn').textContent = 'No ETFs saved';
     renderHeroChart([startCapital]);
   }
-
-  // Market Pulse
-  const pulseConfigs = [
-    { id: 'pulse1', div: 'Championship', fn: r => (parseFloat(r.FTHG) + parseFloat(r.FTAG)) < 6 },
-    { id: 'pulse2', div: 'Championship', fn: r => (parseFloat(r.HC)   + parseFloat(r.AC))   > 5 },
-    { id: 'pulse3', div: 'SeriaB',       fn: r => (parseFloat(r.FTHG) + parseFloat(r.FTAG)) < 6 },
-    { id: 'pulse4', div: 'laliga',       fn: r => (parseFloat(r.HC)   + parseFloat(r.AC))   < 13 },
-  ];
-  pulseConfigs.forEach(p => {
-    const rate = calcPulseRate(data, p.div, p.fn);
-    document.getElementById(p.id + 'Rate').textContent = rate.toFixed(1) + '%';
-    document.getElementById(p.id).style.setProperty('--bar-val', 0);
-    setTimeout(() => document.getElementById(p.id).style.setProperty('--bar-val', (rate/100).toFixed(3)), 300);
-  });
-
-  // Indices
-  const cornersAvgROI = etfResults.length > 0 ? etfResults.reduce((s, r) => s + parseFloat(r.ret), 0) / etfResults.length : 0;
-  const cornersVal = +(1000 * (1 + cornersAvgROI / 100)).toFixed(1);
-  const cornersSeasons = [...new Set(data.filter(r => r.Div === 'Championship').map(r => r.Season))].sort();
-  const cornersLastSeason = cornersSeasons[cornersSeasons.length - 1];
-  const cornersLastRows = data.filter(r => r.Div === 'Championship' && r.Season === cornersLastSeason);
-  const cornersRecentRate = cornersLastRows.length > 0 ? (cornersLastRows.filter(r => (parseFloat(r.HC)+parseFloat(r.AC))>5).length / cornersLastRows.length * 100).toFixed(1) : '0.0';
-  document.getElementById('cornersIndexVal').textContent = cornersVal.toLocaleString('en-GB');
-  document.getElementById('cornersIndexPct').textContent = '▲ +' + cornersRecentRate + '%';
-  document.getElementById('cornersIndexDesc').textContent = etfResults.length + ' ETFs · Live Data';
-
-  const goalsDivs = ['Championship', 'SeriaB', 'laliga'];
-  const goalsRates = goalsDivs.map(div => { const rows = data.filter(r => r.Div === div); return rows.length > 0 ? rows.filter(r => (parseFloat(r.FTHG)+parseFloat(r.FTAG))<6).length / rows.length * 100 : 0; });
-  const goalsVal = +(1000 * (1 + (goalsRates.reduce((s,v) => s+v,0) / goalsRates.length) / 100)).toFixed(1);
-  const goalsLastRows = data.filter(r => goalsDivs.includes(r.Div) && r.Season === cornersLastSeason);
-  const goalsRecentRate = goalsLastRows.length > 0 ? (goalsLastRows.filter(r => (parseFloat(r.FTHG)+parseFloat(r.FTAG))<6).length / goalsLastRows.length * 100).toFixed(1) : '0.0';
-  document.getElementById('goalsIndexVal').textContent = goalsVal.toLocaleString('en-GB');
-  document.getElementById('goalsIndexPct').textContent = '▲ +' + goalsRecentRate + '%';
-  document.getElementById('goalsIndexDesc').textContent = goalsDivs.length + ' Leagues · U6 Goals';
-
-  const seriabRows = data.filter(r => r.Div === 'SeriaB');
-  const seriabAvg = seriabRows.length > 0 ? ((seriabRows.filter(r=>(parseFloat(r.FTHG)+parseFloat(r.FTAG))<6).length + seriabRows.filter(r=>(parseFloat(r.HC)+parseFloat(r.AC))>5).length) / (seriabRows.length*2) * 100) : 0;
-  const seriabVal = +(1000 * (1 + seriabAvg / 100)).toFixed(1);
-  const seriabLastRows = data.filter(r => r.Div === 'SeriaB' && r.Season === cornersLastSeason);
-  const seriabRecentU6 = seriabLastRows.length > 0 ? (seriabLastRows.filter(r=>(parseFloat(r.FTHG)+parseFloat(r.FTAG))<6).length / seriabLastRows.length * 100).toFixed(1) : '0.0';
-  document.getElementById('seriabIndexVal').textContent = seriabVal.toLocaleString('en-GB');
-  document.getElementById('seriabIndexPct').textContent = '▲ +' + seriabRecentU6 + '%';
-  document.getElementById('seriabIndexDesc').textContent = '2 Markets · SeriaB';
 
   // Last Round Recap
   renderLastRoundRecap();
