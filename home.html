@@ -1413,7 +1413,45 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
 <script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC2ILk_So6nzqGuZifYfTEktwZUqwu0TdM",
+  authDomain: "simplififootball-1234.firebaseapp.com",
+  projectId: "simplififootball-1234",
+  storageBucket: "simplififootball-1234.firebasestorage.app",
+  messagingSenderId: "953983072540",
+  appId: "1:953983072540:web:2e8d75afa04dd84a6762d9",
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+
+const HUB_BASE = "https://us-central1-simplififootball-1234.cloudfunctions.net/api/hub";
+
+async function getAuthToken() {
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    window.location.href = "/login.html";
+    throw new Error("Not logged in");
+  }
+  return user.getIdToken();
+}
+
+async function hubSimulate(teamKeys, market, startCapital, stakePct, season) {
+  const token = await getAuthToken();
+  const res = await fetch(`${HUB_BASE}/simulate`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ teamKeys, market, startCapital, stakePct, season }),
+  });
+  if (!res.ok) throw new Error("Hub simulate failed: " + res.status);
+  const data = await res.json();
+  return data.result;
+}
 const GREEN = '#10b981';
 const GOLD  = '#c9a84c';
 const BLUE  = '#378ADD';
@@ -1466,52 +1504,19 @@ function getHomeFilteredData() {
 }
 
 // ── Simulation ────────────────────────────────────────────────────────────────
-function runSimulation(data, div, teams, startCapital, stakePct, marketKey) {
-  const mkt = HOME_MARKETS[marketKey];
-  const lg = data.filter(r => r.Div === div);
-
-  function getTeamFixtures(team) {
-    return lg.filter(r => r.HomeTeam === team || r.AwayTeam === team)
-      .sort((a, b) => {
-        if (a.Season !== b.Season) return a.Season < b.Season ? -1 : 1;
-        const da = a.Date ? a.Date.split('/').reverse().join('-') : '';
-        const db = b.Date ? b.Date.split('/').reverse().join('-') : '';
-        return da < db ? -1 : 1;
-      }).map((r, i) => ({ ...r, teamRound: i + 1 }));
-  }
-
-  const teamFixtures = {};
-  teams.forEach(t => { teamFixtures[t] = getTeamFixtures(t); });
-  const maxRound = Math.max(...teams.map(t => teamFixtures[t].length));
-
-  let capital = startCapital;
-  const capitalCurve = [startCapital];
-  let wins = 0, losses = 0, voids = 0;
-
-  for (let rnd = 1; rnd <= maxRound; rnd++) {
-    const stake = +(capital * stakePct).toFixed(2);
-    const fixtures = {};
-    teams.forEach(t => { const f = teamFixtures[t].find(r => r.teamRound === rnd); if (f) fixtures[t] = f; });
-    const present = Object.keys(fixtures);
-    let h2h = false;
-    for (let i = 0; i < present.length; i++)
-      for (let j = i + 1; j < present.length; j++) {
-        const f = fixtures[present[i]];
-        if (f.HomeTeam === present[j] || f.AwayTeam === present[j]) h2h = true;
-      }
-    if (h2h) { voids++; continue; }
-    if (present.length === 0) continue;
-    const combinedOdds = +Math.pow(mkt.fixtureOdds, present.length).toFixed(6);
-    const allHit = present.every(t => mkt.hitFn(fixtures[t]));
-    if (allHit) { capital = +(capital - stake + stake * combinedOdds).toFixed(2); wins++; }
-    else { capital = +(capital - stake).toFixed(2); losses++; }
-    capitalCurve.push(capital);
-  }
-
-  const totalBets = wins + losses;
-  return { capital, capitalCurve, wins, losses, voids, totalBets,
-    winRate: totalBets > 0 ? ((wins / totalBets) * 100).toFixed(1) : '0.0',
-    ret: (((capital - startCapital) / startCapital) * 100).toFixed(1) };
+async function runSimulation(data, div, teams, startCapital, stakePct, marketKey, season) {
+  const teamKeys = teams.map(t => `${div}:${t}`);
+  const result = await hubSimulate(teamKeys, marketKey, startCapital, stakePct, season || 'all');
+  return {
+    capital: result.capital,
+    capitalCurve: result.capitalCurve,
+    wins: result.wins,
+    losses: result.losses,
+    voids: result.voids,
+    totalBets: result.totalBets,
+    winRate: String(result.winRate),
+    ret: String(result.ret),
+  };
 }
 
 // ── Render sparkline ─────────────────────────────────────────────────────────
@@ -1597,18 +1602,17 @@ function renderETFCards(etfResults, etfs) {
 
 
 // ── Run all simulations ───────────────────────────────────────────────────────
-function runAll() {
+async function runAll() {
   const data = getHomeFilteredData();
   const startCapital = parseFloat(document.getElementById('homeCapitalInput').value) || 2000;
   const stakePct = parseFloat(document.getElementById('homeStakeSelect').value) || 0.10;
   const etfs = getSavedETFs();
 
-  // Simulate each saved ETF
-  const etfResults = etfs.map(etf => {
-    const mkt = HOME_MARKETS[etf.market] || HOME_MARKETS['over5corners'];
-    return runSimulation(data, etf.div, etf.teams, startCapital, stakePct, etf.market);
-  });
-
+  // Simulate each saved ETF (via hub)
+  const etfResults = await Promise.all(etfs.map(etf =>
+    runSimulation(data, etf.div, etf.teams, startCapital, stakePct, etf.market, homeCurrentSeason)
+  ));
+ 
   // Render ETF cards
   renderETFCards(etfResults, etfs);
 
