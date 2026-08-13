@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simplifi — Football Investment Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #000000;
+    --white: #ffffff;
+    --green: #10b981;
+    --green-dim: #059669;
+    --green-glow: rgba(16,185,129,0.12);
+    --green-faint: rgba(16,185,129,0.06);
+    --gold: #c9a84c;
+    --gold-dim: rgba(201,168,76,0.15);
+    --surface: #0a0a0a;
+    --surface-2: #111111;
+    --surface-3: #181818;
+    --border: rgba(255,255,255,0.07);
+    --border-green: rgba(16,185,129,0.2);
+    --text-primary: #f5f5f0;
+    --text-secondary: rgba(245,245,240,0.45);
+    --text-muted: rgba(245,245,240,0.25);
+    --red: #e24b4a;
+  }
+
+  html, body {
+    background: var(--black);
+    color: var(--text-primary);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .app-shell {
+    width: 100%;
+    max-width: 420px;
+    min-height: 100vh;
+    background: var(--black);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── DESKTOP LAYOUT ── */
+  @media (min-width: 900px) {
+    body {
+      background: #050505;
+      align-items: stretch;
+    }
+
+    .app-shell {
+      max-width: 100%;
+      width: 100%;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      grid-template-rows: auto;
+      overflow: visible;
+    }
+
+    /* Left column: nav + hero */
+    nav {
+      grid-column: 1;
+      grid-row: 1;
+      border-right: 1px solid var(--border);
+    }
+
+    .hero {
+      grid-column: 1;
+      grid-row: 2;
+      border-right: 1px solid var(--border);
+      padding-bottom: 40px;
+    }
+
+    /* Right column: everything else stacks */
+    .right-panel {
+      grid-column: 2;
+      grid-row: 1 / 99;
+      padding: 32px 40px;
+      overflow-y: auto;
+    }
+
+    .etf-scroll,
+    .indices,
+    .pulse-section,
+    .cta-section,
+    .section-header {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .section-header {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    /* ETF cards side by side on desktop */
+    .etf-scroll {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* Indices full width */
+    .indices { gap: 10px; }
+
+    /* Pulse grid 4 columns */
+    .pulse-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    /* Bottom nav becomes left sidebar nav on desktop */
+    .bottom-nav {
+      grid-column: 1;
+      grid-row: 3;
+      position: sticky;
+      bottom: 0;
+      border-right: 1px solid var(--border);
+      border-top: 1px solid var(--border);
+    }
+
+    /* Hide scanline on desktop */
+    .scanline { display: none; }
+  }
+
+  @media (min-width: 480px) and (max-width: 899px) {
+    body { background: #050505; }
+    .app-shell {
+      width: 420px;
+      min-height: 100vh;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+    }
+  }
+
+  /* ── LIGHT MODE ── */
+  body.light {
+    --black: #f5f5f0;
+    --surface: #ebebeb;
+    --surface-2: #e0e0da;
+    --surface-3: #d4d4ce;
+    --border: rgba(0,0,0,0.08);
+    --border-green: rgba(16,185,129,0.35);
+    --text-primary: #1a1a18;
+    --text-secondary: rgba(26,26,24,0.55);
+    --text-muted: rgba(26,26,24,0.35);
+    --green-glow: rgba(16,185,129,0.15);
+    --green-faint: rgba(16,185,129,0.08);
+  }
+
+  body.light .grid-overlay {
+    background-image:
+      linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+  }
+
+  body.light .scanline {
+    background: linear-gradient(to right, transparent, rgba(16,185,129,0.04), transparent);
+  }
+
+  body.light nav {
+    background: linear-gradient(to bottom, #f5f5f0 80%, transparent);
+  }
+
+  body.light .bottom-nav {
+    background: rgba(245,245,240,0.92);
+  }
+
+  body.light .home-select,
+  body.light .home-select option,
+  body.light .home-capital-input {
+    background-color: var(--surface-2);
+    color: var(--text-primary);
+  }
+
+  body.light .delta-pill {
+    background: rgba(16,185,129,0.15);
+  }
+
+  /* ── THEME TOGGLE BUTTON ── */
+  .theme-toggle {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 14px;
+    transition: background 0.2s, border-color 0.2s;
+    color: var(--text-secondary);
+  }
+  .theme-toggle:hover { border-color: var(--border-green); }
+
+  /* ─── NAV ─── */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 24px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(to bottom, var(--black) 80%, transparent);
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    color: var(--text-primary);
+  }
+
+  .nav-logo span {
+    color: var(--green);
+  }
+
+  .nav-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--surface-3);
+    border: 1px solid var(--border-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--green);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .nav-bell {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 16px;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    padding: 8px 24px 32px;
+    position: relative;
+  }
+
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .hero-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 72px;
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .hero-value sub {
+    font-size: 32px;
+    font-weight: 300;
+    vertical-align: baseline;
+    letter-spacing: 0;
+    color: var(--text-secondary);
+  }
+
+  .hero-delta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .delta-pill {
+    background: rgba(16,185,129,0.12);
+    border: 1px solid rgba(16,185,129,0.25);
+    border-radius: 100px;
+    padding: 4px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    letter-spacing: 0.05em;
+  }
+
+  .delta-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ─── CHART ─── */
+  .chart-wrap {
+    position: relative;
+    height: 100px;
+    margin: 0 -4px;
+  }
+
+  .chart-canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ─── TIME TABS ─── */
+  .time-tabs {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0 0;
+  }
+
+  .time-tab {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: color 0.2s, background 0.2s;
+  }
+
+  .time-tab.active {
+    color: var(--green);
+    background: var(--green-faint);
+  }
+
+  /* ─── SECTION HEADER ─── */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 32px 24px 16px;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--text-primary);
+  }
+
+  .section-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--green);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  /* ─── ETF CARDS ─── */
+  .etf-scroll {
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .etf-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.3s;
+  }
+
+  .etf-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(16,185,129,0.3), transparent);
+  }
+
+  .etf-card:hover {
+    border-color: var(--border-green);
+  }
+
+  .etf-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .etf-badge {
+    display: inline-block;
+    background: var(--green-glow);
+    border: 1px solid var(--border-green);
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .etf-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+
+  .etf-sub {
+    font-size: 11px;
+    color: var(--text-secondary);
+    letter-spacing: 0.06em;
+    margin-top: 3px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+  }
+
+  .etf-value-block {
+    text-align: right;
+  }
+
+  .etf-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+  }
+
+  .etf-return {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    text-align: right;
+    margin-top: 2px;
+  }
+
+  .etf-return.neg { color: var(--red); }
+
+  .etf-chart-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    margin-bottom: 4px;
+    cursor: pointer;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .toggle-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .toggle-icon {
+    font-size: 12px;
+    color: var(--text-muted);
+    transition: transform 0.25s ease;
+  }
+
+  .etf-chart-toggle.open .toggle-label { color: var(--green); }
+  .etf-chart-toggle.open .toggle-icon { transform: rotate(180deg); color: var(--green); }
+
+  .etf-chart-wrap {
+    transition: height 0.3s ease;
+  }
+
+  .etf-footer {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .etf-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .etf-stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .etf-stat-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .etf-stat-val.green { color: var(--green); }
+
+  /* ─── INDICES ─── */
+  .indices {
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .index-row {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: border-color 0.25s;
+  }
+
+  .index-row:hover { border-color: var(--border-green); }
+
+  .index-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .index-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .index-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text-primary);
+  }
+
+  .index-desc {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    color: var(--text-secondary);
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    margin-top: 1px;
+  }
+
+  .index-right {
+    text-align: right;
+  }
+
+  .index-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  .index-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    margin-top: 1px;
+  }
+
+  .index-pct.neg { color: var(--red); }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    margin: 4px 24px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  /* ─── MARKET PULSE ─── */
+  .pulse-section {
+    padding: 0 24px;
+  }
+
+  .pulse-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .pulse-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pulse-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--green);
+    transform: scaleX(var(--bar-val, 0));
+    transform-origin: left;
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .pulse-card.red::after { background: var(--red); }
+
+  .pulse-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .pulse-rate {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+
+  .pulse-market {
+    font-size: 10px;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+  }
+
+  /* ─── CTA ─── */
+  .cta-section {
+    padding: 36px 24px 24px;
+  }
+
+  .cta-btn {
+    width: 100%;
+    background: var(--green);
+    color: #000;
+    border: none;
+    border-radius: 14px;
+    padding: 18px 24px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cta-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .cta-btn:active { transform: scale(0.98); }
+
+  .cta-arrow {
+    font-size: 18px;
+    font-weight: 300;
+  }
+
+  /* ─── BOTTOM NAV ─── */
+  .bottom-nav {
+    position: sticky;
+    bottom: 0;
+    background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    padding: 16px 24px 24px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+  }
+
+  .nav-item.active { opacity: 1; }
+
+  .nav-item-icon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-item-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .nav-item.active .nav-item-label { color: var(--green); }
+
+  /* ─── SUBTLE GRID OVERLAY ─── */
+  .grid-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* ─── SCAN LINE ANIMATION ─── */
+  @keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100vh); }
+  }
+
+  .scanline {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, rgba(16,185,129,0.06), transparent);
+    animation: scanline 8s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ── HOME CONTROLS BAR ── */
+  .home-controls {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  @media (min-width: 900px) {
+    .home-controls { padding: 20px 0 20px 0; background: transparent; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+  }
+
+  .home-control-group { display: flex; flex-direction: column; gap: 5px; }
+
+  .home-control-label {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    letter-spacing: 0.16em; color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .home-select {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 28px 7px 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--text-primary);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(245,245,240,0.25)'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-color: var(--surface-2);
+    min-width: 130px;
+  }
+  .home-select option { background: #111111; color: var(--text-primary); }
+
+  .home-capital-wrap {
+    display: flex; align-items: center;
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0 10px; gap: 4px;
+  }
+  .home-capital-prefix { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-secondary); }
+  .home-capital-input {
+    background: transparent; border: none; outline: none;
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    color: var(--text-primary); width: 64px; padding: 7px 0;
+  }
+
+  /* ── HOME SEASON BAR ── */
+  .home-season-bar {
+    display: flex; align-items: center; gap: 6px;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    overflow-x: auto;
+  }
+  .home-season-bar::-webkit-scrollbar { height: 0; }
+
+  @media (min-width: 900px) {
+    .home-season-bar { padding: 12px 0; background: transparent; }
+  }
+
+  .home-season-label {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    letter-spacing: 0.16em; color: var(--text-muted);
+    text-transform: uppercase; white-space: nowrap;
+    margin-right: 4px; flex-shrink: 0;
+  }
+
+  .home-season-tab {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    letter-spacing: 0.08em; color: var(--text-secondary);
+    padding: 4px 10px; border-radius: 5px;
+    border: 1px solid var(--border); background: transparent;
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .home-season-tab:hover { border-color: var(--border-green); color: var(--text-primary); }
+  .home-season-tab.active { background: var(--green-faint); border-color: var(--border-green); color: var(--green); }
+
+  .etf-empty {
+    padding: 40px 24px; text-align: center;
+    border: 1px dashed var(--border); border-radius: 16px;
+    margin: 0 24px;
+  }
+  @media (min-width: 900px) { .etf-empty { margin: 0; } }
+  .etf-empty-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 300; color: var(--text-secondary); margin-bottom: 8px; }
+  .etf-empty-sub { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.14em; color: var(--text-muted); text-transform: uppercase; }
+
+  .etf-delete-btn {
+    position: absolute; top: 14px; right: 14px;
+    width: 22px; height: 22px;
+    background: rgba(226,75,74,0.1); border: 1px solid rgba(226,75,74,0.25);
+    border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: var(--red); transition: background 0.2s; z-index: 2;
+  }
+  .etf-delete-btn:hover { background: rgba(226,75,74,0.25); }
+
+  /* ── LAST ROUND RECAP ── */
+  .recap-card {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px; margin: 0 24px;
+    overflow: hidden; position: relative;
+  }
+  .recap-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(16,185,129,0.3), transparent);
+  }
+  @media (min-width: 900px) { .recap-card { margin: 0; } }
+
+  .recap-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+  }
+  .recap-row:last-child { border-bottom: none; }
+
+  .recap-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+  .recap-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .recap-dot.win { background: var(--green); box-shadow: 0 0 6px rgba(16,185,129,.5); }
+  .recap-dot.loss { background: var(--red); box-shadow: 0 0 6px rgba(226,75,74,.5); }
+  .recap-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px; font-weight: 400; color: var(--text-primary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .recap-meta {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    color: var(--text-muted); letter-spacing: .08em; margin-top: 2px;
+    text-transform: uppercase;
+  }
+  .recap-right { text-align: right; flex-shrink: 0; }
+  .recap-pnl {
+    font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
+    letter-spacing: -.01em;
+  }
+  .recap-pnl.win { color: var(--green); }
+  .recap-pnl.loss { color: var(--red); }
+  .recap-result {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    color: var(--text-muted); letter-spacing: .1em;
+    text-transform: uppercase; margin-top: 2px;
+  }
+  .recap-result.win { color: var(--green); }
+  .recap-result.loss { color: var(--red); }
+
+  .recap-empty {
+    text-align: center; padding: 16px 8px;
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--text-muted); letter-spacing: .1em; text-transform: uppercase;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero { animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  .etf-card:nth-child(1) { animation: fadeUp 0.7s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .etf-card:nth-child(2) { animation: fadeUp 0.7s 0.18s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .etf-card:nth-child(3) { animation: fadeUp 0.7s 0.26s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .index-row { animation: fadeUp 0.6s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+  /* ═════════════════════════════════════════════════════════════════ */
+  /* ── ACCORDION (feature dropdowns) ──                                */
+  /* ═════════════════════════════════════════════════════════════════ */
+  .accordion {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin: 0 24px 12px;
+    overflow: hidden;
+    position: relative;
+  }
+  .accordion::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(16,185,129,0.3), transparent);
+  }
+  @media (min-width: 900px) {
+    .accordion { margin: 0 0 12px; }
+  }
+
+  .accordion-header {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    color: inherit;
+    font-family: inherit;
+    text-align: left;
+    transition: background 0.2s;
+  }
+  .accordion-header:hover { background: rgba(16,185,129,0.03); }
+
+  .accordion-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--text-primary);
+  }
+
+  .accordion-chevron {
+    font-size: 14px;
+    color: var(--text-secondary);
+    transition: transform 0.28s ease, color 0.2s ease;
+    line-height: 1;
+  }
+  .accordion.open .accordion-chevron {
+    transform: rotate(180deg);
+    color: var(--green);
+  }
+
+  .accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .accordion.open .accordion-body {
+    max-height: 6000px;
+  }
+
+  .accordion-content {
+    padding: 4px 20px 22px;
+  }
+
+  .accordion-link {
+    display: inline-block;
+    margin-bottom: 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--green);
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .accordion-link:hover { opacity: 0.8; }
+
+  /* Adjust nested containers so accordion body doesn't double-pad */
+  .accordion-content .etf-scroll,
+  .accordion-content .indices,
+  .accordion-content .pulse-section {
+    padding: 0;
+  }
+  .accordion-content .recap-card,
+  .accordion-content .etf-empty {
+    margin: 0;
+  }
+
+  /* ═════════════════════════════════════════════════════════════════ */
+  /* ── FIXTURES (inside accordion) ──                                  */
+  /* ═════════════════════════════════════════════════════════════════ */
+  .fix-filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .fix-filter-label {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .fix-select {
+    width: 100%;
+    padding: 8px 30px 8px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface-3);
+    color: var(--text-primary);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(245,245,240,0.4)'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    outline: none;
+  }
+  .fix-select:focus { border-color: var(--border-green); }
+  .fix-select option { background: #111; color: var(--text-primary); }
+
+  .fix-round-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+  .fix-round-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+  }
+  .fix-round-btn:hover:not(:disabled) { border-color: var(--border-green); color: var(--green); }
+  .fix-round-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .fix-round-center {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .fix-round-info { text-align: center; }
+  .fix-round-info-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+  .fix-round-info-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--green);
+    line-height: 1.1;
+  }
+  .fix-recent-btn {
+    padding: 0 12px;
+    height: 30px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text-secondary);
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .fix-recent-btn:hover { border-color: var(--border-green); color: var(--green); }
+
+  .fix-league-group {
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface-3);
+  }
+  .fix-league-group:last-child { margin-bottom: 0; }
+  .fix-league-header {
+    padding: 10px 14px 8px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .fix-league-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    color: var(--green);
+    text-transform: uppercase;
+  }
+  .fix-league-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+  }
+  .fix-row {
+    display: grid;
+    grid-template-columns: 48px 1fr auto 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .fix-row:last-child { border-bottom: none; }
+  .fix-datetime {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    line-height: 1.3;
+    color: var(--text-secondary);
+  }
+  .fix-datetime .date { color: var(--text-muted); }
+  .fix-team-home {
+    text-align: right;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    color: var(--text-primary);
+  }
+  .fix-team-away {
+    text-align: left;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    color: var(--text-primary);
+  }
+  .fix-score {
+    min-width: 52px;
+    text-align: center;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+  }
+  .fix-score.played {
+    background: var(--green-faint);
+    border-color: var(--border-green);
+    color: var(--green);
+  }
+  .fix-score.upcoming { color: var(--text-muted); }
+  .fix-conf {
+    min-width: 36px;
+    padding: 3px 6px;
+    border-radius: 5px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-align: center;
+    color: var(--text-secondary);
+  }
+  .fix-conf-empty {
+    min-width: 36px;
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+  .fix-empty {
+    text-align: center;
+    padding: 24px 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-overlay"></div>
+<div class="scanline"></div>
+
+<div class="app-shell">
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">SIMPLIFI<span>.</span></div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="nav-bell">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      </div>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark mode">
+        <span id="themeIcon">☀</span>
+      </button>
+      <div class="nav-avatar">JD</div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-label">Total Profit</div>
+    <div class="hero-value"><sub>£</sub><span id="heroWhole">—</span><span id="heroDecimal" style="font-size:36px;color:var(--text-muted)">.00</span></div>
+    <div class="hero-delta">
+      <div class="delta-pill" id="heroDelta">▲ —</div>
+      <div class="delta-label" id="heroReturn">— all time</div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="heroChart" class="chart-canvas"></canvas>
+    </div>
+    <div class="time-tabs">
+      <div class="time-tab">1W</div>
+      <div class="time-tab">1M</div>
+      <div class="time-tab">3M</div>
+      <div class="time-tab active">1Y</div>
+      <div class="time-tab">ALL</div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL (desktop) -->
+  <div class="right-panel">
+
+  <!-- HOME CONTROLS BAR -->
+  <div class="home-controls">
+    <div class="home-control-group">
+      <div class="home-control-label">Starting Capital</div>
+      <div class="home-capital-wrap">
+        <span class="home-capital-prefix">£</span>
+        <input class="home-capital-input" id="homeCapitalInput" type="number" value="2000" min="100" max="100000">
+      </div>
+    </div>
+    <div class="home-control-group">
+      <div class="home-control-label">Stake Per Bet</div>
+      <select class="home-select" id="homeStakeSelect">
+        <option value="0.05">5%</option>
+        <option value="0.07">7%</option>
+        <option value="0.10" selected>10%</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- HOME SEASON BAR -->
+  <div class="home-season-bar" id="homeSeasonBar">
+    <span class="home-season-label">From Season</span>
+  </div>
+
+  <!-- ══════════════════ ACCORDION 1: YOUR ETFs ══════════════════ -->
+  <div class="accordion" id="acc-etfs">
+    <button class="accordion-header" onclick="toggleAccordion('etfs')">
+      <span class="accordion-title">Your ETFs</span>
+      <span class="accordion-chevron">▾</span>
+    </button>
+    <div class="accordion-body">
+      <div class="accordion-content">
+        <a class="accordion-link" onclick="event.stopPropagation(); window.location.href='https://www.simplififootball.com/newtest.html'">+ Add ETF →</a>
+        <div class="etf-scroll" id="etfContainer">
+          <!-- populated from localStorage -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ ACCORDION 2: LAST ROUND RECAP ══════════════════ -->
+  <div class="accordion" id="acc-recap">
+    <button class="accordion-header" onclick="toggleAccordion('recap')">
+      <span class="accordion-title">Last Round Recap</span>
+      <span class="accordion-chevron">▾</span>
+    </button>
+    <div class="accordion-body">
+      <div class="accordion-content">
+        <a class="accordion-link" onclick="event.stopPropagation(); window.location.href='https://www.simplififootball.com/newjournal.html'">Journal →</a>
+        <div class="recap-card" id="recapCard">
+          <div class="recap-empty">Loading recap...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ ACCORDION 3: INDICES ══════════════════ -->
+  <div class="accordion" id="acc-indices">
+    <button class="accordion-header" onclick="toggleAccordion('indices')">
+      <span class="accordion-title">Indices</span>
+      <span class="accordion-chevron">▾</span>
+    </button>
+    <div class="accordion-body">
+      <div class="accordion-content">
+        <a class="accordion-link">Explore →</a>
+        <div class="indices">
+
+          <div class="index-row">
+            <div class="index-left">
+              <div class="index-icon">⬡</div>
+              <div>
+                <div class="index-name">Corners Index</div>
+                <div class="index-desc" id="cornersIndexDesc">— ETFs · O5 Market</div>
+              </div>
+            </div>
+            <div class="index-right">
+              <div class="index-val" id="cornersIndexVal">—</div>
+              <div class="index-pct" id="cornersIndexPct">—</div>
+            </div>
+          </div>
+
+          <div class="index-row">
+            <div class="index-left">
+              <div class="index-icon">◈</div>
+              <div>
+                <div class="index-name">Goals Index</div>
+                <div class="index-desc" id="goalsIndexDesc">— ETFs · U6 Market</div>
+              </div>
+            </div>
+            <div class="index-right">
+              <div class="index-val" id="goalsIndexVal">—</div>
+              <div class="index-pct" id="goalsIndexPct">—</div>
+            </div>
+          </div>
+
+          <div class="index-row">
+            <div class="index-left">
+              <div class="index-icon">◇</div>
+              <div>
+                <div class="index-name">SeriaB Index</div>
+                <div class="index-desc" id="seriabIndexDesc">— ETFs · Multi-Market</div>
+              </div>
+            </div>
+            <div class="index-right">
+              <div class="index-val" id="seriabIndexVal">—</div>
+              <div class="index-pct" id="seriabIndexPct">—</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ ACCORDION 4: MARKET PULSE ══════════════════ -->
+  <div class="accordion" id="acc-pulse">
+    <button class="accordion-header" onclick="toggleAccordion('pulse')">
+      <span class="accordion-title">Market Pulse</span>
+      <span class="accordion-chevron">▾</span>
+    </button>
+    <div class="accordion-body">
+      <div class="accordion-content">
+        <a class="accordion-link" onclick="event.stopPropagation(); window.location.href='https://www.simplififootball.com/newdisc.html'">Details →</a>
+        <div class="pulse-section">
+          <div class="pulse-grid">
+
+            <div class="pulse-card" id="pulse1">
+              <div class="pulse-label" id="pulse1Label">Championship</div>
+              <div class="pulse-rate" id="pulse1Rate">—</div>
+              <div class="pulse-market">Under 6 Goals</div>
+            </div>
+
+            <div class="pulse-card" id="pulse2">
+              <div class="pulse-label" id="pulse2Label">Championship</div>
+              <div class="pulse-rate" id="pulse2Rate">—</div>
+              <div class="pulse-market">Over 5 Corners</div>
+            </div>
+
+            <div class="pulse-card" id="pulse3">
+              <div class="pulse-label" id="pulse3Label">SeriaB</div>
+              <div class="pulse-rate" id="pulse3Rate">—</div>
+              <div class="pulse-market">Under 6 Goals</div>
+            </div>
+
+            <div class="pulse-card" id="pulse4">
+              <div class="pulse-label" id="pulse4Label">LaLiga</div>
+              <div class="pulse-rate" id="pulse4Rate">—</div>
+              <div class="pulse-market">Under 13 Corners</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ ACCORDION 5: FIXTURES (NEW) ══════════════════ -->
+  <div class="accordion" id="acc-fixtures">
+    <button class="accordion-header" onclick="toggleAccordion('fixtures')">
+      <span class="accordion-title">Fixtures</span>
+      <span class="accordion-chevron">▾</span>
+    </button>
+    <div class="accordion-body">
+      <div class="accordion-content">
+
+        <div class="fix-filters">
+          <div>
+            <label class="fix-filter-label">Season</label>
+            <select id="fixSeasonSelect" class="fix-select"></select>
+          </div>
+          <div>
+            <label class="fix-filter-label">League</label>
+            <select id="fixLeagueSelect" class="fix-select"></select>
+          </div>
+        </div>
+
+        <div class="fix-round-nav">
+          <button id="fixPrevBtn" class="fix-round-btn" title="Previous round">‹</button>
+          <div class="fix-round-center">
+            <div class="fix-round-info">
+              <div class="fix-round-info-label">Round</div>
+              <div id="fixCurrentRoundLabel" class="fix-round-info-val">—</div>
+            </div>
+            <button id="fixRecentBtn" class="fix-recent-btn">Recent</button>
+          </div>
+          <button id="fixNextBtn" class="fix-round-btn" title="Next round">›</button>
+        </div>
+
+        <div id="fixContainer"></div>
+
+        <div id="fixEmptyState" class="fix-empty" style="display:none;">No fixtures for this round.</div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <button class="cta-btn" onclick="window.location.href='https://www.simplififootball.com/newtest.html'">
+      <span>Explore New ETFs</span>
+      <span class="cta-arrow">→</span>
+    </button>
+  </div>
+
+  </div><!-- end right-panel -->
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active">
+      <div class="nav-item-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+      </div>
+      <div class="nav-item-label">Home</div>
+    </div>
+    <a href="https://www.simplififootball.com/newtest.html" class="nav-item" style="text-decoration:none;">
+      <div class="nav-item-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </div>
+      <div class="nav-item-label">Markets</div>
+    <a href="https://www.simplififootball.com/newdisc.html" class="nav-item" style="text-decoration:none;">
+      <div class="nav-item-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <div class="nav-item-label">Discover</div>
+    </div>
+    <a href="https://www.simplififootball.com/newjournal.html" class="nav-item" style="text-decoration:none;">
+      <div class="nav-item-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div class="nav-item-label">Account</div>
+    </a>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+<script>
+const GREEN = '#10b981';
+const GOLD  = '#c9a84c';
+const BLUE  = '#378ADD';
+
+// ── Global state ──────────────────────────────────────────────────────────────
+let allCsvData = [];
+let homeCurrentSeason = 'all';
+let heroChartInstance = null;
+const sparklineCharts = {};
+
+// ── Market config ─────────────────────────────────────────────────────────────
+const HOME_MARKETS = {
+  over5corners: { label: 'O5 Corners',  hitFn: r => (parseFloat(r.HC)   + parseFloat(r.AC))   > 5,   fixtureOdds: 1.04  },
+  under6:       { label: 'U6 Goals',    hitFn: r => (parseFloat(r.FTHG) + parseFloat(r.FTAG)) < 6,   fixtureOdds: 1.033 },
+  over25:       { label: 'O2.5 Goals',  hitFn: r => (parseFloat(r.FTHG) + parseFloat(r.FTAG)) > 2.5, fixtureOdds: 1.57  },
+  under25:      { label: 'U2.5 Goals',  hitFn: r => (parseFloat(r.FTHG) + parseFloat(r.FTAG)) <=2.5, fixtureOdds: 1.8   },
+ over1cards: { label:'Over 1 Cards', hitFn:r=>((parseFloat(r.HY)||0)+(parseFloat(r.AY)||0)+(parseFloat(r.HR)||0)*2+(parseFloat(r.AR)||0)*2)>1, fixtureOdds:1.11 },
+ over0cards: { label:'Over 0 Cards', hitFn:r=>((parseFloat(r.HY)||0)+(parseFloat(r.AY)||0)+(parseFloat(r.HR)||0)*2+(parseFloat(r.AR)||0)*2)>0, fixtureOdds:1.04 },
+  over5sot:       { label:'Over 5 Shots on Target',   hitFn:r=>(parseFloat(r.HST)+parseFloat(r.AST))>5,    fixtureOdds:1.09 },
+  under14corn:       { label:'Under 14 Corners', hitFn:r=>(parseFloat(r.HC)+parseFloat(r.AC))<14,  fixtureOdds:1.06  },
+  over7corn:      { label:'Over 7 Corners', hitFn:r=>(parseFloat(r.HC)+parseFloat(r.AC))>7,  fixtureOdds:1.2  },
+ under12corn:      { label:'Under 12 Corners', hitFn:r=>(parseFloat(r.HC)+parseFloat(r.AC))<12,  fixtureOdds:1.28  },
+ under5goals:       { label:'Under 5 Goals',   hitFn:r=>(parseFloat(r.FTHG)+parseFloat(r.FTAG))<5,    fixtureOdds:1.18 },
+  over15goals:       { label:'Over 1.5 Goals', hitFn:r=>(parseFloat(r.FTHG)+parseFloat(r.FTAG))>1.5,  fixtureOdds:1.2  },
+  btts:      { label:'BTTS', hitFn: r => (parseFloat(r.FTHG) > 0) && (parseFloat(r.FTAG) > 0), fixtureOdds:1.65   }
+};
+
+const CARD_COLORS = ['#10b981','#c9a84c','#378ADD','#a855f7','#f97316','#ec4899','#06b6d4','#84cc16'];
+
+// ── localStorage helpers ──────────────────────────────────────────────────────
+function getSavedETFs() {
+  try { return JSON.parse(localStorage.getItem('simplifi_etfs') || '[]'); } catch { return []; }
+}
+function saveETFs(etfs) {
+  localStorage.setItem('simplifi_etfs', JSON.stringify(etfs));
+}
+function deleteETF(id) {
+  const etfs = getSavedETFs().filter(e => e.id !== id);
+  saveETFs(etfs);
+  runAll();
+}
+
+// ── Season filter ─────────────────────────────────────────────────────────────
+function getHomeFilteredData() {
+  if (homeCurrentSeason === 'all') return allCsvData;
+  const all = [...new Set(allCsvData.map(r => r.Season))].filter(Boolean).sort();
+  const idx = all.indexOf(homeCurrentSeason);
+  const valid = idx >= 0 ? all.slice(idx) : all;
+  return allCsvData.filter(r => valid.includes(r.Season));
+}
+
+// ── Simulation ────────────────────────────────────────────────────────────────
+function runSimulation(data, div, teams, startCapital, stakePct, marketKey) {
+  const mkt = HOME_MARKETS[marketKey];
+  const lg = data.filter(r => r.Div === div);
+
+  function getTeamFixtures(team) {
+    return lg.filter(r => r.HomeTeam === team || r.AwayTeam === team)
+      .sort((a, b) => {
+        if (a.Season !== b.Season) return a.Season < b.Season ? -1 : 1;
+        const da = a.Date ? a.Date.split('/').reverse().join('-') : '';
+        const db = b.Date ? b.Date.split('/').reverse().join('-') : '';
+        return da < db ? -1 : 1;
+      }).map((r, i) => ({ ...r, teamRound: i + 1 }));
+  }
+
+  const teamFixtures = {};
+  teams.forEach(t => { teamFixtures[t] = getTeamFixtures(t); });
+  const maxRound = Math.max(...teams.map(t => teamFixtures[t].length));
+
+  let capital = startCapital;
+  const capitalCurve = [startCapital];
+  let wins = 0, losses = 0, voids = 0;
+
+  for (let rnd = 1; rnd <= maxRound; rnd++) {
+    const stake = +(capital * stakePct).toFixed(2);
+    const fixtures = {};
+    teams.forEach(t => { const f = teamFixtures[t].find(r => r.teamRound === rnd); if (f) fixtures[t] = f; });
+    const present = Object.keys(fixtures);
+    let h2h = false;
+    for (let i = 0; i < present.length; i++)
+      for (let j = i + 1; j < present.length; j++) {
+        const f = fixtures[present[i]];
+        if (f.HomeTeam === present[j] || f.AwayTeam === present[j]) h2h = true;
+      }
+    if (h2h) { voids++; continue; }
+    if (present.length === 0) continue;
+    const combinedOdds = +Math.pow(mkt.fixtureOdds, present.length).toFixed(6);
+    const allHit = present.every(t => mkt.hitFn(fixtures[t]));
+    if (allHit) { capital = +(capital - stake + stake * combinedOdds).toFixed(2); wins++; }
+    else { capital = +(capital - stake).toFixed(2); losses++; }
+    capitalCurve.push(capital);
+  }
+
+  const totalBets = wins + losses;
+  return { capital, capitalCurve, wins, losses, voids, totalBets,
+    winRate: totalBets > 0 ? ((wins / totalBets) * 100).toFixed(1) : '0.0',
+    ret: (((capital - startCapital) / startCapital) * 100).toFixed(1) };
+}
+
+// ── Render sparkline ─────────────────────────────────────────────────────────
+function renderSparkline(id, data, color) {
+  if (sparklineCharts[id]) sparklineCharts[id].destroy();
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const grad = ctx.createLinearGradient(0, 0, 0, 100);
+  grad.addColorStop(0, color + '26');
+  grad.addColorStop(1, color + '00');
+  sparklineCharts[id] = new Chart(ctx, {
+    type: 'line',
+    data: { labels: data.map((_, i) => i), datasets: [{ data, borderColor: color, backgroundColor: grad, borderWidth: 1.5, fill: true, tension: 0.4, pointRadius: 0 }] },
+    options: { responsive: true, maintainAspectRatio: false, animation: { duration: 1200, easing: 'easeInOutQuart' }, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } } }
+  });
+}
+
+// ── Hero chart ────────────────────────────────────────────────────────────────
+function renderHeroChart(data) {
+  if (heroChartInstance) heroChartInstance.destroy();
+  const heroCtx = document.getElementById('heroChart').getContext('2d');
+  const heroGrad = heroCtx.createLinearGradient(0, 0, 0, 100);
+  heroGrad.addColorStop(0, 'rgba(16,185,129,0.18)');
+  heroGrad.addColorStop(1, 'rgba(16,185,129,0.0)');
+  heroChartInstance = new Chart(heroCtx, {
+    type: 'line',
+    data: { labels: data.map((_,i) => i), datasets: [{ data, borderColor: '#10b981', backgroundColor: heroGrad, borderWidth: 2, fill: true, tension: 0.4, pointRadius: 0 }] },
+    options: { responsive: true, maintainAspectRatio: false, animation: { duration: 1000, easing: 'easeInOutQuart' }, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } } }
+  });
+}
+
+// ── Render ETF cards from localStorage ───────────────────────────────────────
+function renderETFCards(etfResults, etfs) {
+  const container = document.getElementById('etfContainer');
+  container.innerHTML = '';
+
+  if (etfs.length === 0) {
+    container.innerHTML = `
+      <div class="etf-empty">
+        <div class="etf-empty-title">No ETFs saved yet</div>
+        <div class="etf-empty-sub">Go to Strategy Lab · Build · Save as ETF</div>
+      </div>`;
+    return;
+  }
+
+  etfs.forEach((etf, i) => {
+    const result = etfResults[i];
+    const color = CARD_COLORS[i % CARD_COLORS.length];
+    const mkt = HOME_MARKETS[etf.market] || HOME_MARKETS['over5corners'];
+    const isProfit = parseFloat(result.ret) >= 0;
+    const chartId = `etfChart_${etf.id}`;
+
+    const card = document.createElement('div');
+    card.className = 'etf-card';
+    card.innerHTML = `
+      <button class="etf-delete-btn" onclick="deleteETF('${etf.id}')" title="Remove ETF">✕</button>
+      <div class="etf-card-top">
+        <div>
+          <div class="etf-badge" style="background:${color}18;border-color:${color}44;color:${color};">${etf.div}</div>
+          <div class="etf-name">${etf.name || 'ETF ' + (i+1)}</div>
+          <div class="etf-sub">${etf.teams.join(' · ')}</div>
+        </div>
+        <div class="etf-value-block">
+          <div class="etf-value" style="color:${isProfit ? 'var(--text-primary)' : 'var(--red)'}">£${Math.round(result.capital).toLocaleString('en-GB')}</div>
+          <div class="etf-return${isProfit ? '' : ' neg'}">${isProfit ? '+' : ''}${result.ret}%</div>
+        </div>
+      </div>
+      <div class="etf-chart-toggle" onclick="toggleChart(this)"><span class="toggle-label">Show Chart</span><span class="toggle-icon">▾</span></div>
+      <div class="etf-chart-wrap" style="display:none;overflow:hidden;"><canvas id="${chartId}" class="etf-sparkline" height="100"></canvas></div>
+      <div class="etf-footer">
+        <div class="etf-stat"><div class="etf-stat-label">Win Rate</div><div class="etf-stat-val green">${result.winRate}%</div></div>
+        <div class="etf-stat"><div class="etf-stat-label">Bets</div><div class="etf-stat-val">${result.totalBets}</div></div>
+        <div class="etf-stat"><div class="etf-stat-label">Market</div><div class="etf-stat-val">${mkt.label}</div></div>
+        <div class="etf-stat"><div class="etf-stat-label">Teams</div><div class="etf-stat-val">${etf.teams.length}</div></div>
+      </div>`;
+    container.appendChild(card);
+
+    // Render sparkline after DOM insertion
+    setTimeout(() => renderSparkline(chartId, result.capitalCurve, color), 50);
+  });
+}
+
+// ── Market Pulse ─────────────────────────────────────────────────────────────
+function calcPulseRate(data, div, fn) {
+  const rows = data.filter(r => r.Div === div);
+  if (!rows.length) return 0;
+  return (rows.filter(fn).length / rows.length) * 100;
+}
+
+// ── Run all simulations ───────────────────────────────────────────────────────
+function runAll() {
+  const data = getHomeFilteredData();
+  const startCapital = parseFloat(document.getElementById('homeCapitalInput').value) || 2000;
+  const stakePct = parseFloat(document.getElementById('homeStakeSelect').value) || 0.10;
+  const etfs = getSavedETFs();
+
+  // Simulate each saved ETF
+  const etfResults = etfs.map(etf => {
+    const mkt = HOME_MARKETS[etf.market] || HOME_MARKETS['over5corners'];
+    return runSimulation(data, etf.div, etf.teams, startCapital, stakePct, etf.market);
+  });
+
+  // Render ETF cards
+  renderETFCards(etfResults, etfs);
+
+  // Hero — combined portfolio
+  if (etfResults.length > 0) {
+    const startTotal = startCapital * etfResults.length;
+    const finalTotal = etfResults.reduce((sum, r) => sum + r.capital, 0);
+    const gain = finalTotal - startTotal;
+    const returnPct = ((gain / startTotal) * 100).toFixed(1);
+    const maxLen = Math.max(...etfResults.map(r => r.capitalCurve.length));
+    const combinedCurve = Array.from({ length: maxLen }, (_, i) =>
+      etfResults.reduce((sum, r) => sum + (r.capitalCurve[i] ?? r.capitalCurve[r.capitalCurve.length - 1]), 0)
+    );
+    document.getElementById('heroWhole').textContent = Math.floor(gain).toLocaleString('en-GB');
+    document.getElementById('heroDecimal').textContent = (Math.abs(gain) % 1).toFixed(2).slice(1);
+    document.getElementById('heroDelta').textContent = (gain >= 0 ? '▲ +£' : '▼ -£') + Math.abs(gain).toLocaleString('en-GB', { maximumFractionDigits: 0 });
+    document.getElementById('heroReturn').textContent = (gain >= 0 ? '+' : '') + returnPct + '% all time';
+    renderHeroChart(combinedCurve);
+  } else {
+    document.getElementById('heroWhole').textContent = '0';
+    document.getElementById('heroDecimal').textContent = '.00';
+    document.getElementById('heroDelta').textContent = '—';
+    document.getElementById('heroReturn').textContent = 'No ETFs saved';
+    renderHeroChart([startCapital]);
+  }
+
+  // Market Pulse
+  const pulseConfigs = [
+    { id: 'pulse1', div: 'Championship', fn: r => (parseFloat(r.FTHG) + parseFloat(r.FTAG)) < 6 },
+    { id: 'pulse2', div: 'Championship', fn: r => (parseFloat(r.HC)   + parseFloat(r.AC))   > 5 },
+    { id: 'pulse3', div: 'SeriaB',       fn: r => (parseFloat(r.FTHG) + parseFloat(r.FTAG)) < 6 },
+    { id: 'pulse4', div: 'laliga',       fn: r => (parseFloat(r.HC)   + parseFloat(r.AC))   < 13 },
+  ];
+  pulseConfigs.forEach(p => {
+    const rate = calcPulseRate(data, p.div, p.fn);
+    document.getElementById(p.id + 'Rate').textContent = rate.toFixed(1) + '%';
+    document.getElementById(p.id).style.setProperty('--bar-val', 0);
+    setTimeout(() => document.getElementById(p.id).style.setProperty('--bar-val', (rate/100).toFixed(3)), 300);
+  });
+
+  // Indices
+  const cornersAvgROI = etfResults.length > 0 ? etfResults.reduce((s, r) => s + parseFloat(r.ret), 0) / etfResults.length : 0;
+  const cornersVal = +(1000 * (1 + cornersAvgROI / 100)).toFixed(1);
+  const cornersSeasons = [...new Set(data.filter(r => r.Div === 'Championship').map(r => r.Season))].sort();
+  const cornersLastSeason = cornersSeasons[cornersSeasons.length - 1];
+  const cornersLastRows = data.filter(r => r.Div === 'Championship' && r.Season === cornersLastSeason);
+  const cornersRecentRate = cornersLastRows.length > 0 ? (cornersLastRows.filter(r => (parseFloat(r.HC)+parseFloat(r.AC))>5).length / cornersLastRows.length * 100).toFixed(1) : '0.0';
+  document.getElementById('cornersIndexVal').textContent = cornersVal.toLocaleString('en-GB');
+  document.getElementById('cornersIndexPct').textContent = '▲ +' + cornersRecentRate + '%';
+  document.getElementById('cornersIndexDesc').textContent = etfResults.length + ' ETFs · Live Data';
+
+  const goalsDivs = ['Championship', 'SeriaB', 'laliga'];
+  const goalsRates = goalsDivs.map(div => { const rows = data.filter(r => r.Div === div); return rows.length > 0 ? rows.filter(r => (parseFloat(r.FTHG)+parseFloat(r.FTAG))<6).length / rows.length * 100 : 0; });
+  const goalsVal = +(1000 * (1 + (goalsRates.reduce((s,v) => s+v,0) / goalsRates.length) / 100)).toFixed(1);
+  const goalsLastRows = data.filter(r => goalsDivs.includes(r.Div) && r.Season === cornersLastSeason);
+  const goalsRecentRate = goalsLastRows.length > 0 ? (goalsLastRows.filter(r => (parseFloat(r.FTHG)+parseFloat(r.FTAG))<6).length / goalsLastRows.length * 100).toFixed(1) : '0.0';
+  document.getElementById('goalsIndexVal').textContent = goalsVal.toLocaleString('en-GB');
+  document.getElementById('goalsIndexPct').textContent = '▲ +' + goalsRecentRate + '%';
+  document.getElementById('goalsIndexDesc').textContent = goalsDivs.length + ' Leagues · U6 Goals';
+
+  const seriabRows = data.filter(r => r.Div === 'SeriaB');
+  const seriabAvg = seriabRows.length > 0 ? ((seriabRows.filter(r=>(parseFloat(r.FTHG)+parseFloat(r.FTAG))<6).length + seriabRows.filter(r=>(parseFloat(r.HC)+parseFloat(r.AC))>5).length) / (seriabRows.length*2) * 100) : 0;
+  const seriabVal = +(1000 * (1 + seriabAvg / 100)).toFixed(1);
+  const seriabLastRows = data.filter(r => r.Div === 'SeriaB' && r.Season === cornersLastSeason);
+  const seriabRecentU6 = seriabLastRows.length > 0 ? (seriabLastRows.filter(r=>(parseFloat(r.FTHG)+parseFloat(r.FTAG))<6).length / seriabLastRows.length * 100).toFixed(1) : '0.0';
+  document.getElementById('seriabIndexVal').textContent = seriabVal.toLocaleString('en-GB');
+  document.getElementById('seriabIndexPct').textContent = '▲ +' + seriabRecentU6 + '%';
+  document.getElementById('seriabIndexDesc').textContent = '2 Markets · SeriaB';
+
+  // Last Round Recap
+  renderLastRoundRecap();
+}
+
+// ── Last Round Recap ─────────────────────────────────────────────────────────
+const RECAP_MARKETS = {
+  over5corners: { label:'O5 Corners', hitFn:r=>(parseFloat(r.HC)+parseFloat(r.AC))>5,        fixtureOdds:1.04  },
+  under6:       { label:'U6 Goals',   hitFn:r=>(parseFloat(r.FTHG)+parseFloat(r.FTAG))<6,    fixtureOdds:1.033 },
+  over25:       { label:'O2.5 Goals', hitFn:r=>(parseFloat(r.FTHG)+parseFloat(r.FTAG))>2.5,  fixtureOdds:1.57  },
+  under25:      { label:'U2.5 Goals', hitFn:r=>(parseFloat(r.FTHG)+parseFloat(r.FTAG))<=2.5, fixtureOdds:1.8   },
+  over1cards: { label:'Over 1 Cards', hitFn:r=>((parseFloat(r.HY)||0)+(parseFloat(r.AY)||0)+(parseFloat(r.HR)||0)*2+(parseFloat(r.AR)||0)*2)>1, fixtureOdds:1.11 },
+  over0cards: { label:'Over 0 Cards', hitFn:r=>((parseFloat(r.HY)||0)+(parseFloat(r.AY)||0)+(parseFloat(r.HR)||0)*2+(parseFloat(r.AR)||0)*2)>0, fixtureOdds:1.04 },
+  over5sot:       { label:'Over 5 Shots on Target',   hitFn:r=>(parseFloat(r.HST)+parseFloat(r.AST))>5,    fixtureOdds:1.09 },
+  under14corn:       { label:'Under 14 Corners', hitFn:r=>(parseFloat(r.HC)+parseFloat(r.AC))<14,  fixtureOdds:1.06  },
+  over7corn:      { label:'Over 7 Corners', hitFn:r=>(parseFloat(r.HC)+parseFloat(r.AC))>7,  fixtureOdds:1.2  },
+ under12corn:      { label:'Under 12 Corners', hitFn:r=>(parseFloat(r.HC)+parseFloat(r.AC))<12,  fixtureOdds:1.28  },
+ under5goals:       { label:'Under 5 Goals',   hitFn:r=>(parseFloat(r.FTHG)+parseFloat(r.FTAG))<5,    fixtureOdds:1.18 },
+  over15goals:       { label:'Over 1.5 Goals', hitFn:r=>(parseFloat(r.FTHG)+parseFloat(r.FTAG))>1.5,  fixtureOdds:1.2  },
+  btts:      { label:'BTTS', hitFn: r => (parseFloat(r.FTHG) > 0) && (parseFloat(r.FTAG) > 0), fixtureOdds:1.65   }
+};
+
+function renderLastRoundRecap(){
+  const card = document.getElementById('recapCard');
+  if(!card) return;
+
+  const etfs = getSavedETFs();
+  if(etfs.length === 0){
+    card.innerHTML = '<div class="recap-empty">No ETFs · save one in Strategy Lab</div>';
+    return;
+  }
+
+  const startCapital = parseFloat(document.getElementById('homeCapitalInput').value) || 2000;
+  const stakePct     = parseFloat(document.getElementById('homeStakeSelect').value) || 0.10;
+
+  card.innerHTML = '';
+  let any = false;
+
+  etfs.forEach((etf, i) => {
+    const lg = allCsvData.filter(r => r.Div === etf.div);
+    if(!lg.length) return;
+    const seasons = [...new Set(lg.map(r => r.Season))].filter(Boolean).sort();
+    const latestSeason = seasons[seasons.length - 1];
+    const matches = lg.filter(r => r.Season === latestSeason)
+      .sort((a, b) => {
+        const da = a.Date ? a.Date.split('/').reverse().join('-') : '';
+        const db = b.Date ? b.Date.split('/').reverse().join('-') : '';
+        return da < db ? -1 : 1;
+      });
+    const etfFixtures = matches.filter(r => etf.teams.includes(r.HomeTeam) || etf.teams.includes(r.AwayTeam));
+    // Take the prior round (fixtures 5-8 from end as "last round")
+    const recapWindow = etfFixtures.slice(Math.max(0, etfFixtures.length - 8), Math.max(0, etfFixtures.length - 4));
+    if(recapWindow.length === 0) return;
+
+    any = true;
+    const market = etf.market || 'over5corners';
+    const mkt = RECAP_MARKETS[market] || RECAP_MARKETS.over5corners;
+    const allHit = recapWindow.every(f => mkt.hitFn(f));
+    const stakeAmt = startCapital * stakePct;
+    const combinedOdds = Math.pow(mkt.fixtureOdds, recapWindow.length);
+    const pnl = allHit ? +(stakeAmt * (combinedOdds - 1)).toFixed(2) : -stakeAmt;
+    const pnlStr = (pnl >= 0 ? '+£' : '-£') + Math.abs(pnl).toLocaleString('en-GB', { maximumFractionDigits: 2 });
+
+    const row = document.createElement('div');
+    row.className = 'recap-row';
+    row.innerHTML = `
+      <div class="recap-left">
+        <div class="recap-dot ${allHit?'win':'loss'}"></div>
+        <div style="min-width:0;flex:1;">
+          <div class="recap-name">${etf.name || 'ETF ' + (i+1)}</div>
+          <div class="recap-meta">${etf.div} · ${mkt.label} · ${recapWindow.length} fix</div>
+        </div>
+      </div>
+      <div class="recap-right">
+        <div class="recap-pnl ${allHit?'win':'loss'}">${pnlStr}</div>
+        <div class="recap-result ${allHit?'win':'loss'}">${allHit?'Win':'Loss'}</div>
+      </div>`;
+    card.appendChild(row);
+  });
+
+  if(!any){
+    card.innerHTML = '<div class="recap-empty">No recap data for your ETFs yet</div>';
+  }
+}
+
+// ── Season tabs ───────────────────────────────────────────────────────────────
+function renderHomeSeasonTabs() {
+  const bar = document.getElementById('homeSeasonBar');
+  const seasons = [...new Set(allCsvData.map(r => r.Season))].filter(Boolean).sort();
+  bar.innerHTML = '<span class="home-season-label">From Season</span>';
+  const allTab = document.createElement('button');
+  allTab.className = 'home-season-tab active';
+  allTab.textContent = 'All';
+  allTab.addEventListener('click', () => setHomeSeasonTab(allTab, 'all'));
+  bar.appendChild(allTab);
+  seasons.forEach(s => {
+    const tab = document.createElement('button');
+    tab.className = 'home-season-tab';
+    tab.textContent = s.toUpperCase();
+    tab.addEventListener('click', () => setHomeSeasonTab(tab, s));
+    bar.appendChild(tab);
+  });
+}
+
+function setHomeSeasonTab(el, season) {
+  document.querySelectorAll('.home-season-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  homeCurrentSeason = season;
+  runAll();
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// ── ACCORDION TOGGLE ───────────────────────────────────────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
+function toggleAccordion(key) {
+  const el = document.getElementById('acc-' + key);
+  if (!el) return;
+  el.classList.toggle('open');
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// ── FIXTURES (namespaced with fix*) ────────────────────────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
+let fixData = [];
+let fixAvailableLeagues = [];
+let fixAvailableSeasons = [];
+let fixAvailableRounds = [];
+let fixCurrentLeague = 'all';
+let fixCurrentSeason = 'all';
+let fixCurrentRound = null;
+
+async function loadFixtures() {
+  try {
+    const response = await fetch('/fixtures.csv', { cache: 'no-cache' });
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    const csvText = await response.text();
+    fixData = Papa.parse(csvText, {
+      header: true,
+      dynamicTyping: true,
+      skipEmptyLines: true
+    }).data;
+    console.log('Loaded ' + fixData.length + ' fixtures');
+    fixProcessData();
+    fixBuildDropdowns();
+    fixApplyFilters();
+    fixSetInitialRound();
+    fixRender();
+  } catch (err) {
+    console.error('Failed to load fixtures.csv:', err);
+    const container = document.getElementById('fixContainer');
+    if (container) container.innerHTML = '<div class="fix-empty">Could not load fixtures</div>';
+  }
+}
+
+function fixProcessData() {
+  fixData = fixData.map((fixture, index) => {
+    const matchid = String(fixture.matchid || 'fallback_' + index);
+
+    // Parse DD/MM/YYYY + Location column = kickoff time (HH:MM:SS)
+    let matchDate = null;
+    if (fixture.Date) {
+      const dateStr = String(fixture.Date).trim();
+      const timeStr = String(fixture.Location || '00:00:00').trim();
+      const datePart = dateStr.split(' ')[0];
+      if (datePart && datePart.includes('/')) {
+        const [day, month, year] = datePart.split('/');
+        const [hour, minute] = timeStr.split(':');
+        const parsed = new Date(
+          parseInt(year),
+          parseInt(month) - 1,
+          parseInt(day),
+          parseInt(hour) || 0,
+          parseInt(minute) || 0
+        );
+        if (!isNaN(parsed.getTime())) matchDate = parsed;
+      }
+    }
+
+    const homeTeam = fixture['Home Team'] || fixture.HomeTeam || 'TBA';
+    const awayTeam = fixture['Away Team'] || fixture.AwayTeam || 'TBA';
+    const league = fixture.league || fixture.League || 'Unknown';
+
+    const hthg = fixture.FTHG;
+    const ftag = fixture.FTAG;
+    const played = (hthg !== null && hthg !== undefined && hthg !== '' && !isNaN(hthg))
+                && (ftag !== null && ftag !== undefined && ftag !== '' && !isNaN(ftag));
+
+    return {
+      matchid,
+      matchDate,
+      Round: fixture.Round,
+      Season: fixture.Season || '',
+      League: league,
+      HomeTeam: homeTeam,
+      AwayTeam: awayTeam,
+      FTHG: hthg,
+      FTAG: ftag,
+      finalScore: fixture['final score'],
+      kickoffTime: String(fixture.Location || '').substring(0, 5),
+      played
+    };
+  });
+
+  fixData.sort((a, b) => {
+    if (!a.matchDate) return 1;
+    if (!b.matchDate) return -1;
+    return a.matchDate - b.matchDate;
+  });
+
+  fixAvailableLeagues = [...new Set(fixData.map(f => f.League))].filter(Boolean).sort();
+  fixAvailableSeasons = [...new Set(fixData.map(f => f.Season))].filter(Boolean).sort();
+}
+
+function fixBuildDropdowns() {
+  const seasonSelect = document.getElementById('fixSeasonSelect');
+  const leagueSelect = document.getElementById('fixLeagueSelect');
+
+  seasonSelect.innerHTML = '';
+  const allSeasonOpt = document.createElement('option');
+  allSeasonOpt.value = 'all';
+  allSeasonOpt.textContent = 'All Seasons';
+  seasonSelect.appendChild(allSeasonOpt);
+  fixAvailableSeasons.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s;
+    opt.textContent = s;
+    seasonSelect.appendChild(opt);
+  });
+
+  leagueSelect.innerHTML = '';
+  const allLeagueOpt = document.createElement('option');
+  allLeagueOpt.value = 'all';
+  allLeagueOpt.textContent = 'All Leagues';
+  leagueSelect.appendChild(allLeagueOpt);
+  fixAvailableLeagues.forEach(l => {
+    const opt = document.createElement('option');
+    opt.value = l;
+    opt.textContent = l;
+    leagueSelect.appendChild(opt);
+  });
+}
+
+function fixGetScoped() {
+  let scope = fixData;
+  if (fixCurrentSeason !== 'all') scope = scope.filter(f => f.Season === fixCurrentSeason);
+  if (fixCurrentLeague !== 'all') scope = scope.filter(f => f.League === fixCurrentLeague);
+  return scope;
+}
+
+function fixApplyFilters() {
+  const scope = fixGetScoped();
+  fixAvailableRounds = [...new Set(scope.map(f => f.Round))]
+    .filter(r => r !== null && r !== undefined && r !== '')
+    .map(r => parseInt(r))
+    .filter(r => !isNaN(r))
+    .sort((a, b) => a - b);
+}
+
+function fixSetInitialRound() {
+  const scope = fixGetScoped();
+  const playedRounds = scope
+    .filter(f => f.played)
+    .map(f => parseInt(f.Round))
+    .filter(r => !isNaN(r));
+  if (playedRounds.length > 0) {
+    fixCurrentRound = Math.max(...playedRounds);
+  } else if (fixAvailableRounds.length > 0) {
+    fixCurrentRound = fixAvailableRounds[0];
+  } else {
+    fixCurrentRound = null;
+  }
+}
+
+function fixOnFilterChange() {
+  fixCurrentSeason = document.getElementById('fixSeasonSelect').value;
+  fixCurrentLeague = document.getElementById('fixLeagueSelect').value;
+  fixApplyFilters();
+  fixSetInitialRound();
+  fixRender();
+}
+
+function fixGoPrev() {
+  if (fixCurrentRound === null) return;
+  const idx = fixAvailableRounds.indexOf(fixCurrentRound);
+  if (idx > 0) {
+    fixCurrentRound = fixAvailableRounds[idx - 1];
+    fixRender();
+  }
+}
+function fixGoNext() {
+  if (fixCurrentRound === null) return;
+  const idx = fixAvailableRounds.indexOf(fixCurrentRound);
+  if (idx >= 0 && idx < fixAvailableRounds.length - 1) {
+    fixCurrentRound = fixAvailableRounds[idx + 1];
+    fixRender();
+  }
+}
+function fixGoRecent() {
+  fixSetInitialRound();
+  fixRender();
+}
+
+function fixRender() {
+  const container = document.getElementById('fixContainer');
+  const emptyState = document.getElementById('fixEmptyState');
+  const roundLabel = document.getElementById('fixCurrentRoundLabel');
+  const prevBtn = document.getElementById('fixPrevBtn');
+  const nextBtn = document.getElementById('fixNextBtn');
+
+  roundLabel.textContent = fixCurrentRound !== null ? fixCurrentRound : '—';
+
+  const idx = fixAvailableRounds.indexOf(fixCurrentRound);
+  prevBtn.disabled = idx <= 0;
+  nextBtn.disabled = idx < 0 || idx >= fixAvailableRounds.length - 1;
+
+  let fixtures = fixGetScoped().filter(f => parseInt(f.Round) === fixCurrentRound);
+
+  container.innerHTML = '';
+
+  if (fixtures.length === 0) {
+    emptyState.style.display = 'block';
+    return;
+  }
+  emptyState.style.display = 'none';
+
+  const byLeague = {};
+  fixtures.forEach(f => {
+    if (!byLeague[f.League]) byLeague[f.League] = [];
+    byLeague[f.League].push(f);
+  });
+
+  const leagueKeys = Object.keys(byLeague).sort();
+
+  leagueKeys.forEach(league => {
+    const group = byLeague[league];
+    group.sort((a, b) => {
+      if (!a.matchDate) return 1;
+      if (!b.matchDate) return -1;
+      return a.matchDate - b.matchDate;
+    });
+
+    const card = document.createElement('div');
+    card.className = 'fix-league-group';
+
+    const header = document.createElement('div');
+    header.className = 'fix-league-header';
+    header.innerHTML = '<div class="fix-league-name">' + league + '</div>' +
+                       '<div class="fix-league-count">' + group.length + ' ' + (group.length === 1 ? 'match' : 'matches') + '</div>';
+    card.appendChild(header);
+
+    group.forEach(fixture => {
+      const row = document.createElement('div');
+      row.className = 'fix-row';
+
+      const timeDisplay = fixture.kickoffTime || '--:--';
+      const dateDisplay = fixture.matchDate
+        ? fixture.matchDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
+        : '';
+
+      let scoreHtml;
+      if (fixture.played) {
+        scoreHtml = '<div class="fix-score played">' + fixture.FTHG + ' - ' + fixture.FTAG + '</div>';
+      } else {
+        scoreHtml = '<div class="fix-score upcoming">vs</div>';
+      }
+
+      const fs = fixture.finalScore;
+      const hasConf = fs !== null && fs !== undefined && fs !== '' && !isNaN(fs);
+      const confHtml = hasConf
+        ? '<div class="fix-conf">' + fs + '/5</div>'
+        : '<div class="fix-conf-empty">—</div>';
+
+      row.innerHTML =
+        '<div class="fix-datetime">' +
+          '<div class="date">' + dateDisplay + '</div>' +
+          '<div>' + timeDisplay + '</div>' +
+        '</div>' +
+        '<div class="fix-team-home">' + fixture.HomeTeam + '</div>' +
+        scoreHtml +
+        '<div class="fix-team-away">' + fixture.AwayTeam + '</div>' +
+        confHtml;
+
+      card.appendChild(row);
+    });
+
+    container.appendChild(card);
+  });
+}
+
+// ── Load CSV ──────────────────────────────────────────────────────────────────
+async function loadData() {
+  // Parallel: BELGIUM (existing home page data) + fixtures (new fixtures accordion)
+  const belgiumPromise = fetch('/BELGIUM.csv', { cache: 'no-cache' })
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+    .then(text => {
+      allCsvData = Papa.parse(text, { header: true, dynamicTyping: true, skipEmptyLines: true }).data;
+      renderHomeSeasonTabs();
+      runAll();
+    })
+    .catch(err => console.error('Failed to load BELGIUM.csv:', err));
+
+  const fixturesPromise = loadFixtures();
+
+  await Promise.all([belgiumPromise, fixturesPromise]);
+}
+
+// ── Event listeners ───────────────────────────────────────────────────────────
+// ── Theme ─────────────────────────────────────────────────────────────────────
+function applyTheme(theme) {
+  document.body.classList.toggle('light', theme === 'light');
+  const icon = document.getElementById('themeIcon');
+  if (icon) icon.textContent = theme === 'light' ? '🌙' : '☀';
+}
+
+function toggleTheme() {
+  const current = localStorage.getItem('simplifi_theme') || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('simplifi_theme', next);
+  applyTheme(next);
+}
+
+window.addEventListener('load', () => {
+  applyTheme(localStorage.getItem('simplifi_theme') || 'dark');
+  loadData();
+  document.querySelectorAll('.pulse-card').forEach(card => card.style.setProperty('--bar-val', 0));
+
+  // Fixtures event listeners (wired after DOM ready)
+  const fixPrevBtn = document.getElementById('fixPrevBtn');
+  const fixNextBtn = document.getElementById('fixNextBtn');
+  const fixRecentBtn = document.getElementById('fixRecentBtn');
+  const fixSeasonSelect = document.getElementById('fixSeasonSelect');
+  const fixLeagueSelect = document.getElementById('fixLeagueSelect');
+  if (fixPrevBtn) fixPrevBtn.addEventListener('click', fixGoPrev);
+  if (fixNextBtn) fixNextBtn.addEventListener('click', fixGoNext);
+  if (fixRecentBtn) fixRecentBtn.addEventListener('click', fixGoRecent);
+  if (fixSeasonSelect) fixSeasonSelect.addEventListener('change', fixOnFilterChange);
+  if (fixLeagueSelect) fixLeagueSelect.addEventListener('change', fixOnFilterChange);
+});
+
+document.getElementById('homeCapitalInput').addEventListener('change', runAll);
+document.getElementById('homeStakeSelect').addEventListener('change', runAll);
+
+document.querySelectorAll('.time-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.time-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+
+function toggleChart(btn) {
+  const wrap = btn.nextElementSibling;
+  const isOpen = btn.classList.contains('open');
+  if (isOpen) {
+    wrap.style.display = 'none';
+    btn.classList.remove('open');
+    btn.querySelector('.toggle-label').textContent = 'Show Chart';
+  } else {
+    wrap.style.display = 'block';
+    btn.classList.add('open');
+    btn.querySelector('.toggle-label').textContent = 'Hide Chart';
+  }
+}
+
+// Re-run when user switches back to this tab
+window.addEventListener('focus', runAll);
+// Re-run immediately when another tab saves an ETF
+window.addEventListener('storage', e => { if (e.key === 'simplifi_etfs') runAll(); });
+</script>
+</body>
+</html>
